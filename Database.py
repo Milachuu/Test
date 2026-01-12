@@ -1,16 +1,5 @@
-import mysql.connector
 import Bins
-
-
-db = mysql.connector.connect(
-    host = "localhost",
-    user = "root",
-    passwd = "Helloworld1$",
-    database = "Neighbourly_Database"
-)
-
-
-mycursor = db.cursor()
+from db_utils import db, mycursor
   
 
 def create_database():
@@ -341,7 +330,6 @@ def select_password_storage(email,password):
 
 """
     
-
 
 
 

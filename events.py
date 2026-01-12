@@ -1,5 +1,5 @@
-import mysql.connector
 from datetime import datetime
+from db_utils import get_db_connection
 
 # Convert date to SQL acceptable date format
 
@@ -13,13 +13,11 @@ def parse_date(date_str):
     raise ValueError(f"Unsupported date format: {date_str}")
 
 def get_all_events():
+    close_after = False
+    cursor = None
+    db = None
     try:
-        db = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="Helloworld1$",
-            database="Neighbourly_Database"
-        )
+        db, close_after = get_db_connection()
         cursor = db.cursor()
 
         events = {
@@ -805,7 +803,9 @@ def get_all_events():
         print(f"[ERROR] {e}")
 
     finally:
-        cursor.close()
-        db.close()
+        if cursor is not None:
+            cursor.close()
+        if close_after and db is not None:
+            db.close()
 
 # get_all_events()
