@@ -29,7 +29,7 @@ def table_creation():
     mycursor.execute("CREATE TABLE IF NOT EXISTS Listing ( listing_id INT  AUTO_INCREMENT PRIMARY KEY NOT NULL, listing_username Varchar(30) , title Varchar(100), description Varchar(150), category ENUM('Food','Non-Food'), type ENUM('Borrow','Free'), availability_date Varchar(20) , availability_time Varchar(20), photo_path Varchar(255), listing_email Varchar(100), FOREIGN KEY (listing_email) REFERENCES User(login_email))")
 
 
-    mycursor.execute(" CREATE TABLE IF NOT EXISTS Booking ( booking_id int AUTO_INCREMENT PRIMARY KEY NOT NULL, booking_email Varchar(100), book_listing_id int, selected_date Varchar(15) , selected_time Varchar(15), FOREIGN KEY (booking_email) REFERENCES User(login_email), FOREIGN KEY (book_listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE ) ")
+    mycursor.execute(" CREATE TABLE IF NOT EXISTS Booking ( booking_id int AUTO_INCREMENT PRIMARY KEY NOT NULL, booking_email Varchar(100), book_listing_id int, selected_date Varchar(15) , selected_time Varchar(15), status ENUM('Pending','Confirmed','Approved','Reserved','Cancelled','Expired','Completed','Rejected') NOT NULL DEFAULT 'Pending', FOREIGN KEY (booking_email) REFERENCES User(login_email), FOREIGN KEY (book_listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE ) ")
 
     mycursor.execute(" CREATE TABLE IF NOT EXISTS Chat ( chat_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, listing_id INT NOT NULL, borrower_email VARCHAR(100) NOT NULL, giver_email VARCHAR(100) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uniq_chat (listing_id, borrower_email, giver_email), FOREIGN KEY (listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE, FOREIGN KEY (borrower_email) REFERENCES User(login_email) ON DELETE CASCADE, FOREIGN KEY (giver_email) REFERENCES User(login_email) ON DELETE CASCADE ) ")
 
@@ -120,8 +120,8 @@ def Create_Listing(listing_username, title, description, category, type, availab
     db.commit()
 
 
-def Create_Booking(booking_email,book_listing_id,selected_date,selected_time):
-    mycursor.execute("INSERT INTO Booking (booking_email, book_listing_id, selected_date, selected_time) VALUES (%s,%s,%s,%s)", (booking_email, book_listing_id, selected_date, selected_time))
+def Create_Booking(booking_email,book_listing_id,selected_date,selected_time,status="Pending"):
+    mycursor.execute("INSERT INTO Booking (booking_email, book_listing_id, selected_date, selected_time, status) VALUES (%s,%s,%s,%s,%s)", (booking_email, book_listing_id, selected_date, selected_time, status))
     db.commit()
 
 
@@ -341,7 +341,6 @@ def select_password_storage(email,password):
 
 """
     
-
 
 
 

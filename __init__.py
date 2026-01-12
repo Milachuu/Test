@@ -53,6 +53,10 @@ db = mysql.connector.connect(
 
 mycursor = db.cursor()
 
+ACTIVE_BOOKING_STATUSES = ("Pending", "Confirmed", "Approved", "Reserved")
+# Listings with inactive bookings are allowed to reappear in browse results.
+INACTIVE_BOOKING_STATUSES = ("Cancelled", "Expired", "Completed", "Rejected")
+
 
 
 
@@ -68,6 +72,39 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def fetch_available_listings(listing_type, viewer_email):
+    status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
+    query = f"""
+        SELECT
+            l.listing_id,
+            l.listing_username,
+            l.title,
+            l.description,
+            l.category,
+            l.type,
+            l.availability_date,
+            l.availability_time,
+            l.photo_path,
+            l.listing_email
+        FROM Listing AS l
+        WHERE LOWER(l.type) = %s
+          AND NOT EXISTS (
+            SELECT 1
+            FROM Booking AS b
+            WHERE b.book_listing_id = l.listing_id
+              AND b.status IN ({status_placeholders})
+              AND l.listing_email <> %s
+          )
+    """
+    params = [
+        listing_type.lower(),
+        *ACTIVE_BOOKING_STATUSES,
+        viewer_email,
+    ]
+    mycursor.execute(query, params)
+    return mycursor.fetchall()
 
 
 
@@ -1079,11 +1116,8 @@ def login_home():
     t = make_t(lang_code)                 
 
 
-    mycursor.execute("SELECT * FROM Listing WHERE type = 'Borrow'")
-    borrow_listings = mycursor.fetchall()
-
-    mycursor.execute("SELECT * FROM Listing WHERE type = 'Free'")
-    free_listings = mycursor.fetchall()
+    borrow_listings = fetch_available_listings("borrow", get_email)
+    free_listings = fetch_available_listings("free", get_email)
 
     mycursor.execute("Select wishlist_listing_id From Wishlist Where wishlist_email =%s",[get_email] )
     favourited_rows = mycursor.fetchall()
@@ -1472,6 +1506,40 @@ def booking(listing_id):
     for date_key, time_slots in availability_by_date.items():
         availability_by_date[date_key] = sorted(time_slots, key=lambda slot: slot["value"])
 
+    status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
+    mycursor.execute(
+        f"""
+            SELECT booking_email, selected_date, selected_time
+            FROM Booking
+            WHERE book_listing_id = %s
+              AND status IN ({status_placeholders})
+        """,
+        [listing_id, *ACTIVE_BOOKING_STATUSES],
+    )
+    active_bookings = mycursor.fetchall()
+    if active_bookings and owner_email != get_email:
+        flash("Listing no longer available.", "error")
+        if listings[5].lower() == "borrow":
+            return redirect(url_for("borrow"))
+        return redirect(url_for("free"))
+
+    booked_slots = {
+        (str(selected_date), str(selected_time))
+        for _, selected_date, selected_time in active_bookings
+        if selected_date and selected_time
+    }
+    if booked_slots:
+        for date_key, time_slots in list(availability_by_date.items()):
+            remaining_slots = [
+                slot
+                for slot in time_slots
+                if (date_key, slot["value"]) not in booked_slots
+            ]
+            if remaining_slots:
+                availability_by_date[date_key] = remaining_slots
+            else:
+                availability_by_date.pop(date_key, None)
+
    
     # row = mycursor.fetchone()
 
@@ -1518,6 +1586,29 @@ def booking(listing_id):
         selected_time = request.form.get('selectedTime')
 
         if selected_date and selected_time:
+            mycursor.execute(
+                f"""
+                    SELECT 1
+                    FROM Booking
+                    WHERE book_listing_id = %s
+                      AND status IN ({status_placeholders})
+                      AND selected_date = %s
+                      AND selected_time = %s
+                    LIMIT 1
+                """,
+                [listing_id, *ACTIVE_BOOKING_STATUSES, selected_date, selected_time],
+            )
+            if mycursor.fetchone():
+                message = "Selected time is no longer available."
+                return render_template(
+                    'booking.html',
+                    listings=listings,
+                    username=get_username,
+                    message=message,
+                    availability_by_date=availability_by_date,
+                    t=t,
+                )
+
             available_times = [slot["value"] for slot in availability_by_date.get(selected_date, [])]
             if selected_time not in available_times:
                 message = "Selected time is no longer available."
@@ -1549,7 +1640,7 @@ def booking(listing_id):
             print(selected_date)
             print(selected_time)
 
-            Database.Create_Booking(get_email, listings[0], selected_date, selected_time)
+            Database.Create_Booking(get_email, listings[0], selected_date, selected_time, "Pending")
             db.commit()
 
             giver_email = listings[9]
@@ -1701,9 +1792,8 @@ def borrow():
 
      
 
-    # Fetch all borrow listings
-    mycursor.execute("SELECT listing_id, listing_username, title, description, category, availability_date, availability_time, photo_path FROM Listing WHERE LOWER(type) = 'borrow'")
-    rows = mycursor.fetchall()
+    # Fetch all borrow listings excluding actively booked ones for other users
+    rows = fetch_available_listings("borrow", get_email)
 
 
     
@@ -1716,9 +1806,9 @@ def borrow():
             "title": row[2],
             "description": row[3],
             "category": row[4],
-            "availability_date": row[5],
-            "availability_time": row[6],
-            "photo": row[7] if row[7] else 'uploads/placeholder.png'
+            "availability_date": row[6],
+            "availability_time": row[7],
+            "photo": row[8] if row[8] else 'uploads/placeholder.png'
         }
         for row in rows
     ]
@@ -1760,9 +1850,8 @@ def free():
 
  
 
-    # Fetch all free listings
-    mycursor.execute("SELECT listing_id, listing_username, title, description, category, availability_date, availability_time, photo_path FROM Listing WHERE LOWER(type) = 'free'")
-    rows = mycursor.fetchall()
+    # Fetch all free listings excluding actively booked ones for other users
+    rows = fetch_available_listings("free", get_email)
 
 
 
@@ -1774,9 +1863,9 @@ def free():
             "title": row[2],
             "description": row[3],
             "category": row[4],
-            "availability_date": row[5],
-            "availability_time": row[6],
-            "photo": row[7] if row[7] else 'uploads/placeholder.png'
+            "availability_date": row[6],
+            "availability_time": row[7],
+            "photo": row[8] if row[8] else 'uploads/placeholder.png'
         }
         for row in rows
     ]
