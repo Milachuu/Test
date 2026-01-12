@@ -1,15 +1,9 @@
-import mysql.connector
+from db_utils import get_db_connection
 
 
 def populateBin():
     # Connect to MySQL
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        passwd="Helloworld1$",  # your password
-        database="Neighbourly_Database"
-    )
-
+    db, close_after = get_db_connection()
     cursor = db.cursor()
 
 
@@ -142,7 +136,8 @@ def populateBin():
     db.commit()
     print("Data inserted successfully.")
     cursor.close()
-    db.close()
+    if close_after:
+        db.close()
 
 #  Populate Data
 

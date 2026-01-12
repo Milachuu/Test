@@ -42,16 +42,10 @@ app.config.update(
 
 
 import Database
-import mysql.connector
+from db_utils import db, mycursor, init_app as init_db, ensure_schema
 
-db = mysql.connector.connect(
-    host = "localhost",
-    user = "root",
-    passwd = "Helloworld1$",
-    database = "Neighbourly_Database",
-)
-
-mycursor = db.cursor()
+init_db(app)
+ensure_schema()
 
 ACTIVE_BOOKING_STATUSES = ("Pending", "Confirmed", "Approved", "Reserved")
 # Listings with inactive bookings are allowed to reappear in browse results.
@@ -1965,7 +1959,6 @@ def setting():
         return redirect(url_for('setting'))
 
     
-    mycursor = db.cursor()
     mycursor.execute("SELECT * FROM User WHERE login_email = %s", [get_email])
     details = mycursor.fetchone()
 
