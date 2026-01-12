@@ -317,6 +317,21 @@
     "availability": "Availability",
     "availability_date": "Date",
     "availability_time": "Time",
+    "availability_start": "Start time",
+    "availability_end": "End time",
+    "availability_helper": "Add one or more dates and time ranges in 30-minute increments.",
+    "availability_add_date": "Add date",
+    "availability_remove_date": "Remove date",
+    "availability_add_slot": "Add slot",
+    "availability_remove_slot": "Remove slot",
+    "availability_date_required": "Please choose an availability date.",
+    "availability_slot_required": "Add at least one availability time range.",
+    "availability_slot_incomplete": "Each availability slot needs a start and end time.",
+    "availability_slot_invalid": "Each availability slot must have a start time before the end time.",
+    "availability_slot_duration": "Each availability slot must be at least 30 minutes.",
+    "availability_slot_overlap": "Availability slots cannot overlap.",
+    "availability_block_required": "Add at least one availability date.",
+    "availability_save_error": "Unable to save availability slots. Please try again.",
     "date_error": "⚠ Date must be from 5th February 2025 onwards.",
     "submit": "List Now"
   },
@@ -757,6 +772,21 @@
     "availability": "Availability",
     "availability_date": "Date",
     "availability_time": "Time",
+    "availability_start": "Start time",
+    "availability_end": "End time",
+    "availability_helper": "Add one or more dates and time ranges in 30-minute increments.",
+    "availability_add_date": "Add date",
+    "availability_remove_date": "Remove date",
+    "availability_add_slot": "Add slot",
+    "availability_remove_slot": "Remove slot",
+    "availability_date_required": "Please choose an availability date.",
+    "availability_slot_required": "Add at least one availability time range.",
+    "availability_slot_incomplete": "Each availability slot needs a start and end time.",
+    "availability_slot_invalid": "Each availability slot must have a start time before the end time.",
+    "availability_slot_duration": "Each availability slot must be at least 30 minutes.",
+    "availability_slot_overlap": "Availability slots cannot overlap.",
+    "availability_block_required": "Add at least one availability date.",
+    "availability_save_error": "Unable to save availability slots. Please try again.",
     "date_error": "⚠ Date must be from 5th February 2025 onwards.",
     "submit": "List Now"
   },
@@ -834,4 +864,3 @@
   "terms_usage": "Redeemed vouchers can be used at participating merchants that accept $10 redemption as indicated on <a href=\"https://www.uniqgiftvoucher.com/egiftcard/\" target=\"_blank\">https://www.uniqgiftvoucher.com/egiftcard/</a>."
   }
 }
-

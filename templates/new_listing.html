@@ -9,6 +9,26 @@
 <div class="bg">
   <div class="listing-form-container">
     <h1 class="page-title">{{ t("create_newlisting.page_title") }}</h1>
+    {% if errors %}
+      <div class="form-alert" role="alert">
+        <ul>
+          {% for error in errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+    <div
+      class="form-alert form-alert-client"
+      id="availabilityErrors"
+      data-error-incomplete="{{ t('create_newlisting.availability_slot_incomplete') }}"
+      data-error-invalid="{{ t('create_newlisting.availability_slot_invalid') }}"
+      data-error-overlap="{{ t('create_newlisting.availability_slot_overlap') }}"
+      data-error-required="{{ t('create_newlisting.availability_block_required') }}"
+      data-error-date-required="{{ t('create_newlisting.availability_date_required') }}"
+      data-error-duration="{{ t('create_newlisting.availability_slot_duration') }}"
+      hidden
+    ></div>
     <form method="POST" action="{{ url_for('create_listing') }}" enctype="multipart/form-data">
       
       <!-- Photo Upload Section -->
@@ -25,46 +45,96 @@
 
       <!-- Item Details -->
       <div class="item-details">
-        <label for="title">{{ t("create_newlisting.listing_title") }}</label>
-        <input type="text" id="title" name="title"
-               placeholder="{{ t('create_newlisting.title_placeholder') }}"
-               class="form-control" required pattern=".{5,}"
-               title="{{ t('create_listing.title_rule') }}">
+        <div class="form-field">
+          <label for="title">{{ t("create_newlisting.listing_title") }}</label>
+          <input type="text" id="title" name="title"
+                 placeholder="{{ t('create_newlisting.title_placeholder') }}"
+                 class="form-control" required pattern=".{5,}"
+                 title="{{ t('create_listing.title_rule') }}">
+        </div>
 
-        <label for="description">{{ t("create_newlisting.description") }}</label>
-        <textarea id="description" name="description"
-                  placeholder="{{ t('create_newlisting.description_placeholder') }}"
-                  class="form-control" rows="3" required minlength="10"></textarea>
+        <div class="form-field">
+          <label for="description">{{ t("create_newlisting.description") }}</label>
+          <textarea id="description" name="description"
+                    placeholder="{{ t('create_newlisting.description_placeholder') }}"
+                    class="form-control" rows="3" required minlength="10"></textarea>
+        </div>
       </div>
 
       <!-- Category Selection -->
       <div class="category-selection">
-        <label for="category">{{ t("create_newlisting.category") }}</label>
-        <select id="category" name="category" class="form-control" required>
-          <option value="">{{ t("create_newlisting.category_select") }}</option>
-          <option value="food">{{ t("create_newlisting.category_food") }}</option>
-          <option value="non-food">{{ t("create_newlisting.category_non_food") }}</option>
-        </select>
+        <div class="form-field">
+          <label for="category">{{ t("create_newlisting.category") }}</label>
+          <select id="category" name="category" class="form-control" required>
+            <option value="">{{ t("create_newlisting.category_select") }}</option>
+            <option value="food">{{ t("create_newlisting.category_food") }}</option>
+            <option value="non-food">{{ t("create_newlisting.category_non_food") }}</option>
+          </select>
+        </div>
 
-        <label for="type">{{ t("create_newlisting.type") }}</label>
-        <select id="type" name="type" class="form-control" required>
-          <option value="">{{ t("create_newlisting.type_select") }}</option>
-          <option value="borrow">{{ t("create_newlisting.type_borrow") }}</option>
-          <option value="free">{{ t("create_newlisting.type_free") }}</option>
-        </select>
+        <div class="form-field">
+          <label for="type">{{ t("create_newlisting.type") }}</label>
+          <select id="type" name="type" class="form-control" required>
+            <option value="">{{ t("create_newlisting.type_select") }}</option>
+            <option value="borrow">{{ t("create_newlisting.type_borrow") }}</option>
+            <option value="free">{{ t("create_newlisting.type_free") }}</option>
+          </select>
+        </div>
       </div>
 
       <!-- Availability -->
       <div class="availability">
         <h2>{{ t("create_newlisting.availability") }}</h2>
-        <label for="availability_date" class="form-label">{{ t("create_newlisting.availability_date") }}</label>
-        <input type="date" id="availability_date" name="availability_date" class="form-control" required>
+        <p class="availability-helper">{{ t("create_newlisting.availability_helper") }}</p>
+        <div id="availabilityBlocks">
+          {% for block in availability_blocks %}
+            <div class="availability-block">
+              <div class="availability-block-header">
+                <div class="form-field">
+                  <label class="form-label">{{ t("create_newlisting.availability_date") }}</label>
+                  <input
+                    type="date"
+                    class="form-control availability-date"
+                    value="{{ block.date }}"
+                    required
+                  >
+                </div>
+                <button type="button" class="date-remove">
+                  {{ t("create_newlisting.availability_remove_date") }}
+                </button>
+              </div>
 
-        <label for="availability_time">{{ t("create_newlisting.availability_time") }}</label>
-        <input type="time" id="availability_time" name="availability_time" class="form-control" required>
+              <div class="time-slot-header">
+                <span>{{ t("create_newlisting.availability_start") }}</span>
+                <span class="slot-separator-header" aria-hidden="true"></span>
+                <span>{{ t("create_newlisting.availability_end") }}</span>
+                <span class="slot-separator-header" aria-hidden="true"></span>
+              </div>
+              <div class="time-slot-list">
+                {% for slot in block.slots %}
+                  <div class="time-slot-row">
+                    <select class="form-control time-input availability-start" data-current="{{ slot.start }}" required></select>
+                    <span class="slot-separator">→</span>
+                    <select class="form-control time-input availability-end" data-current="{{ slot.end }}" required></select>
+                    <button type="button" class="slot-remove" aria-label="{{ t('create_newlisting.availability_remove_slot') }}">
+                      {{ t("create_newlisting.availability_remove_slot") }}
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+              <button type="button" class="slot-add">
+                {{ t("create_newlisting.availability_add_slot") }}
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="date-add" id="addDate">
+          {{ t("create_newlisting.availability_add_date") }}
+        </button>
         <p id="date-error" class="error-msg" style="display:none;">
           {{ t("create_newlisting.date_error") }}
         </p>
+        <input type="hidden" id="availabilityPayload" name="availability_payload">
       </div>
 
       <!-- Submit Button -->
@@ -75,20 +145,251 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const dateInput = document.getElementById("availability_date");
     const errorMsg = document.getElementById("date-error");
     const minDate = new Date(2025, 1, 5); // Feb 5, 2025
-    dateInput.setAttribute("min", minDate.toISOString().split("T")[0]);
+    const minDateString = minDate.toISOString().split("T")[0];
+    const availabilityBlocks = document.getElementById("availabilityBlocks");
+    const addDateButton = document.getElementById("addDate");
+    const availabilityErrors = document.getElementById("availabilityErrors");
+    const form = document.querySelector("form");
+    const payloadInput = document.getElementById("availabilityPayload");
+    const minDurationMinutes = 30;
 
-    dateInput.addEventListener("change", function () {
-        const selectedDate = new Date(dateInput.value);
-        if (selectedDate < minDate) {
-            errorMsg.style.display = "block";
-            dateInput.value = "";
-        } else {
-            errorMsg.style.display = "none";
+    const timeOptions = [];
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+            timeOptions.push(value);
         }
+    }
+
+    const applyDateMin = (input) => {
+        input.setAttribute("min", minDateString);
+    };
+
+    const populateTimeSelect = (select) => {
+        const currentValue = select.dataset.current || "";
+        select.innerHTML = "";
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "--:--";
+        select.appendChild(placeholder);
+        timeOptions.forEach((value) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+        if (currentValue) {
+            select.value = currentValue;
+        }
+    };
+
+    const createSlotRow = (startValue = "", endValue = "") => {
+        const row = document.createElement("div");
+        row.className = "time-slot-row";
+        row.innerHTML = `
+            <select class="form-control time-input availability-start" data-current="${startValue}" required></select>
+            <span class="slot-separator">→</span>
+            <select class="form-control time-input availability-end" data-current="${endValue}" required></select>
+            <button type="button" class="slot-remove" aria-label="{{ t('create_newlisting.availability_remove_slot') }}">
+              {{ t("create_newlisting.availability_remove_slot") }}
+            </button>
+        `;
+        populateTimeSelect(row.querySelector(".availability-start"));
+        populateTimeSelect(row.querySelector(".availability-end"));
+        row.querySelector(".slot-remove").addEventListener("click", () => {
+            row.remove();
+            updateSlotRemoveButtons();
+        });
+        return row;
+    };
+
+    const createDateBlock = (dateValue = "", slots = []) => {
+        const block = document.createElement("div");
+        block.className = "availability-block";
+        block.innerHTML = `
+            <div class="availability-block-header">
+              <div class="form-field">
+                <label class="form-label">{{ t("create_newlisting.availability_date") }}</label>
+                <input type="date" class="form-control availability-date" value="${dateValue}" required>
+              </div>
+              <button type="button" class="date-remove">{{ t("create_newlisting.availability_remove_date") }}</button>
+            </div>
+            <div class="time-slot-header">
+              <span>{{ t("create_newlisting.availability_start") }}</span>
+              <span class="slot-separator-header" aria-hidden="true"></span>
+              <span>{{ t("create_newlisting.availability_end") }}</span>
+              <span class="slot-separator-header" aria-hidden="true"></span>
+            </div>
+            <div class="time-slot-list"></div>
+            <button type="button" class="slot-add">{{ t("create_newlisting.availability_add_slot") }}</button>
+        `;
+        const dateInput = block.querySelector(".availability-date");
+        applyDateMin(dateInput);
+        dateInput.addEventListener("change", () => {
+            if (dateInput.value && dateInput.value < minDateString) {
+                errorMsg.style.display = "block";
+                dateInput.value = "";
+            } else {
+                errorMsg.style.display = "none";
+            }
+        });
+
+        const slotList = block.querySelector(".time-slot-list");
+        const slotData = slots.length ? slots : [{ start: "", end: "" }];
+        slotData.forEach((slot) => {
+            slotList.appendChild(createSlotRow(slot.start, slot.end));
+        });
+
+        block.querySelector(".slot-add").addEventListener("click", () => {
+            slotList.appendChild(createSlotRow());
+            updateSlotRemoveButtons();
+        });
+
+        block.querySelector(".date-remove").addEventListener("click", () => {
+            block.remove();
+            updateDateRemoveButtons();
+        });
+        return block;
+    };
+
+    const updateSlotRemoveButtons = () => {
+        availabilityBlocks.querySelectorAll(".availability-block").forEach((block) => {
+            const rows = block.querySelectorAll(".time-slot-row");
+            rows.forEach((row) => {
+                const removeButton = row.querySelector(".slot-remove");
+                removeButton.disabled = rows.length === 1;
+            });
+        });
+    };
+
+    const updateDateRemoveButtons = () => {
+        const blocks = availabilityBlocks.querySelectorAll(".availability-block");
+        blocks.forEach((block) => {
+            const removeButton = block.querySelector(".date-remove");
+            removeButton.disabled = blocks.length === 1;
+        });
+    };
+
+    const parseTimeValue = (value) => {
+        const [hours, minutes] = value.split(":").map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const showAvailabilityErrors = (messages) => {
+        if (!messages.length) {
+            availabilityErrors.hidden = true;
+            availabilityErrors.innerHTML = "";
+            return;
+        }
+        availabilityErrors.hidden = false;
+        availabilityErrors.innerHTML = `<ul>${messages.map((msg) => `<li>${msg}</li>`).join("")}</ul>`;
+    };
+
+    form.addEventListener("submit", (event) => {
+        const messages = [];
+        const blocks = Array.from(availabilityBlocks.querySelectorAll(".availability-block"));
+        const payload = [];
+
+        if (!blocks.length) {
+            messages.push(availabilityErrors.dataset.errorRequired);
+        }
+
+        blocks.forEach((block) => {
+            const dateInput = block.querySelector(".availability-date");
+            const slots = Array.from(block.querySelectorAll(".time-slot-row")).map((row) => {
+                const start = row.querySelector(".availability-start").value;
+                const end = row.querySelector(".availability-end").value;
+                return { start, end };
+            });
+
+            if (!dateInput.value) {
+                messages.push(availabilityErrors.dataset.errorDateRequired);
+            } else if (dateInput.value < minDateString) {
+                messages.push(errorMsg.textContent.trim());
+            }
+
+            const incompleteSlot = slots.some((slot) => !slot.start || !slot.end);
+            if (incompleteSlot) {
+                messages.push(availabilityErrors.dataset.errorIncomplete);
+            }
+
+            const parsedSlots = slots
+                .filter((slot) => slot.start && slot.end)
+                .map((slot) => ({
+                    start: parseTimeValue(slot.start),
+                    end: parseTimeValue(slot.end),
+                }));
+
+            const invalidSlot = parsedSlots.some((slot) => slot.start >= slot.end);
+            if (invalidSlot) {
+                messages.push(availabilityErrors.dataset.errorInvalid);
+            }
+
+            const durationTooShort = parsedSlots.some((slot) => slot.end - slot.start < minDurationMinutes);
+            if (durationTooShort) {
+                messages.push(availabilityErrors.dataset.errorDuration);
+            }
+
+            const sortedSlots = parsedSlots.slice().sort((a, b) => a.start - b.start);
+            for (let i = 1; i < sortedSlots.length; i++) {
+                if (sortedSlots[i].start < sortedSlots[i - 1].end) {
+                    messages.push(availabilityErrors.dataset.errorOverlap);
+                    break;
+                }
+            }
+
+            payload.push({
+                date: dateInput.value,
+                slots,
+            });
+        });
+
+        if (messages.length) {
+            event.preventDefault();
+            showAvailabilityErrors(messages);
+            return;
+        }
+
+        payloadInput.value = JSON.stringify(payload);
+        showAvailabilityErrors([]);
     });
+
+    availabilityBlocks.querySelectorAll(".availability-date").forEach(applyDateMin);
+    availabilityBlocks.querySelectorAll(".availability-start, .availability-end").forEach(populateTimeSelect);
+
+    availabilityBlocks.querySelectorAll(".slot-add").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const block = event.currentTarget.closest(".availability-block");
+            const list = block.querySelector(".time-slot-list");
+            list.appendChild(createSlotRow());
+            updateSlotRemoveButtons();
+        });
+    });
+
+    availabilityBlocks.querySelectorAll(".slot-remove").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.currentTarget.closest(".time-slot-row").remove();
+            updateSlotRemoveButtons();
+        });
+    });
+
+    availabilityBlocks.querySelectorAll(".date-remove").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.currentTarget.closest(".availability-block").remove();
+            updateDateRemoveButtons();
+        });
+    });
+
+    addDateButton.addEventListener("click", () => {
+        availabilityBlocks.appendChild(createDateBlock());
+        updateDateRemoveButtons();
+        updateSlotRemoveButtons();
+    });
+
+    updateDateRemoveButtons();
+    updateSlotRemoveButtons();
 
     // Image preview
     const photoInput = document.getElementById('photo');

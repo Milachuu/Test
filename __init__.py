@@ -5,7 +5,7 @@ from Forms import CreateUserForm,CreateUserInfo,Login,Wishlist,Reporting
 import User,hashlib, pyotp, qrcode, base64, io, os, uuid, json
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time as dt_time
 from time import time
 import stripe
 import secrets
@@ -68,6 +68,85 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+AVAILABILITY_MIN_DATE = date(2025, 2, 5)
+SLOT_MINUTES = 30
+
+
+def _format_time_value(time_value):
+    if time_value is None:
+        return ""
+    if isinstance(time_value, str):
+        return time_value[:5]
+    parsed = _parse_time_value(time_value)
+    return parsed.strftime("%H:%M")
+
+
+def _format_time_label(time_value):
+    if time_value is None:
+        return ""
+    time_str = _format_time_value(time_value)
+    for fmt in ("%H:%M", "%H:%M:%S", "%I:%M %p", "%I:%M%p"):
+        try:
+            parsed = datetime.strptime(time_str, fmt)
+            return parsed.strftime("%I:%M %p").lstrip("0")
+        except ValueError:
+            continue
+    return time_str
+
+
+def _parse_time_value(time_value):
+    if time_value is None:
+        return None
+    if isinstance(time_value, dt_time):
+        return time_value
+    if isinstance(time_value, timedelta):
+        total_minutes = int(time_value.total_seconds() // 60)
+        hours = (total_minutes // 60) % 24
+        minutes = total_minutes % 60
+        return dt_time(hour=hours, minute=minutes)
+    if isinstance(time_value, str):
+        return datetime.strptime(time_value[:5], "%H:%M").time()
+    return time_value
+
+
+def _time_to_minutes(time_value):
+    parsed = _parse_time_value(time_value)
+    return parsed.hour * 60 + parsed.minute
+
+
+def _generate_time_slots(start_time, end_time, step_minutes=SLOT_MINUTES):
+    start_minutes = _time_to_minutes(start_time)
+    end_minutes = _time_to_minutes(end_time)
+    slots = []
+    current = start_minutes
+    while current + step_minutes <= end_minutes:
+        hours = current // 60
+        minutes = current % 60
+        slots.append(f"{hours:02d}:{minutes:02d}")
+        current += step_minutes
+    return slots
+
+
+def _get_next_availability(listing_id):
+    mycursor.execute(
+        """
+        SELECT availability_date, start_time, end_time
+        FROM ListingAvailability
+        WHERE listing_id = %s
+        ORDER BY availability_date ASC, start_time ASC
+        LIMIT 1
+        """,
+        [listing_id],
+    )
+    row = mycursor.fetchone()
+    if not row:
+        return None, None
+    date_str = str(row[0])
+    start_value = _format_time_value(row[1])
+    end_value = _format_time_value(row[2])
+    return date_str, f"{_format_time_label(start_value)} – {_format_time_label(end_value)}"
+
+
 def fetch_available_listings(listing_type, viewer_email):
     status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     query = f"""
@@ -84,18 +163,21 @@ def fetch_available_listings(listing_type, viewer_email):
             l.listing_email
         FROM Listing AS l
         WHERE LOWER(l.type) = %s
+          AND EXISTS (
+            SELECT 1
+            FROM ListingAvailability AS la
+            WHERE la.listing_id = l.listing_id
+          )
           AND NOT EXISTS (
             SELECT 1
             FROM Booking AS b
             WHERE b.book_listing_id = l.listing_id
               AND b.status IN ({status_placeholders})
-              AND l.listing_email <> %s
           )
     """
     params = [
         listing_type.lower(),
         *ACTIVE_BOOKING_STATUSES,
-        viewer_email,
     ]
     mycursor.execute(query, params)
     return mycursor.fetchall()
@@ -949,8 +1031,7 @@ def create_listing():
         description = request.form.get('description')
         category = request.form.get('category')
         listing_type = request.form.get('type')
-        availability_date = request.form.get('availability_date')
-        availability_time = request.form.get('availability_time')
+        availability_payload = request.form.get('availability_payload')
 
         errors = []
         for field, value in {'Title': title, 'Description': description, 'Category': category, 'Type': listing_type}.items():
@@ -958,8 +1039,86 @@ def create_listing():
             if error:
                 errors.append(error)
 
+        availability_blocks = []
+        if availability_payload:
+            try:
+                availability_blocks = json.loads(availability_payload)
+            except json.JSONDecodeError:
+                errors.append(t("create_newlisting.availability_block_required"))
+
+        if not isinstance(availability_blocks, list):
+            availability_blocks = []
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        if not availability_blocks:
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        availability_rows = []
+        for block in availability_blocks:
+            block_date = (block or {}).get("date")
+            slots = (block or {}).get("slots") or []
+            if not block_date:
+                errors.append(t("create_newlisting.availability_date_required"))
+                continue
+            try:
+                parsed_date = datetime.strptime(block_date, "%Y-%m-%d").date()
+                if parsed_date < AVAILABILITY_MIN_DATE:
+                    errors.append(t("create_newlisting.date_error"))
+            except ValueError:
+                errors.append(t("create_newlisting.availability_date_required"))
+                continue
+
+            if not slots:
+                errors.append(t("create_newlisting.availability_slot_required"))
+                continue
+
+            parsed_slots = []
+            for slot in slots:
+                start_time = slot.get("start")
+                end_time = slot.get("end")
+                if not start_time or not end_time:
+                    errors.append(t("create_newlisting.availability_slot_incomplete"))
+                    continue
+                try:
+                    parsed_start = datetime.strptime(start_time, "%H:%M").time()
+                    parsed_end = datetime.strptime(end_time, "%H:%M").time()
+                except ValueError:
+                    errors.append(t("create_newlisting.availability_slot_incomplete"))
+                    continue
+                if parsed_start >= parsed_end:
+                    errors.append(t("create_newlisting.availability_slot_invalid"))
+                    continue
+                if (_time_to_minutes(parsed_end) - _time_to_minutes(parsed_start)) < SLOT_MINUTES:
+                    errors.append(t("create_newlisting.availability_slot_duration"))
+                    continue
+                parsed_slots.append({"start": parsed_start, "end": parsed_end})
+
+            parsed_slots.sort(key=lambda slot: slot["start"])
+            previous_end = None
+            for slot in parsed_slots:
+                if previous_end and slot["start"] < previous_end:
+                    errors.append(t("create_newlisting.availability_slot_overlap"))
+                    break
+                previous_end = slot["end"]
+
+            for slot in parsed_slots:
+                availability_rows.append(
+                    {
+                        "date": block_date,
+                        "start": slot["start"],
+                        "end": slot["end"],
+                    }
+                )
+
         if errors:
-            return render_template('new_listing.html', errors=errors, user_info = user_info,username= get_username, t=t)
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
+            return render_template(
+                'new_listing.html',
+                errors=errors,
+                username=get_username,
+                availability_blocks=display_blocks,
+                t=t,
+            )
 
         # File Upload Validation
         photo = request.files.get('photo')
@@ -975,15 +1134,49 @@ def create_listing():
         description = sanitisation(description)
 
         # Changes are made here, Insert details into db
-        Database.Create_Listing(get_username,title,description,category,listing_type,availability_date,availability_time,photo_path,get_email)
-        db.commit()
+        try:
+            listing_id = Database.Create_Listing(
+                get_username,
+                title,
+                description,
+                category,
+                listing_type,
+                None,
+                None,
+                photo_path,
+                get_email,
+                commit=False,
+            )
+            Database.Create_Listing_Availability(
+                listing_id,
+                get_email,
+                availability_rows,
+                commit=False,
+            )
+            db.commit()
+        except Exception:
+            db.rollback()
+            errors.append(t("create_newlisting.availability_save_error"))
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
+            return render_template(
+                'new_listing.html',
+                errors=errors,
+                username=get_username,
+                availability_blocks=display_blocks,
+                t=t,
+            )
 
        
         return redirect(url_for('login_home'))
 
     
 
-    return render_template('new_listing.html', username= get_username, t=t)
+    return render_template(
+        'new_listing.html',
+        username=get_username,
+        availability_blocks=[{"date": "", "slots": [{"start": "", "end": ""}]}],
+        t=t,
+    )
 
 
 
@@ -1288,8 +1481,6 @@ def fetch_chat_details(chat_id, user_email):
             l.category,
             l.type,
             l.photo_path,
-            l.availability_date,
-            l.availability_time,
             borrower.username,
             giver.username
         FROM Chat c
@@ -1309,7 +1500,23 @@ def fetch_chat_details(chat_id, user_email):
     if user_email not in (borrower_email, giver_email):
         return None
 
-    other_username = row[12] if user_email == borrower_email else row[11]
+    mycursor.execute(
+        """
+        SELECT selected_date, selected_time
+        FROM Booking
+        WHERE book_listing_id = %s AND booking_email = %s
+        ORDER BY booking_id DESC
+        LIMIT 1
+        """,
+        (row[1], borrower_email),
+    )
+    booking_row = mycursor.fetchone()
+    if booking_row and booking_row[0] and booking_row[1]:
+        availability_date = str(booking_row[0])
+        availability_time = _format_time_label(booking_row[1])
+    else:
+        availability_date, availability_time = _get_next_availability(row[1])
+    other_username = row[10] if user_email == borrower_email else row[9]
     return {
         "chat_id": row[0],
         "listing_id": row[1],
@@ -1320,8 +1527,8 @@ def fetch_chat_details(chat_id, user_email):
         "listing_category": row[6],
         "listing_type": row[7],
         "listing_photo": row[8] or "uploads/placeholder.png",
-        "availability_date": row[9],
-        "availability_time": row[10],
+        "availability_date": availability_date,
+        "availability_time": availability_time,
         "other_username": other_username,
     }
 
@@ -1471,34 +1678,29 @@ def booking(listing_id):
 
     owner_email = listings[9]
     mycursor.execute(
-        "SELECT availability_date, availability_time FROM Listing WHERE listing_id = %s AND listing_email = %s",
+        """
+        SELECT availability_date, start_time, end_time
+        FROM ListingAvailability
+        WHERE listing_id = %s AND owner_email = %s
+        ORDER BY availability_date ASC, start_time ASC
+        """,
         [listing_id, owner_email],
     )
     availability_rows = mycursor.fetchall()
 
-    def format_time_label(time_str):
-        if not time_str:
-            return ""
-        for fmt in ("%H:%M", "%H:%M:%S", "%I:%M %p", "%I:%M%p"):
-            try:
-                parsed = datetime.strptime(time_str, fmt)
-                return parsed.strftime("%I:%M %p").lstrip("0")
-            except ValueError:
-                continue
-        return time_str
-
     availability_by_date = {}
-    for availability_date, availability_time in availability_rows:
-        if not availability_date or not availability_time:
+    for availability_date, start_time, end_time in availability_rows:
+        if not availability_date or not start_time or not end_time:
             continue
         date_str = str(availability_date)
-        time_str = str(availability_time)
-        availability_by_date.setdefault(date_str, []).append(
-            {"value": time_str, "label": format_time_label(time_str)}
-        )
+        for slot in _generate_time_slots(start_time, end_time):
+            availability_by_date.setdefault(date_str, set()).add(slot)
 
-    for date_key, time_slots in availability_by_date.items():
-        availability_by_date[date_key] = sorted(time_slots, key=lambda slot: slot["value"])
+    for date_key, time_slots in list(availability_by_date.items()):
+        sorted_slots = sorted(time_slots)
+        availability_by_date[date_key] = [
+            {"value": slot, "label": _format_time_label(slot)} for slot in sorted_slots
+        ]
 
     status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     mycursor.execute(
@@ -1511,12 +1713,6 @@ def booking(listing_id):
         [listing_id, *ACTIVE_BOOKING_STATUSES],
     )
     active_bookings = mycursor.fetchall()
-    if active_bookings and owner_email != get_email:
-        flash("Listing no longer available.", "error")
-        if listings[5].lower() == "borrow":
-            return redirect(url_for("borrow"))
-        return redirect(url_for("free"))
-
     booked_slots = {
         (str(selected_date), str(selected_time))
         for _, selected_date, selected_time in active_bookings
