@@ -89,6 +89,13 @@
   }
   .time-button:hover{ background:#e8f5e9; }
   .time-button.selected{ background:#00b362; color:#fff; box-shadow:0 8px 18px rgba(0,179,98,.22); }
+  .time-button:disabled{
+    background:#f4f6f8; color:#c2c7d0; border-color:#e1e6ee; cursor:not-allowed;
+    box-shadow:none;
+  }
+  .no-availability{
+    margin-top:12px; text-align:right; color:#b42318; font-weight:600;
+  }
 
   /* Book Now CTA */
   .book-now-button{
@@ -221,18 +228,8 @@
       <div class="calendar-container">
         <div class="select-container">
           <select id="yearSelect" name="year" aria-label="Year select">
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
-            <option value="2028">2028</option>
-            <option value="2029">2029</option>
-            <option value="2030">2030</option>
           </select>
           <select id="monthSelect" name="month" aria-label="Month select">
-            <option>January</option><option>February</option><option>March</option>
-            <option>April</option><option>May</option><option>June</option>
-            <option>July</option><option>August</option><option>September</option>
-            <option>October</option><option>November</option><option>December</option>
           </select>
         </div>
 
@@ -249,23 +246,8 @@
         <p id="selectedDateHeader">Monday, August 18</p>
         <p id="timezone">TIME ZONE: Singapore (GMT +8:00)</p>
 
-        <div class="time-buttons">
-          <button type="button" class="time-button" value="11:00 AM">11:00 AM</button>
-          <button type="button" class="time-button" value="12:00 PM">12:00 PM</button>
-          <button type="button" class="time-button" value="1:00 PM">1:00 PM</button>
-
-          <button type="button" class="time-button" value="2:00 PM">2:00 PM</button>
-          <button type="button" class="time-button" value="3:00 PM">3:00 PM</button>
-          <button type="button" class="time-button" value="4:00 PM">4:00 PM</button>
-
-          <button type="button" class="time-button" value="5:00 PM">5:00 PM</button>
-          <button type="button" class="time-button" value="6:00 PM">6:00 PM</button>
-          <button type="button" class="time-button" value="7:00 PM">7:00 PM</button>
-
-          <button type="button" class="time-button" value="8:00 PM">8:00 PM</button>
-          <button type="button" class="time-button" value="9:00 PM">9:00 PM</button>
-          <button type="button" class="time-button" value="10:00 PM">10:00 PM</button>
-        </div>
+        <div class="time-buttons" id="timeButtons"></div>
+        <p id="noAvailability" class="no-availability" hidden>No availability for the selected date.</p>
       </div>
     </div>
 
@@ -279,87 +261,201 @@
   const yearSelect = document.getElementById("yearSelect");
   const monthSelect = document.getElementById("monthSelect");
   const calendarDays = document.getElementById("calendarDays");
-  const timeButtons = document.querySelectorAll(".time-button");
+  const timeButtons = document.getElementById("timeButtons");
   const selectedDateInput = document.getElementById("selectedDate");
   const selectedTimeInput = document.getElementById("selectedTime");
   const selectedDateHeader = document.getElementById("selectedDateHeader");
+  const noAvailability = document.getElementById("noAvailability");
+  const bookNowButton = document.querySelector(".book-now-button");
+
+  const availabilityByDate = {{ availability_by_date|tojson }};
+  const availableDates = Object.keys(availabilityByDate).sort();
 
   const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  const weekdays   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
   let selectedDayEl = null;
   let selectedTimeEl = null;
 
-  function updateSelectedDateHeader() {
-    const y = Number(yearSelect.value);
-    const m = monthNames.indexOf(monthSelect.value);
-    const d = selectedDayEl ? Number(selectedDayEl.textContent) : new Date().getDate();
-    const dt = new Date(y, m, d);
-    const label = `${weekdays[dt.getDay()]}, ${monthNames[m]} ${d}`;
-    selectedDateHeader.textContent = label;
+  function formatDateLabel(dateStr) {
+    if (!dateStr) return "No availability";
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    return new Intl.DateTimeFormat("en-SG", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: "Asia/Singapore"
+    }).format(dt);
   }
 
-  function generateCalendar(year, monthIndex) {
+  function getSingaporeToday() {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Singapore",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date());
+  }
+
+  function buildAvailabilityIndex() {
+    const monthsByYear = {};
+    availableDates.forEach(dateStr => {
+      const [year, month] = dateStr.split("-");
+      if (!monthsByYear[year]) monthsByYear[year] = new Set();
+      monthsByYear[year].add(month);
+    });
+    return monthsByYear;
+  }
+
+  const monthsByYear = buildAvailabilityIndex();
+
+  function populateYearOptions() {
+    yearSelect.innerHTML = "";
+    Object.keys(monthsByYear).sort().forEach(year => {
+      const option = document.createElement("option");
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    });
+  }
+
+  function populateMonthOptions(year) {
+    monthSelect.innerHTML = "";
+    const months = Array.from(monthsByYear[year] || []).sort();
+    months.forEach(month => {
+      const option = document.createElement("option");
+      option.value = month;
+      option.textContent = monthNames[Number(month) - 1];
+      monthSelect.appendChild(option);
+    });
+  }
+
+  function renderTimeSlots(dateStr) {
+    timeButtons.innerHTML = "";
+    selectedTimeEl = null;
+    selectedTimeInput.value = "";
+
+    const slots = availabilityByDate[dateStr] || [];
+    if (!slots.length) {
+      noAvailability.hidden = false;
+      bookNowButton.disabled = true;
+      return;
+    }
+
+    noAvailability.hidden = true;
+    bookNowButton.disabled = false;
+
+    slots.forEach(slot => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "time-button";
+      button.value = slot.value;
+      button.textContent = slot.label || slot.value;
+      button.addEventListener("click", () => {
+        if (selectedTimeEl) selectedTimeEl.classList.remove("selected");
+        selectedTimeEl = button;
+        button.classList.add("selected");
+        selectedTimeInput.value = slot.value;
+      });
+      timeButtons.appendChild(button);
+    });
+  }
+
+  function updateSelectedDateHeader(dateStr) {
+    selectedDateHeader.textContent = formatDateLabel(dateStr);
+  }
+
+  function generateCalendar(year, monthIndex, activeDate) {
     calendarDays.innerHTML = "";
-    const first = new Date(year, monthIndex, 1);
-    const last  = new Date(year, monthIndex + 1, 0);
+    const first = new Date(Date.UTC(year, monthIndex, 1));
+    const last = new Date(Date.UTC(year, monthIndex + 1, 0));
     const total = last.getDate();
-    const pad   = first.getDay();
+    const pad = first.getUTCDay();
 
     for (let i = 0; i < pad; i++) {
       const empty = document.createElement("div");
       calendarDays.appendChild(empty);
     }
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    const todayString = getSingaporeToday();
 
     for (let day = 1; day <= total; day++) {
       const cell = document.createElement("div");
       cell.className = "calendar-day";
       cell.textContent = day;
 
-      const thisDate = new Date(year, monthIndex, day);
-      if (thisDate < today) cell.classList.add("disabled");
+      const dateStr = `${year}-${String(monthIndex + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+      const isAvailable = availabilityByDate[dateStr] && availabilityByDate[dateStr].length > 0;
+      if (!isAvailable || dateStr < todayString) cell.classList.add("disabled");
 
       cell.addEventListener("click", () => {
         if (cell.classList.contains("disabled")) return;
         if (selectedDayEl) selectedDayEl.classList.remove("selected");
         selectedDayEl = cell;
         cell.classList.add("selected");
-        selectedDateInput.value = `${year}-${String(monthIndex + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-        updateSelectedDateHeader();
+        selectedDateInput.value = dateStr;
+        updateSelectedDateHeader(dateStr);
+        renderTimeSlots(dateStr);
       });
+
+      if (activeDate === dateStr) {
+        selectedDayEl = cell;
+        cell.classList.add("selected");
+      }
 
       calendarDays.appendChild(cell);
     }
   }
 
-  // Time buttons select behaviour
-  timeButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (selectedTimeEl) selectedTimeEl.classList.remove("selected");
-      selectedTimeEl = btn;
-      btn.classList.add("selected");
-      selectedTimeInput.value = btn.value;
-    });
-  });
+  function getInitialDate() {
+    const todayString = getSingaporeToday();
+    const futureDate = availableDates.find(dateStr => dateStr >= todayString);
+    return futureDate || availableDates[0] || "";
+  }
 
-  // Init with current month/year
-  const now = new Date();
-  yearSelect.value = String(now.getFullYear());
-  monthSelect.value = monthNames[now.getMonth()];
-  generateCalendar(now.getFullYear(), now.getMonth());
-  updateSelectedDateHeader();
+  function initializeCalendar() {
+    if (!availableDates.length) {
+      selectedDateHeader.textContent = "No availability";
+      noAvailability.hidden = false;
+      bookNowButton.disabled = true;
+      yearSelect.disabled = true;
+      monthSelect.disabled = true;
+      return;
+    }
+
+    const initialDate = getInitialDate();
+    const [year, month] = initialDate.split("-");
+    populateYearOptions();
+    yearSelect.value = year;
+    populateMonthOptions(year);
+    monthSelect.value = month;
+    generateCalendar(Number(year), Number(month) - 1, initialDate);
+    selectedDateInput.value = initialDate;
+    updateSelectedDateHeader(initialDate);
+    renderTimeSlots(initialDate);
+  }
 
   // React to changes
   yearSelect.addEventListener("change", () => {
-    generateCalendar(Number(yearSelect.value), monthNames.indexOf(monthSelect.value));
-    updateSelectedDateHeader();
+    populateMonthOptions(yearSelect.value);
+    monthSelect.selectedIndex = 0;
+    const monthValue = Number(monthSelect.value) - 1;
+    selectedDayEl = null;
+    selectedDateInput.value = "";
+    generateCalendar(Number(yearSelect.value), monthValue);
+    updateSelectedDateHeader("");
+    renderTimeSlots("");
   });
   monthSelect.addEventListener("change", () => {
-    generateCalendar(Number(yearSelect.value), monthNames.indexOf(monthSelect.value));
-    updateSelectedDateHeader();
+    const monthValue = Number(monthSelect.value) - 1;
+    selectedDayEl = null;
+    selectedDateInput.value = "";
+    generateCalendar(Number(yearSelect.value), monthValue);
+    updateSelectedDateHeader("");
+    renderTimeSlots("");
   });
+
+  initializeCalendar();
 </script>
 {% endblock %}
