@@ -17,7 +17,7 @@
 
 /* Navigation Bar */
 .menu__bar {
-  position: fixed;
+  position: sticky;
   top: 0;
   width: 100%;
   background-color: white;
@@ -165,7 +165,7 @@
 
 /* ─── Before Login Navigation ─── */
 .before_menu__bar {
-  position: fixed;
+  position: sticky;
   top: 0;
   width: 100%;
   background-color: white;
@@ -578,4 +578,3 @@ html[data-font="112"] body {
 #chat {
   color: black;
 }
-
