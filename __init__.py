@@ -148,6 +148,7 @@ def _get_next_availability(listing_id):
 
 
 def fetch_available_listings(listing_type, viewer_email):
+    status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     query = f"""
         SELECT
             l.listing_id,
@@ -167,9 +168,16 @@ def fetch_available_listings(listing_type, viewer_email):
             FROM ListingAvailability AS la
             WHERE la.listing_id = l.listing_id
           )
+          AND NOT EXISTS (
+            SELECT 1
+            FROM Booking AS b
+            WHERE b.book_listing_id = l.listing_id
+              AND b.status IN ({status_placeholders})
+          )
     """
     params = [
         listing_type.lower(),
+        *ACTIVE_BOOKING_STATUSES,
     ]
     mycursor.execute(query, params)
     return mycursor.fetchall()
