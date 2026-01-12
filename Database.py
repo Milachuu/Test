@@ -73,6 +73,8 @@ def table_creation():
 # add_points()
 # Create
 
+
+
 def Create_Log(log_email,failed_login,log_date,log_time,status):
     mycursor.execute("INSERT INTO Log(log_email,failed_login,log_date,log_time,status) VALUES (%s,%s,%s,%s,%s)",(log_email,failed_login,log_date,log_time,status))
     db.commit()

@@ -808,4 +808,4 @@ def get_all_events():
         cursor.close()
         db.close()
 
-#get_all_events()
+# get_all_events()
