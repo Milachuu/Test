@@ -1438,6 +1438,40 @@ def booking(listing_id):
     mycursor.execute("SELECT listing_id, listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email FROM Listing WHERE listing_id = %s", [listing_id])
     listings = mycursor.fetchone()
 
+    if not listings:
+        return "Listing not found", 404
+
+    owner_email = listings[9]
+    mycursor.execute(
+        "SELECT availability_date, availability_time FROM Listing WHERE listing_id = %s AND listing_email = %s",
+        [listing_id, owner_email],
+    )
+    availability_rows = mycursor.fetchall()
+
+    def format_time_label(time_str):
+        if not time_str:
+            return ""
+        for fmt in ("%H:%M", "%H:%M:%S", "%I:%M %p", "%I:%M%p"):
+            try:
+                parsed = datetime.strptime(time_str, fmt)
+                return parsed.strftime("%I:%M %p").lstrip("0")
+            except ValueError:
+                continue
+        return time_str
+
+    availability_by_date = {}
+    for availability_date, availability_time in availability_rows:
+        if not availability_date or not availability_time:
+            continue
+        date_str = str(availability_date)
+        time_str = str(availability_time)
+        availability_by_date.setdefault(date_str, []).append(
+            {"value": time_str, "label": format_time_label(time_str)}
+        )
+
+    for date_key, time_slots in availability_by_date.items():
+        availability_by_date[date_key] = sorted(time_slots, key=lambda slot: slot["value"])
+
    
     # row = mycursor.fetchone()
 
@@ -1468,7 +1502,14 @@ def booking(listing_id):
     if booking_lock_until and str(today) < booking_lock_until:
 
         message = f"You have reached the maximum booking for today."
-        return render_template('booking.html', listings=listings, username=get_username,message=message, t=t)
+        return render_template(
+            'booking.html',
+            listings=listings,
+            username=get_username,
+            message=message,
+            availability_by_date=availability_by_date,
+            t=t,
+        )
 
 
 
@@ -1477,6 +1518,17 @@ def booking(listing_id):
         selected_time = request.form.get('selectedTime')
 
         if selected_date and selected_time:
+            available_times = [slot["value"] for slot in availability_by_date.get(selected_date, [])]
+            if selected_time not in available_times:
+                message = "Selected time is no longer available."
+                return render_template(
+                    'booking.html',
+                    listings=listings,
+                    username=get_username,
+                    message=message,
+                    availability_by_date=availability_by_date,
+                    t=t,
+                )
 
       
             booking_limit = session["booking_limit"]
@@ -1546,10 +1598,23 @@ def booking(listing_id):
                 message = "Time was Not Selected"
             
 
-            return render_template('booking.html', listings=listings, username=get_username,message=message, t=t)
+            return render_template(
+                'booking.html',
+                listings=listings,
+                username=get_username,
+                message=message,
+                availability_by_date=availability_by_date,
+                t=t,
+            )
     
-
-    return render_template('booking.html', listings=listings, username=get_username,message="", t=t)
+    return render_template(
+        'booking.html',
+        listings=listings,
+        username=get_username,
+        message="",
+        availability_by_date=availability_by_date,
+        t=t,
+    )
 
 
 
