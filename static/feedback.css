@@ -1,0 +1,111 @@
+#feedbackform {
+    padding-top: 3%;
+    padding-bottom: 8%;
+    background-color: #F8D8D9;
+    margin-top: 80px;
+}
+
+fieldset {
+    width: 85%;
+    margin: auto;
+    margin-top: 2%;
+    border: none;
+}
+
+.feedbackLabel {
+    width: 85%;
+    margin-left: 7%;
+    font-size: 200%;
+    color: #0dac9c;
+    position: relative;
+    display: inline-block;
+}
+
+.feedbackLabel::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    border-radius: 2px;
+    left: 0;
+    bottom: -8px;
+    width: 8%;
+    height: 3px;
+    background-color: #0dac9c;
+    border-radius: 3px;
+}
+
+.userDetails {
+    padding: 14px;
+    width: 30%;
+    border-radius: 18px;
+    border: none;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding-inline: 4%;
+}
+
+textarea {
+    border-radius: 14px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    border: none;
+    padding-top: 3%;
+    padding-inline: 4%;
+    color: grey;
+    width: 45%;
+}
+
+.buttons {
+    padding: 14px;
+    width: 15%;
+    border-radius: 18px;
+    border: none;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding-inline: 4%;
+    background-color: white;
+    color: grey;
+}
+
+.feedbackBgElement {
+    position: absolute;
+    width: 40%;
+    left: 55%;
+    top: 22%;
+}
+
+h2 {
+    margin-left: 8%;
+    color: #0dac9c;
+}
+
+.feedbackCard {
+    background-color: #0dac9c;
+    color: white;
+    width: 60%;
+    margin-top: 2%;
+    margin-left: 8%;
+    padding: 1%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: normal;
+    border-radius: 20px;
+}
+
+#errorMessages {
+    color: red;
+    margin-left: 8%;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.feedback-submit {
+    width: 45%;
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    background-color: #0dac9c;
+    color: white;
+    font-weight: 500;
+}
+
+.feedback-submit:hover {
+    background-color: #11a395;
+    transition: 0.3s;
+}

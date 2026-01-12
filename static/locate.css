@@ -1,0 +1,468 @@
+/* FORM SECTION */
+.locateForm {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    text-align: center;
+    background: linear-gradient(to bottom, #EBBBA7, #CFC7F8);
+    margin-top: 70px;
+}
+
+#locateBgElement {
+    width: 20%;
+}
+
+#locateTitle {
+    font-size: 200%;
+    font-weight: bold;
+}
+
+#locationSelect {
+    border-radius: 5px;
+    width: 40%;
+    padding: 10px;
+    border-color: #0EA89A;
+    border-width: 3px;
+    color: grey;
+}
+
+/* BUTTON FILTERS */
+#locateResults {
+    margin-left: 10%;
+    margin-top: 3%;
+}
+
+.resultsButton {
+    margin-right: 2%;
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    padding: 8px;
+    width: 10%;
+    border-radius: 20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT LAYOUT */
+.locateContentWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2%;
+    margin: 2% 10%;
+}
+
+
+/* CARDS SECTION */
+#locationsContainer {
+    width: 55%;
+    padding-bottom: 5%;
+}
+
+.location-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 2%;
+    margin: 2%;
+    background: linear-gradient(to bottom, #CFC7F8, #EBBBA7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* BIN TYPE LABEL */
+.binType {
+    background-color: white;
+    padding: 5px;
+    width: fit-content;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* BIN NAME */
+.locationName {
+    font-weight: bold;
+}
+
+/* BIN IMAGE ICON */
+.wasteType {
+    width: 60px;
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}
+
+/* MAP SECTION */
+#map {
+    width: 40%;
+    height: 600px;
+    border-radius: 10px;
+    position: sticky;
+    top: 100px;  /* distance from top of page (adjust to your navbar height) */
+    display: none;
+}
+
+/* RESULT COUNT */
+#resultCount {
+    font-weight: bold;
+    display: none;
+}
+
+
+#resultsMapContainer {
+    display: flex;
+    justify-content: space-between;
+    padding: 2% 10%;
+    flex-wrap: wrap;
+}
+
+#locationsContainer {
+    width: 55%;
+}
+
+#map {
+    width: 40%;
+    height: 600px;
+    border-radius: 10px;
+    margin-left: 2%;
+    display: none;
+}
+
+.location-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 2%;
+    margin: 2% 0;
+    background: linear-gradient(to bottom, #CFC7F8, #EBBBA7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: none;
+}
+
+.wasteType {
+    width: 45px;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+}
+
+/* ===================== DARK THEME – Locate Bins ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #1b2230;
+  --text: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --brand: #0EA89A;
+  --shadow: 0 6px 20px rgba(0,0,0,.55);
+}
+
+/* Page background + text */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* -------- Banner / Form strip -------- */
+html[data-theme="dark"] .locateForm,
+html[data-theme-effective="dark"] .locateForm {
+  background: linear-gradient(180deg, #2a3140 0%, #1a202c 100%);
+}
+
+html[data-theme="dark"] #locateTitle,
+html[data-theme-effective="dark"] #locateTitle {
+  color: var(--text);
+}
+
+html[data-theme="dark"] #locationSelect,
+html[data-theme-effective="dark"] #locationSelect {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] #locationSelect:focus,
+html[data-theme-effective="dark"] #locationSelect:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* -------- Filter buttons -------- */
+html[data-theme="dark"] .resultsButton,
+html[data-theme-effective="dark"] .resultsButton {
+  background: var(--brand);
+  color: #fff;
+}
+html[data-theme="dark"] .resultsButton:hover,
+html[data-theme-effective="dark"] .resultsButton:hover {
+  background: #099084;
+}
+
+/* -------- Cards -------- */
+html[data-theme="dark"] .location-card,
+html[data-theme-effective="dark"] .location-card {
+  background: linear-gradient(180deg, #1d2430 0%, #141922 100%);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .binType,
+html[data-theme-effective="dark"] .binType {
+  background: var(--brand);
+  color: #fff;
+}
+html[data-theme="dark"] .locationName,
+html[data-theme-effective="dark"] .locationName {
+  color: var(--text);
+}
+html[data-theme="dark"] #resultCount,
+html[data-theme-effective="dark"] #resultCount {
+  color: var(--text);
+}
+
+/* -------- Map -------- */
+html[data-theme="dark"] #map,
+html[data-theme-effective="dark"] #map {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Leaflet UI elements */
+html[data-theme="dark"] .leaflet-popup-content-wrapper,
+html[data-theme-effective="dark"] .leaflet-popup-content-wrapper {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-popup-tip,
+html[data-theme-effective="dark"] .leaflet-popup-tip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-control-zoom a,
+html[data-theme-effective="dark"] .leaflet-control-zoom a {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-control-zoom a:hover,
+html[data-theme-effective="dark"] .leaflet-control-zoom a:hover {
+  background: var(--surface);
+}
+
+/* Optional: dim banner image */
+html[data-theme="dark"] #locateBgElement,
+html[data-theme-effective="dark"] #locateBgElement {
+  filter: brightness(.9) contrast(1.05);
+}
+
+/* ================= FORM / BANNER ================= */
+.locateForm{
+  padding: 3.5% 0 3%;
+  text-align: center;
+  background: linear-gradient(to bottom, #EBBBA7, #CFC7F8);
+  margin-top: 70px;
+}
+
+#locateBgElement{ width: 22%; max-width: 420px; }
+
+#locateTitle{
+  display:block;
+  font-weight: 800;
+  font-size: clamp(2rem, 2.4vw + 1rem, 3rem);
+  letter-spacing: .3px;
+  margin: 6px 0 14px;
+}
+
+#locationSelect{
+  border-radius: 14px;
+  width: min(52%, 720px);
+  padding: 16px 18px;
+  font-size: 1.15rem;
+  border: 3px solid #0EA89A;
+  color: #444;
+  background: #fff;
+}
+
+/* ================= FILTER BUTTONS ================= */
+#locateResults{
+  margin: 26px 10% 8px;
+  display:flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.resultsButton{
+  appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background-color: #0EA89A;
+  color: #fff;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+
+  padding: 14px 22px;
+  border-radius: 999px;
+  min-width: 180px;          /* fixed, readable width */
+  box-shadow: 0 10px 22px rgba(14,168,154,.18);
+  transition: transform .06s ease, box-shadow .2s ease, filter .15s ease, background .15s ease;
+}
+.resultsButton:hover{ filter: brightness(.97); transform: translateY(-1px); }
+.resultsButton:active{ transform: translateY(0); }
+
+/* “active filter” look (toggled in JS) */
+.resultsButton.active{
+  box-shadow: 0 12px 28px rgba(14,168,154,.28);
+  filter: brightness(.95);
+}
+
+/* ================= MAIN LAYOUT ================= */
+.locateContentWrapper{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap: 2%; margin: 18px 10% 48px;
+}
+
+/* ================= CARDS ================= */
+#locationsContainer{ width: 55%; padding-bottom: 32px; }
+
+.location-card{
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  padding: 18px 18px 60px;
+  margin: 16px 0;
+  background: linear-gradient(to bottom, #CFC7F8, #EBBBA7);
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  position: relative;
+  display: none;
+}
+
+.binType{
+  background: #fff;
+  padding: 6px 10px;
+  width: fit-content;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.locationName{
+  font-weight: 800;
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.location-card p{ font-size: 1.05rem; line-height: 1.55; }
+
+/* card icon */
+.wasteType{
+  width: 64px;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+}
+
+/* ================= MAP ================= */
+#map{
+  width: 40%;
+  height: 680px;
+  border-radius: 14px;
+  position: sticky;
+  top: 100px; /* match navbar height */
+  display: none;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+}
+
+/* ================= RESULT COUNT ================= */
+#resultCount{
+  font-weight: 800;
+  font-size: 1.15rem;
+  display: none;
+  margin: 8px 0 4px;
+}
+
+/* ================= ENLARGED MODE (html[data-font="112"]) ================= */
+html[data-font="112"] #locateTitle{
+  font-size: clamp(2.2rem, 3vw + 1rem, 3.4rem);
+}
+html[data-font="112"] #locationSelect{
+  font-size: 1.3rem; padding: 18px 20px; border-radius: 16px;
+}
+html[data-font="112"] .resultsButton{
+  font-size: 1.25rem; padding: 18px 26px; min-width: 210px;
+  box-shadow: 0 14px 30px rgba(14,168,154,.25);
+}
+html[data-font="112"] .location-card{ border-radius: 16px; padding: 22px 22px 70px; }
+html[data-font="112"] .binType{ font-size: 1.1rem; }
+html[data-font="112"] .locationName{ font-size: 1.4rem; }
+html[data-font="112"] .location-card p{ font-size: 1.15rem; }
+html[data-font="112"] .wasteType{ width: 72px; }
+html[data-font="112"] #map{ height: 740px; }
+html[data-font="112"] #resultCount{ font-size: 1.3rem; }
+
+/* ================= DARK THEME (existing, kept & tuned) ================= */
+html[data-theme="dark"], html[data-theme-effective="dark"]{
+  --bg:#0c0f13; --surface:#141922; --surface-2:#1b2230; --text:#e7eaf0;
+  --muted:#9aa4b2; --border:#2a3140; --brand:#0EA89A; --shadow:0 6px 20px rgba(0,0,0,.55);
+}
+html[data-theme="dark"] body, html[data-theme-effective="dark"] body{ background:var(--bg); color:var(--text); }
+
+html[data-theme="dark"] .locateForm,
+html[data-theme-effective="dark"] .locateForm{ background: linear-gradient(180deg,#2a3140 0%,#1a202c 100%); }
+html[data-theme="dark"] #locateTitle, html[data-theme-effective="dark"] #locateTitle{ color:var(--text); }
+
+html[data-theme="dark"] #locationSelect,
+html[data-theme-effective="dark"] #locationSelect{
+  background:var(--surface-2); color:var(--text); border:1px solid var(--border);
+}
+html[data-theme="dark"] #locationSelect:focus,
+html[data-theme-effective="dark"] #locationSelect:focus{ outline:2px solid var(--brand); outline-offset:1px; }
+
+html[data-theme="dark"] .resultsButton,
+html[data-theme-effective="dark"] .resultsButton{ background:var(--brand); color:#fff; }
+html[data-theme="dark"] .resultsButton:hover,
+html[data-theme-effective="dark"] .resultsButton:hover{ background:#099084; }
+
+html[data-theme="dark"] .location-card,
+html[data-theme-effective="dark"] .location-card{
+  background: linear-gradient(180deg,#1d2430 0%,#141922 100%);
+  border:1px solid var(--border); color:var(--text); box-shadow:var(--shadow);
+}
+html[data-theme="dark"] .binType, html[data-theme-effective="dark"] .binType{ background:var(--brand); color:#fff; }
+html[data-theme="dark"] #resultCount, html[data-theme-effective="dark"] #resultCount{ color:var(--text); }
+
+html[data-theme="dark"] #map, html[data-theme-effective="dark"] #map{
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+html[data-theme="dark"] .leaflet-popup-content-wrapper,
+html[data-theme-effective="dark"] .leaflet-popup-content-wrapper{
+  background:var(--surface); color:var(--text); border:1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-popup-tip,
+html[data-theme-effective="dark"] .leaflet-popup-tip{
+  background:var(--surface); border:1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-control-zoom a,
+html[data-theme-effective="dark"] .leaflet-control-zoom a{
+  background:var(--surface-2); color:var(--text); border:1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-control-zoom a:hover,
+html[data-theme-effective="dark"] .leaflet-control-zoom a:hover{ background:var(--surface); }
+
+html[data-theme="dark"] #locateBgElement,
+html[data-theme-effective="dark"] #locateBgElement{ filter: brightness(.9) contrast(1.05); }
+

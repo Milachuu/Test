@@ -1,0 +1,232 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | Donate {% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='donate.css') }}">
+{% endblock %}
+
+{% block content %}
+<script>
+    const otherAmountInput = document.getElementById('otherAmount');
+    otherAmountInput.addEventListener('input', function () {
+        document.querySelectorAll('.donation-amount .btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('otherAmountBtn').classList.add('selected');
+    });
+
+    function showCreditForm() {
+        document.querySelector(".creditForm").style.display = "block";
+        document.querySelector("#otherPaymentOptions").style.display = "none";
+    }
+
+    function showOtherForm() {
+        document.querySelector(".creditForm").style.display = "none";
+        document.querySelector("#otherPaymentOptions").style.display = "block";
+    }
+
+    function showDonationType(type) {
+        document.getElementById("individual-amount").style.display = (type === "individual") ? "block" : "none";
+        document.getElementById("corporate-amount").style.display = (type === "corporate") ? "block" : "none";
+        document.getElementById("anonymous-amount").style.display = (type === "anonymous") ? "block" : "none";
+
+        // Hide personal details for anonymous donations
+        document.getElementById("personalParticulars").style.display = (type === "anonymous") ? "none" : "block";
+    }
+
+    function selectFrequency(element) {
+        // Remove 'selected' class from all options
+        document.querySelectorAll(".frequency-option").forEach(option => {
+            option.classList.remove("selected");
+        });
+
+        // Add 'selected' class to the clicked element
+        element.classList.add("selected");
+    }
+
+    function selectDonation(element) {
+        // Remove 'selected' class from all options
+        document.querySelectorAll(".amount-option").forEach(option => {
+            option.classList.remove("selected");
+        });
+
+        // Add 'selected' class to the clicked element
+        element.classList.add("selected");
+    }
+</script>
+<form action="{{ url_for('donate') }}" method="POST">
+    <label class="donateLabel">Donate Now</label>
+    <fieldset>
+        <header class="formHeader">Mandatory fields are indicated with an asterisk (<span class="required">*</span>).</header>
+        <label class="keyLabels">Please indicate chosen payment method <span class="required">*</span></label><br>
+        <input type="button" class="paymentMethod" value="Credit Card" id="creditForm" onclick="showCreditForm()">
+        <input type="button" class="paymentMethod" value="Other" id="otherForm" onclick="showOtherForm()"><br><br>
+
+        <div id="otherPaymentOptions" style="display: none;">
+            <label class="keyLabels">Other Payment Methods</label><br>
+            <div class="other-payment-cards">
+                <div class="payment-card">
+                    <span class="other-info-header">PayNow QR</span><br>
+                    <img src="\static\img\paynow qr.png">
+                    <span class="other-info">
+                        Scan the QR code on the left to make your donation.<br>
+                        UEN: A12BC3456D<br><br>
+                        Please indicate the UEN within the transaction so<br>that we can process it as a donation.
+                    </span>
+                </div><br>
+                <div class="payment-card">
+                    <span class="other-info-header">Cheque</span><br>
+                    <img src="\static\img\cheque.png">
+                    <span class="other-info">
+                        Please make your cheque payable to NeighbourlyNest<br>and mail it to our <a href="https://maps.app.goo.gl/oxm1jNAUDn8Xn7Pv7">headquarters</a><br><br>
+                        To ensure prompt processing, please indicate<br>[Your Name/ Donation Purpose] on the back of the cheque.
+                    </span>
+                </div><br>
+                <div class="payment-card">
+                    <span class="other-info-header">Bank Transfer</span><br>
+                    <img src="\static\img\mobile-banking.png">
+                    <span class="other-info">
+                        Make your donation via bank transfer to:<br>
+                        POSB -- NeighbourlyNest  987-65432-1<br><br>
+                        Please include [Your Name/ Donation Purpose] in the transaction<br>details so we can identify your donation.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="creditForm">
+            <label class="keyLabels">Please specify donation type <span class="required">*</span></label>
+            <div class="donation-type-group">
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="individual" class="buttonsLeft" onclick="showDonationType('individual')"> <span>Individual</span>
+                </label>
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="corporate" onclick="showDonationType('corporate')"> <span>Corporate</span>
+                </label>
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="anonymous" onclick="showDonationType('anonymous')">
+                    <span>Anonymous</span>
+                </label>
+            </div><br><br>
+            <label class="fieldLabelsTop" id="frequencyLabel">Donation frequency<span class="required">*</span></label>
+            <div class="donation-frequency">
+                <label class="frequency-option" onclick="selectFrequency(this)">
+                    <input type="radio" name="donation-frequency" value="onetime" class="buttonsLeft">One time
+                </label>
+                <label class="frequency-option" onclick="selectFrequency(this)">
+                    <input type="radio" name="donation-frequency" value="Monthly">Monthly
+                </label>
+            </div><br>
+            <label class="fieldLabelsTop">Please indicate donation amount <span class="required">*</span></label>
+            <div class="donation-amount" id="individual-amount">
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="10" class="buttonsLeft">$10
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="30">$30
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="50">$50
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="100">$100
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="other">Other Amount
+                    <input type="number" name="other_amount_value" class="otherAmount" placeholder="Amount">
+                </label>
+            </div>
+            <div class="donation-amount" id="corporate-amount">
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="50" class="buttonsLeft">$50
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="100">$100
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="250">$250
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="100">$500
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="other">Other Amount
+                    <input type="number" name="other_amount_value" class="otherAmount" placeholder="Amount">
+                </label>
+            </div>
+            <div class="donation-amount" id="anonymous-amount">
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="10" class="buttonsLeft">$10
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="30">$30
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="50">$50
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="100">$100
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="other">Other Amount
+                    <input type="number" name="other_amount_value" class="otherAmount" placeholder="Amount">
+                </label>
+            </div><br><br><br>
+            <div id="personalParticulars">
+                <label class="sectionLabels">Personal Particulars</label><br>
+                <div>
+                    <label class="title">Title<span class="required">*</span></label><br>
+                    <select name="title" class="title-options">
+                        <option value="Select Title" selected disabled>Select title</option>
+                        <option value="mr">Mr</option>
+                        <option value="mrs">Mrs</option>
+                        <option value="ms">Ms</option>
+                        <option value="dr">Dr</option>
+                    </select>
+                </div><br>
+                <label class="first-name">First Name<span class="required">*</span></label>
+                <label class="last-name">Last Name<span class="required">*</span></label><br>
+                <input type="text" name="first-name" class="inputFieldsLeft" placeholder="First Name" minlength="3" maxlength="15" title = "First name must contain only letters (A-Z or a-z) and be between 3 and 10 characters" required>
+                <input type="text" name="last-name" class="inputFields" placeholder="Last Name" minlength="2" required><br><br>
+                <label class="email">Email Address<span class="required">*</span></label>
+                <label class="country-code">Country Code<span class="required">*</span></label>
+                <label class="contact">Contact Number<span class="required">*</span></label><br>
+                <input type="email" name="email" placeholder="Email Address" class="inputFieldsLeft" required>
+                <input type="number" name="country-code" placeholder="e.g. 65" class="inputFieldsMiddle" required>
+                <input type="tel" name="contact-number" placeholder="Contact Number" class="inputFieldsRight" required><br><br>
+                <label class="address1">Address Line 1<span class="required">*</span></label>
+                <label class="address2">Address Line 2<span class="required">*</span></label><br>
+                <input type="text" name="address1" placeholder="Block Number & Street Name" class="inputFieldsLeft" required>
+                <input type="text" name="address2" placeholder="Unit Number or Building Name" class="inputFields" required><br><br>
+                <label class="postal-code">Postal Code<span class="required">*</span></label><br>
+                <input type="number" name="postal-code" placeholder="Postal Code" class="inputFieldsLeft" required><br><br>
+                <label class="commentsHeader">Comments</label><br>
+                <div class="commentBox">
+                    <textarea class="comments" rows="5" cols="100"></textarea><br>
+                </div>
+            </div>
+                <div><br>
+                    <label class="sectionLabels">Declaration</label><br>
+
+                <div class="declaration">
+                    <span class="fieldLabels">By submitting this form,</span><br><br>
+                    <div class="checkbox-container">
+                        <input type="checkbox" name="acknowledgement" id="acknowledgement" value="ack-yes" required>
+                            <label for="acknowledgement" class="declaration-checkboxes" id="ackCheckbox">
+                                I acknowledge that the information I have provided in this form is accurate and complete.
+                                I understand that my donation is made in support of NeighbourlyNest and will be used solely for that purpose,
+                                and I understand that information provided may be used to process this donation but will not be disclosed to
+                                any third parties under any and all circumstances.
+                            </label><br><br><br><br>
+                    </div>
+                    <input type="checkbox" name="promotions" id="promotions" value="promo-yes">
+                    <label for="promotions" class="declaration-checkboxes">
+                        I would like to receive email updates about news, promotions, and events.
+                    </label>
+                </div>
+            </div><br><br>
+            <div class="submitButton">
+                <input type="submit" class="submit" value="Submit">
+            </div>
+        </div>
+    </fieldset>
+</form>
+{% endblock %}

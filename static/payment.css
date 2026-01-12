@@ -1,0 +1,86 @@
+.paymentHeader {
+    margin-top: 4%;
+}
+
+.paymentAmount {
+    font-size: 140%;
+    font-weight: 500;
+}
+
+.paymentTotal {
+    margin-top: 3%;
+    box-shadow: 0 0 5px grey;
+    width: 70%;
+    margin-left: 15%;
+    border-radius: 25px;
+    padding: 2%;
+    margin-bottom: 5%;
+}
+
+.paymentTotal span {
+    font-size: 150%;
+    font-weight: 500;
+}
+
+.card-details {
+    width: 100%;
+    margin-bottom: 4%;
+}
+
+.card-number-input {
+    width: 49.5%;
+    padding: 0.8% 0% 0.8% 1%;
+}
+
+.card-number {
+    width: 49.5%;
+}
+
+.card-expiry, .card-cvv {
+    width: 24.5%;
+    margin-bottom: 1%;
+}
+
+.card-expiry-input, .card-cvv-input {
+    width: 24.5%;
+    padding: 0.8% 0% 0.8% 1%;
+}
+
+.card-number-input, .card-expiry-input, .card-cvv-input {
+    border-radius: 10px;
+    border: solid 1px grey;
+}
+
+.card-number-input:focus, .card-expiry-input:focus, .card-cvv-input:focus {
+    border-color: #5a7ee1;
+    box-shadow: 0 0 8px #304b96;
+    outline: none;
+}
+
+.payment-submit {
+    margin-left: 39.5%;
+    width: 20%;
+    padding: 1.5%;
+    border-radius: 25px;
+    border: 1px solid lightgray;
+    background-color: #0dac9c;
+    color: white;
+    font-size: 120%;
+    font-weight: 450;
+}
+
+.payment-submit:hover {
+    background-color: #f1ffff;
+    border: 1px solid #0dac9c;
+    color: black;
+}
+
+.donation-amount-text {
+    font-size: 180%;
+}
+
+.paymentTotal img {
+    position: absolute;
+    width: 15%;
+    margin-left: 51%;
+}

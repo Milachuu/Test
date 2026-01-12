@@ -1,0 +1,149 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ t("login_navbar.title") }}</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+<body>
+  <!-- Home Page Navigation - After Login -->
+  <div class="menu__bar">
+    <nav>
+      <a href="/login_home" class="logo-link">
+        <img src="../../static/img/logo.png" alt="{{ t('login_navbar.title') }}" class="logo">
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/borrow">{{ t("login_navbar.borrow-text") }}</a></li>
+        <li><a href="/free">{{ t("login_navbar.free-text") }}</a></li>
+        <li><a href="/locate">{{ t("login_navbar.locate-bin-text") }}</a></li>
+        <li><a href="/events">{{ t("login_navbar.events-text") }}</a></li>
+        <li><a href="/reward">{{ t("login_navbar.rewards-text") }}</a></li>
+        {% if session.get('role') == 'Admin' %}
+        <li><a href="/dashboard">{{ t("login_navbar.dashboard-text") }}</a></li>
+        {% endif %}
+      </ul>
+
+      <div class="user-actions">
+        <div class="user-section" onclick="toggleMenu()">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="username">Hello, {{ username }}</span>
+          <span class="material-symbols-outlined arrow-icon">arrow_drop_down</span>
+        </div>
+        <span class="material-symbols-outlined notification-icon">notifications</span>
+        <a href="/userchat">
+          <span class="material-symbols-outlined" id="chat">chat</span>
+        </a>
+      </div>
+
+      <div class="sub-menu-wrap" id="subMenu">
+        <div class="submenu">
+          <!-- Profile -->
+          <div class="user-infos">
+            <a href="/user_retrieve_info" class="sub-menu-link">
+              <span class="material-symbols-outlined">account_circle</span>
+              <span class="profile-text">{{ t("login_navbar.profile-text") }}</span>
+            </a>
+          </div>
+
+          <!-- Borrow -->
+          <p class="borrow-text">{{ t("login_navbar.borrow-text") }}</p>
+          <a href="/bookings" class="sub-menu-link">
+            <span class="material-symbols-outlined">partner_exchange</span>
+            <span>{{ t("login_navbar.my-borrowings-text") }}</span>
+          </a>
+
+          <!-- Account -->
+          <p class="account-text">{{ t("login_navbar.account-text") }}</p>
+          <a href="/settings/editprofile" class="sub-menu-link">
+            <span class="material-symbols-outlined">settings</span>
+            <span>{{ t("login_navbar.settings-text") }}</span>
+          </a>
+
+          <!-- Language with nested submenu -->
+          <div class="language-wrapper">
+            <a href="#" class="sub-menu-link language-link">
+              <span class="material-symbols-outlined">language</span>
+              <span class="menu-text">{{ t("login_navbar.language-text") }}</span>
+              <span class="down-arrow">v</span>
+            </a>
+            <div class="language-submenu">
+              <a href="/lang/en" class="sub-menu-link language-option" data-lang="English">English</a>
+              <a href="/lang/zh" class="sub-menu-link language-option" data-lang="Mandarin">中文</a>
+              <a href="/lang/id" class="sub-menu-link language-option" data-lang="Bahasa Melayu">Malay</a>
+            </div>
+          </div>
+
+          <!-- Wishlist & Logout -->
+          <a href="/wishlist" class="sub-menu-link">
+            <span class="material-symbols-outlined">bookmark</span>
+            <span>{{ t("login_navbar.wishlist-customize_text") }}</span>
+          </a>
+          <a href="{{ url_for('logout') }}" class="sub-menu-link">
+            <span class="material-symbols-outlined">logout</span>
+            <span>{{ t("login_navbar.log-out-text") }}</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    const subMenu     = document.getElementById("subMenu");
+    const userSection = document.querySelector(".user-section");
+    const arrowIcon   = userSection.querySelector(".arrow-icon");
+    const langLink    = document.querySelector(".language-link");
+    const langSub     = document.querySelector(".language-submenu");
+
+    function toggleMenu() {
+      subMenu.classList.toggle("open-menu");
+      arrowIcon.textContent = subMenu.classList.contains("open-menu")
+        ? "arrow_drop_up"
+        : "arrow_drop_down";
+    }
+
+    langLink.addEventListener("click", e => {
+      e.preventDefault();
+      langLink.classList.toggle("open");
+      langSub.classList.toggle("open-menu");
+    });
+
+    document.addEventListener("click", e => {
+      const tgt = e.target;
+      if (!userSection.contains(tgt) && !subMenu.contains(tgt)) {
+        subMenu.classList.remove("open-menu");
+        arrowIcon.textContent = "arrow_drop_down";
+      }
+      if (!langLink.contains(tgt) && !langSub.contains(tgt)) {
+        langLink.classList.remove("open");
+        langSub.classList.remove("open-menu");
+      }
+    });
+  </script>
+
+  <script>
+  // Language click -> POST to preferences API -> reload
+  document.querySelectorAll('.language-option').forEach(link => {
+    link.addEventListener('click', (e) => {
+      // Intercept click; let the API update language server-side (same as Preference page)
+      e.preventDefault();
+      const chosen = link.dataset.lang; // "English", "Mandarin", "Bahasa Melayu" (or "Bahasa Indonesia")
+      fetch('{{ url_for("api_update_preferences") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: chosen })
+      })
+      .catch(() => {})     // ignore network hiccups; fallback still exists via href
+      .finally(() => {
+        // Reload to re-render with the new language (t(...) picks up the change)
+        window.location.reload();
+      });
+    });
+  });
+  </script>
+</body>
+</html>

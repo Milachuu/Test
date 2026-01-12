@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ t("report_user.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+{% endblock %}
+
+{% block content %}
+{% from "_formHelper.html" import render_field %}
+<div class="content-container">
+    <h1 class="page-title">{{ t("report_user.title") }}</h1>
+    <form method="POST" action="" class="report-form">
+        <fieldset>
+            <legend>{{ t("report_user.form_legend") }}</legend>
+            <div class="form-group">
+                {{ render_field(form.report_email, class="form-control", placeholder=t("report_user.email")) }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.report_option, class="form-control", placeholder=t("report_user.reason")) }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.report_other, class="form-control", placeholder=t("report_user.other_reason")) }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.report_description, class="form-control", placeholder=t("report_user.description")) }}
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="return alert('{{ t("report_user.success") }}');">
+                {{ t("report_user.submit") }}
+            </button>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

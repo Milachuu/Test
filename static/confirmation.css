@@ -1,0 +1,70 @@
+/* Confirmation Page Styles */
+.confirmation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-image: url('/static/img/good-background-iaaruoreug7ouxpv.jpg'); /* Replace with the path to your image */
+    background-size: cover; /* This will make the image cover the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    padding: 20px;
+}
+
+.confirmation-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.confirmation-title {
+    font-size: 2.5rem;
+    color: #28a745; /* Green color for positive feedback */
+    margin-bottom: 20px;
+}
+
+.confirmation-message {
+    font-size: 1.2rem;
+    color: #333333;
+    margin-bottom: 15px;
+}
+
+.confirmation-details {
+    font-size: 1rem;
+    color: #666666;
+    margin-bottom: 30px;
+}
+
+.confirmation-actions .btn {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}

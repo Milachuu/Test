@@ -1,0 +1,47 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | Our Mission{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='mission.css') }}">
+{% endblock %}
+
+{% block content %}
+<img src="../static/img/Neighbours2.png" alt="Neighbours" class="mission-img">
+
+<div class="mission-text">
+    <h1>Our Mission</h1>
+    <h2>Creating A Nurturing Local Space For Sharing & Caring</h2>
+</div>
+
+<div class="mission-section">
+    <div>
+        <img src="../static/img/mission1.png" id="mission-img" alt="Icon">
+        <h3>Fostering</h3>
+        <h3 class="txt-emphasise">Neighbourliness</h3>
+        <p>We want to bring the true kampong spirit back! NeighbourlyNest strives to create strong bonds through reconnection with neighbours!</p>
+    </div>
+
+    <div>
+        <img src="../static/img/mission2.png" id="mission-img" alt="Icon">
+        <h3>Encouraging</h3>
+        <h3 class="txt-emphasise">Sustainability</h3>
+        <p>Waste less with NeighbourlyNest, and be part of creating not only a better Singapore, but a better planet. Let's share pre-loved items and resources.</p>
+    </div>
+
+    <div>
+        <img src="../static/img/mission3.png" id="mission-img" alt="Icon">
+        <h3>For Singaporeans</h3>
+        <h3 class="txt-emphasise">By Singaporeans</h3>
+        <p>All it takes is one good deed to start the cycle, and NeighbourlyNest works to create a kinder society for Singaporeans by Singaporeans.</p>
+    </div>
+</div>
+
+<h1 class="mission-cause-txt" style="font-size: 30px; text-align: center; margin-top: 30px;">
+    CONTRIBUTE TO OUR CAUSE TODAY
+</h1>
+<a href="/donate" style="padding-left: 45%;">
+    <button class="btn btn-danger btn-create" style="padding: 10px; width: 10%; margin-bottom: 20px;" id="donate">
+        Donate
+    </button>
+</a>
+{% endblock %}

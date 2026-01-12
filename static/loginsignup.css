@@ -1,0 +1,174 @@
+/*Login page*/
+.login{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 120px;
+    
+  }
+  .login h1{
+    font-size: 50px;
+    margin-bottom: 20px;
+  }
+  .sign_up_here{
+    display: flex;
+    flex-direction: row;
+   
+  }
+  .sign_up_here p{
+    padding-right: 10px;
+  }
+  
+  /* Format for the login form */
+  .login_input-ctn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 20px;
+  }
+
+  .password_field {
+    padding-right: 32px;
+  }
+
+
+  .login_form label{
+    color: #0EA89A;
+  }
+  
+  .login_form input{
+    font-size: 15px;
+    margin: 20px;
+    height: 30px;
+    width: 350px;
+  }
+  
+  .login_form .submit_form{
+    color: white;
+    width: 500px;
+    margin-left: 75px;
+    background-color: black; 
+    border-radius: 8px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
+  .sign-up-txt {
+    color: black;
+    text-underline-offset: 5px
+  }
+
+  /* Format for the signup form, note that I used some of the login form css*/
+  .create-acc-txt{
+    text-align: center;
+    margin-top: 100px;
+  }
+
+  .signup_input_ctn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .first_name {
+    padding-right: 100px;
+  }
+
+  .last_name {
+    padding-right: 100px;
+  }
+
+  .email_field {
+    padding-right: 60px;
+  }
+
+  .password_field1 {
+    padding-right: 90px;
+  }
+
+  .password_field2 {
+    padding-right: 160px;
+  }
+
+  .login_form input {
+    width: 500px;
+  }
+
+/* Forget Password */
+.forget-password-txt {
+    margin-top: 140px;
+    text-align: center;
+}
+
+.forget_password-ctn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 40px;
+}
+
+.password-field {
+    padding-right: 30px;
+}
+
+.forget_password-ctn .submit-btn {
+    margin-left: 60px;
+    background: rgba(0,0,0,0.8);
+    color: white
+}
+
+.forget_password-ctn .submit-btn:hover {
+    background: rgba(0,0,0,1);
+    transition: ease-in 0.2s;
+}
+
+.forget-btn-text {
+  color: black;
+  font-size: 15px;
+}
+
+.forget-btn {
+  text-decoration: underline;
+  padding-bottom: 30px;
+  margin-top: 10px;
+  text-underline-offset: 5px;
+  color: black;
+  font-size: 16px;
+}
+
+.email-input input {
+  border-radius: 8px;
+  background: #FFF;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+  border: none;
+  height: 40px;
+}
+
+.email-input input::placeholder {
+  padding-left: 10px;
+}
+
+.password_field input {
+  border-radius: 8px;
+  background: #FFF;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+  border: none;
+  height: 40px;
+}
+
+.password_field input::placeholder {
+  padding-left: 10px;
+}
+
+#submit-btn {
+  margin-right: 35px;
+}
+
+
+
+
+
+
+
+  

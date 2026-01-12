@@ -1,0 +1,39 @@
+{% extends "base.html" %} 
+{% block title %}Your Info{% endblock %} 
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='your_info.css') }}">
+{% endblock %}
+
+{% block content %} 
+{% from "_formHelper.html" import render_field %} 
+ 
+<div class="content-container">
+  <h1 class="page-title">User Profile</h1>
+  <form method="POST" action="" class="user-profile-form">
+      <fieldset>
+          <legend>User Information</legend>
+          <div class="form-group">
+              {{ render_field(form.username, class="form-control", placeholder="Username") }}
+          </div>
+          <div class="form-group">
+              {{ render_field(form.gender, class="form-control", placeholder="Gender") }}
+          </div>
+          <p>Contact Information</p>
+          <div class="form-group">
+              {{ render_field(form.address, class="form-control", placeholder= "Address") }}
+          </div>
+          <div class="form-group">
+              {{ render_field(form.email, class="form-control", placeholder="Email") }}
+          </div>
+          <div class="form-group">
+              {{ render_field(form.phone_number, class="form-control", placeholder="Phone Number") }}
+          </div>
+          <div class="form-group">
+              {{ render_field(form.bio, class="form-control", placeholder="Bio") }}
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </fieldset>
+  </form>
+</div>
+{% endblock %}

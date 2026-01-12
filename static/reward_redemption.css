@@ -1,0 +1,627 @@
+/* Theme */
+:root { --teal: #00a99d; }
+
+/* Base */
+body { margin: 0; font-family: sans-serif; }
+
+.reward-container {
+  margin-left: 50px;
+  padding: 40px;
+  margin-top: 100px;
+}
+
+/* Balance */
+.reward-balance-box {
+  background: #EEEEEE;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: left;
+  margin-bottom: 40px;
+  max-width: 400px;
+}
+.reward-balance-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #444;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.reward-balance-points {
+  font-size: 1.3rem;
+  color: var(--teal);
+  font-weight: 700;
+}
+.star-icon { color: var(--teal); font-size: 1.5rem; margin-right: 5px; }
+
+/* Headings / sections */
+.reward-container h1 {
+  color: var(--teal);
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+.header-text { text-transform: uppercase; font-weight: bold; }
+
+.reward-section { margin-bottom: 40px; }
+.reward-subtitle { font-size: 1.2rem; color:#7F7F7F; margin: 0 0 30px 0; }
+
+/* Card */
+.reward-card img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  border: 2px solid var(--teal);
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+/* Note */
+.reward-note { font-size: 1.1rem; color: #555; margin-bottom: 20px; }
+.reward-note a { color: var(--teal); text-decoration: underline; }
+
+/* Global alert (points) */
+.reward-alert {
+  background: #ffeaea;
+  color: #b00020;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  max-width: 95%;
+  margin-bottom: 16px;
+}
+
+/* Redeem flow */
+.rf-section { margin-top: 16px; }
+.rf-label { font-size: 1rem; color: #333; display: block; margin-bottom: 10px; }
+
+/* Quantity row */
+.rf-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.rf-qty {
+  display: inline-flex;
+  border: 1px solid #dcdcdc;
+  border-radius: 28px;
+  overflow: hidden;
+  height: 44px;
+  align-items: center;
+}
+.rf-qty-btn {
+  background: #fff;
+  border: none;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.rf-qty-input {
+  width: 56px;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+/* Redeem button */
+.rf-redeem {
+  padding: 10px 24px;
+  height: 44px;
+  background: #fff;
+  border: 2px solid var(--teal);
+  color: var(--teal);
+  border-radius: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.rf-redeem:hover { background: var(--teal); color: #fff; }
+
+/* Points text */
+.rf-points { color: var(--teal); font-weight: 700; margin: 0 0 0 4px; }
+
+/* Inline alert under quantity */
+.rf-alert {
+  margin-top: 12px;
+  background: #ffeaea;
+  color: #b00020;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Verify section */
+.rf-title {
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 2rem;
+  margin: 0 0 18px 0;
+  color: var(--teal);
+  padding-top: 40px;
+}
+
+/* NEW: dynamic summary line */
+.rf-summary {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 1.05rem;
+}
+.rf-summary strong { color: var(--teal); }
+
+.rf-help {
+  font-size: 1.05rem;
+  color: #6f6f6f;
+  margin: 0 0 24px 0;
+}
+
+.rf-otp-wrap { max-width: 880px; margin-bottom: 16px; }
+#otp-input {
+  width: 100%;
+  height: 54px;
+  padding: 12px 18px;
+  border: 2px solid #e8e8e8;
+  border-radius: 30px;
+  font-size: 1.15rem;
+  letter-spacing: .35em;
+  text-align: center;
+  background: #fff;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+#otp-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(0,169,157,.12);
+}
+
+.rf-actions { margin: 10px 0 18px; }
+.rf-resend {
+  background: transparent;
+  border: none;
+  color: var(--teal);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.rf-resend:hover { text-decoration: underline; }
+
+.rf-submit {
+  border: none;
+  background: var(--teal);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .03em;
+  padding: 12px 26px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: opacity .2s ease, transform .05s ease;
+}
+.rf-submit[disabled] { opacity: .5; cursor: not-allowed; }
+.rf-submit:not([disabled]):active { transform: translateY(1px); }
+
+/* Hide utility */
+.rf-hidden { display: none; }
+
+/* Terms */
+.reward-terms-box {
+  background: #f5f5f5;
+  border-radius: 20px;
+  color: #555;
+  padding: 40px 50px;
+  max-width: 95%;
+}
+.reward-terms-box h2 {
+  color: var(--teal);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.reward-terms-box ul { list-style-type: disc; padding-left: 20px; margin-top: 30px; }
+.reward-terms-box a { color: var(--teal); text-decoration: none; }
+.reward-terms-box ul li { padding-top: 10px; color: #7a7a7a; }
+.reward-terms-box ul li::marker { color: #000; font-weight: bold; font-size: 20px; }
+
+/* Add spacing for success section */
+#success-block {
+  margin-top: 30px;   /* space from logo/previous content */
+  margin-bottom: 40px; /* space before Terms & Conditions */
+}
+
+/* Title */
+.rf-success-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Main text */
+.rf-success-text {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+/* Sub text */
+.rf-success-sub {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.rf-success-sub a {
+  color: #0EA89A;
+  text-decoration: underline;
+}
+
+/* Return button */
+#success-return {
+  background-color: #0EA89A;
+  color: white;
+  font-weight: bold;
+  padding: 10px 25px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease-in-out;
+  text-decoration: none;
+}
+
+#success-return:hover {
+  background-color: #0b8d82;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reward-container { margin-left: 16px; padding: 24px; }
+  .rf-title { font-size: 1.7rem; }
+  #otp-input { height: 50px; font-size: 1.05rem; }
+}
+
+/* ===================== DARK THEME (Reward Redemption) ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --text: #e7eaf0;
+  --muted: #a9b2c0;
+  --border: #2a3140;
+  --brand: #00a99d;          /* matches --teal */
+  --danger-bg: #2d1518;
+  --danger-text: #ffb3bc;
+}
+
+/* page base */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* container spacing text inherits */
+html[data-theme="dark"] .reward-container,
+html[data-theme-effective="dark"] .reward-container {
+  color: var(--text);
+}
+
+/* balance box */
+html[data-theme="dark"] .reward-balance-box,
+html[data-theme-effective="dark"] .reward-balance-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .reward-balance-label,
+html[data-theme-effective="dark"] .reward-balance-label {
+  color: var(--muted);
+}
+html[data-theme="dark"] .reward-balance-points,
+html[data-theme-effective="dark"] .reward-balance-points,
+html[data-theme="dark"] .star-icon,
+html[data-theme-effective="dark"] .star-icon {
+  color: var(--brand);
+}
+
+/* headings */
+html[data-theme="dark"] .reward-container h1,
+html[data-theme-effective="dark"] .reward-container h1,
+html[data-theme="dark"] .rf-title,
+html[data-theme-effective="dark"] .rf-title {
+  color: var(--brand);
+}
+
+/* “Amount to redeem” subtitle & general muted text */
+html[data-theme="dark"] .reward-subtitle,
+html[data-theme-effective="dark"] .reward-subtitle,
+html[data-theme="dark"] .rf-help,
+html[data-theme-effective="dark"] .rf-help,
+html[data-theme="dark"] .rf-summary,
+html[data-theme-effective="dark"] .rf-summary {
+  color: var(--muted);
+}
+html[data-theme="dark"] .rf-summary strong,
+html[data-theme-effective="dark"] .rf-summary strong {
+  color: var(--brand);
+}
+
+/* voucher image frame */
+html[data-theme="dark"] .reward-card img,
+html[data-theme-effective="dark"] .reward-card img {
+  border-color: var(--brand);
+  /* optional gentle dim so it sits better on dark */
+  filter: brightness(0.96);
+}
+
+/* note + links */
+html[data-theme="dark"] .reward-note,
+html[data-theme-effective="dark"] .reward-note {
+  color: var(--muted);
+}
+html[data-theme="dark"] .reward-note a,
+html[data-theme-effective="dark"] .reward-note a,
+html[data-theme="dark"] .rf-success-sub a,
+html[data-theme-effective="dark"] .rf-success-sub a,
+html[data-theme="dark"] .reward-terms-box a,
+html[data-theme-effective="dark"] .reward-terms-box a {
+  color: var(--brand);
+}
+
+/* global alert + inline alert */
+html[data-theme="dark"] .reward-alert,
+html[data-theme-effective="dark"] .reward-alert,
+html[data-theme="dark"] .rf-alert,
+html[data-theme-effective="dark"] .rf-alert {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid #512028;
+}
+
+/* qty group */
+html[data-theme="dark"] .rf-label,
+html[data-theme-effective="dark"] .rf-label {
+  color: var(--text);
+}
+html[data-theme="dark"] .rf-qty,
+html[data-theme-effective="dark"] .rf-qty {
+  border-color: var(--border);
+  background: var(--surface);
+}
+html[data-theme="dark"] .rf-qty-btn,
+html[data-theme-effective="dark"] .rf-qty-btn {
+  background: var(--surface-2);
+  color: var(--text);
+}
+html[data-theme="dark"] .rf-qty-input,
+html[data-theme-effective="dark"] .rf-qty-input {
+  background: transparent;
+  color: var(--text);
+}
+
+/* redeem button & points text */
+html[data-theme="dark"] .rf-redeem,
+html[data-theme-effective="dark"] .rf-redeem {
+  background: transparent;
+  border-color: var(--brand);
+  color: var(--brand);
+}
+html[data-theme="dark"] .rf-redeem:hover,
+html[data-theme-effective="dark"] .rf-redeem:hover {
+  background: var(--brand);
+  color: #fff;
+}
+html[data-theme="dark"] .rf-points,
+html[data-theme-effective="dark"] .rf-points {
+  color: var(--brand);
+}
+
+/* OTP input */
+html[data-theme="dark"] #otp-input,
+html[data-theme-effective="dark"] #otp-input {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+html[data-theme="dark"] #otp-input:focus,
+html[data-theme-effective="dark"] #otp-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(0,169,157,.16);
+}
+
+/* resend & submit */
+html[data-theme="dark"] .rf-resend,
+html[data-theme-effective="dark"] .rf-resend {
+  color: var(--brand);
+}
+html[data-theme="dark"] .rf-submit,
+html[data-theme-effective="dark"] .rf-submit {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* success section text */
+html[data-theme="dark"] .rf-success-title,
+html[data-theme-effective="dark"] .rf-success-title {
+  color: var(--text);
+}
+html[data-theme="dark"] .rf-success-text,
+html[data-theme-effective="dark"] .rf-success-text,
+html[data-theme="dark"] .rf-success-sub,
+html[data-theme-effective="dark"] .rf-success-sub {
+  color: var(--muted);
+}
+
+/* return button */
+html[data-theme="dark"] #success-return,
+html[data-theme-effective="dark"] #success-return {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* terms box */
+html[data-theme="dark"] .reward-terms-box,
+html[data-theme-effective="dark"] .reward-terms-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+html[data-theme="dark"] .reward-terms-box h2,
+html[data-theme-effective="dark"] .reward-terms-box h2 {
+  color: var(--brand);
+}
+html[data-theme="dark"] .reward-terms-box ul li,
+html[data-theme-effective="dark"] .reward-terms-box ul li {
+  color: var(--muted);
+}
+html[data-theme="dark"] .reward-terms-box ul li::marker,
+html[data-theme-effective="dark"] .reward-terms-box ul li::marker {
+  color: var(--text);
+}
+
+/* ================== ENLARGED MODE (Reward Redemption) ================== */
+/* Activate with: <html data-font="112"> … </html> */
+
+html[data-font="112"] .reward-container {
+  margin-top: 80px;      /* tighter top spacing */
+  padding: 60px !important;
+}
+
+html[data-font="112"] .reward-balance-box {
+  padding: 30px;
+  border-radius: 28px;
+  max-width: 520px;
+}
+html[data-font="112"] .reward-balance-label {
+  font-size: 1.5rem !important;
+}
+html[data-font="112"] .reward-balance-points {
+  font-size: 2rem !important;
+}
+html[data-font="112"] .star-icon {
+  font-size: 2.2rem !important;
+}
+
+html[data-font="112"] .header-text {
+  font-size: 2.6rem !important;
+  margin-bottom: 30px;
+}
+
+html[data-font="112"] .reward-subtitle {
+  font-size: 1.5rem !important;
+}
+
+html[data-font="112"] .reward-card img {
+  max-width: 600px !important;
+  border-radius: 18px !important;
+}
+
+html[data-font="112"] .reward-note {
+  font-size: 1.3rem !important;
+}
+
+html[data-font="112"] .rf-label {
+  font-size: 1.3rem !important;
+}
+
+html[data-font="112"] .rf-qty {
+  height: 56px !important;
+  border-radius: 32px !important;
+}
+html[data-font="112"] .rf-qty-btn {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 28px !important;
+}
+html[data-font="112"] .rf-qty-input {
+  width: 72px !important;
+  font-size: 1.4rem !important;
+}
+
+html[data-font="112"] .rf-redeem {
+  font-size: 1.2rem !important;
+  height: 56px !important;
+  padding: 14px 34px !important;
+  border-radius: 32px !important;
+}
+
+html[data-font="112"] .rf-points {
+  font-size: 1.2rem !important;
+}
+
+html[data-font="112"] .rf-title {
+  font-size: 2.4rem !important;
+}
+
+html[data-font="112"] .rf-summary,
+html[data-font="112"] .rf-help {
+  font-size: 1.25rem !important;
+}
+
+html[data-font="112"] #otp-input {
+  height: 64px !important;
+  font-size: 1.5rem !important;
+  border-radius: 36px !important;
+  letter-spacing: .45em !important;
+}
+
+html[data-font="112"] .rf-submit,
+html[data-font="112"] .rf-resend {
+  font-size: 1.25rem !important;
+  padding: 16px 36px !important;
+  border-radius: 32px !important;
+}
+
+html[data-font="112"] .rf-success-title {
+  font-size: 2rem !important;
+}
+html[data-font="112"] .rf-success-text {
+  font-size: 1.3rem !important;
+}
+html[data-font="112"] .rf-success-sub {
+  font-size: 1.1rem !important;
+}
+html[data-font="112"] #success-return {
+  font-size: 1.25rem !important;
+  padding: 16px 36px !important;
+  border-radius: 32px !important;
+}
+
+html[data-font="112"] .reward-terms-box {
+  padding: 60px !important;
+}
+html[data-font="112"] .reward-terms-box h2 {
+  font-size: 1.8rem !important;
+}
+html[data-font="112"] .reward-terms-box ul li {
+  font-size: 1.2rem !important;
+}
+
+/* Username styling in navbar */
+.username {
+  margin-left: 6px;              /* spacing from the icon */
+  font-weight: 500;
+  font-size: 1rem;
+  color: #000000;                   /* adjust for light/dark themes */
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 150px;              /* prevents overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure "Hello," text is lighter so the name stands out */
+.username strong {
+  font-weight: 600;
+  color: var(--brand, #0EA89A);  /* your site accent color */
+}
+
+html[data-theme="dark"] .username,
+html[data-theme-effective="dark"] .username {
+    color: #ffffff;
+}

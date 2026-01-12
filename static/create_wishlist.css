@@ -1,0 +1,256 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Set the background image */
+    background-image: url('../static/img/good-background-iaaruoreug7ouxpv.jpg'); /* Replace with the path to your image */
+    background-size: cover; /* This will make the image cover the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    margin-top: 150px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the container */
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25)
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 2em;
+    margin: 0;
+}
+
+.header p {
+    color: #777;
+    font-size: 1em;
+    margin: 10px 0 0;
+}
+
+.wishlist-form {
+    display: flex;
+    flex-direction: column;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+legend {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background-color: #0EA89A;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #087c72;
+}
+
+/* ========== Light (existing) ========== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    /* Light background image */
+    background-image: url('../static/img/good-background-iaaruoreug7ouxpv.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    margin-top: 150px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 2em;
+    margin: 0;
+}
+
+.header p {
+    color: #777;
+    font-size: 1em;
+    margin: 10px 0 0;
+}
+
+.wishlist-form {
+    display: flex;
+    flex-direction: column;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+legend {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    background: #fff;
+    color: #222;
+}
+
+.form-control::placeholder {
+    color: #8a8a8a;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.2s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #0EA89A;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #087c72;
+}
+
+/* ========== Dark Mode (required format) ========== */
+
+/* Subtle dark overlay on the page image without changing HTML */
+html[data-theme="dark"] body::before,
+html[data-theme-effective="dark"] body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.55); /* dims the light hero image */
+    z-index: 0;
+}
+
+/* Ensure stacking of the content above the overlay */
+html[data-theme="dark"] body > *,
+html[data-theme-effective="dark"] body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Container + text */
+html[data-theme="dark"] .container,
+html[data-theme-effective="dark"] .container {
+    background: rgba(18, 22, 28, 0.92);       /* near-black glass */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(67, 76, 94, 0.35);  /* slate border */
+}
+
+html[data-theme="dark"] .header h1,
+html[data-theme-effective="dark"] .header h1,
+html[data-theme="dark"] legend,
+html[data-theme-effective="dark"] legend {
+    color: #E6EBF5; /* off-white */
+}
+
+html[data-theme="dark"] .header p,
+html[data-theme-effective="dark"] .header p {
+    color: #B7C1D6;
+}
+
+/* Inputs */
+html[data-theme="dark"] .form-control,
+html[data-theme-effective="dark"] .form-control {
+    background: #11161f;
+    color: #E6EBF5;
+    border: 1px solid #2a3140;
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme-effective="dark"] .form-control:focus {
+    outline: none;
+    border-color: #0EA89A;
+    box-shadow: 0 0 0 3px rgba(14, 168, 154, 0.25);
+}
+
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme-effective="dark"] .form-control::placeholder {
+    color: #8ea0b8;
+}
+
+/* Button */
+html[data-theme="dark"] .btn-primary,
+html[data-theme-effective="dark"] .btn-primary {
+    background-color: #0EA89A;
+    color: #0b111a;
+    box-shadow: 0 2px 10px rgba(14, 168, 154, 0.25);
+}
+
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme-effective="dark"] .btn-primary:hover {
+    background-color: #0c8f84;
+    box-shadow: 0 4px 14px rgba(14, 168, 154, 0.35);
+}
+
+/* Optional: tweak page background if you ever remove the image */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+    background-color: #0b111a;
+    color: #E6EBF5;
+}

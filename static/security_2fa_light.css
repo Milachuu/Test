@@ -1,0 +1,341 @@
+/* static/security_2fa_light.css */
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.top-spacer {
+  height: 80px; /* Adjust this value to push content down */
+  background-color: transparent;
+}
+
+.settings-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ——— sidebar + indicator ——— */
+.preference-sidebar {
+  width: 200px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ccc;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* for the sliding indicator */
+}
+
+
+/* Sidebar links */
+.preference-sidebar-item {
+  padding: 15px 20px;
+  cursor: pointer;
+  color: #666;
+  border-left: 4px solid transparent;
+  text-decoration: none;
+}
+
+.preference-sidebar-item.active {
+  background-color: #e6f9f6;
+  color: #000;
+  font-weight: bold;
+  border-left: 4px solid #00a99d;
+}
+
+/* Remove underline on all sidebar anchors */
+.preference-sidebar a {
+  text-decoration: none;
+}
+
+/* Ensure non-active links stay gray */
+.preference-sidebar a:not(.active),
+.preference-sidebar a:visited:not(.active),
+.preference-sidebar a:hover:not(.active),
+.preference-sidebar a:active:not(.active) {
+  color: #666;
+}
+
+/* Main content area */
+.settings-content {
+  flex: 1;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.settings-content h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Tabs under the header */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 20px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #666;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: #00a99d;
+  font-weight: bold;
+  border-bottom: 3px solid #00a99d;
+}
+
+/* Alert box */
+.alert-box {
+  border: 1px solid #00a99d;
+  background-color: #e6f9f6;
+  padding: 15px;
+  margin-bottom: 30px;
+  font-size: 14px;
+  color: #333;
+  border-left: 4px solid #00a99d;
+}
+
+/* Buttons */
+.view-code-btn,
+.manage-btn {
+  padding: 5px 20px;
+  margin-top: 10px;
+  background-color: white;
+  border: 2px solid #00a99d;
+  color: #00a99d;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-code-btn:hover,
+.manage-btn:hover {
+  background-color: #00a99d;
+  color: #e6f9f6;
+}
+
+/* Provider card */
+.provider-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 10px 0;
+  background-color: transparent;
+  border: none;
+}
+
+.provider-left {
+  flex-shrink: 0;
+}
+
+.provider-icon {
+  width: auto;
+  height: 130px;
+  object-fit: contain;
+}
+
+.provider-main {
+  flex: 1;
+}
+
+.provider-info h5 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.provider-info p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.provider-action {
+  flex-shrink: 0;
+}
+
+#setting_2fa {
+  font-weight: bold;
+  color: black;
+}
+
+  .recovery-modal {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.55); padding: 24px; overflow-y: auto;
+  }
+  .recovery-card {
+    max-width: 520px; margin: 60px auto; background: #fff; border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25); padding: 22px 22px 26px; position: relative;
+  }
+  .recovery-close {
+    position: absolute; top: 10px; right: 12px; width: 36px; height: 36px;
+    border-radius: 8px; border: none; background: #f2f2f2; color: #333;
+    font-size: 20px; font-weight: 700; cursor: pointer;
+  }
+  .recovery-close:hover { background: #e9e9e9; }
+  .recovery-title { margin: 0 0 10px; font-size: 1.25rem; }
+  .recovery-note { color: #555; margin: 6px 0 14px; }
+  .recovery-list {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+  }
+  .recovery-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 700; letter-spacing: 0.06em; text-align: center;
+    background: #f7f7f7; border: 1px solid #ececec; border-radius: 10px; padding: 10px 12px;
+  }
+  .recovery-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .btn {
+    border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600;
+  }
+  .btn-primary { background: #0EA89A; color: #fff; }
+  .btn-secondary { background: #f2f2f2; color: #333; }
+  .recovery-error {
+    margin-top: 10px; color: #b42318; background: #fee4e2; border: 1px solid #fecdca;
+    border-radius: 10px; padding: 10px 12px; display: none;
+  }
+
+  /* Small helper to keep “View recovery code” aligned nicely */
+  .recovery-button .view-code-btn {
+    border: none; padding: 10px 16px; border-radius: 10px; background: #0EA89A; color: #fff; font-weight: 600; cursor: pointer;
+  }
+
+
+  /* ==== Dark Mode Overrides for 2FA Page ==== */
+
+/* Sidebar */
+html[data-theme="dark"] .preference-sidebar,
+html[data-theme-effective="dark"] .preference-sidebar {
+  background-color: #1e1e1e;
+  border-right: 1px solid #333;
+}
+
+html[data-theme="dark"] .preference-sidebar-item,
+html[data-theme-effective="dark"] .preference-sidebar-item {
+  color: #aaa;
+}
+
+html[data-theme="dark"] .preference-sidebar-item.active,
+html[data-theme-effective="dark"] .preference-sidebar-item.active {
+  background-color: #003c39;
+  color: #fff;
+  border-left: 4px solid #00d1c7;
+}
+
+/* Main content */
+html[data-theme="dark"] .settings-content,
+html[data-theme-effective="dark"] .settings-content {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .settings-content h1,
+html[data-theme-effective="dark"] .settings-content h1 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .settings-content h2,
+html[data-theme-effective="dark"] .settings-content h2,
+html[data-theme="dark"] .settings-content h5,
+html[data-theme-effective="dark"] .settings-content h5 {
+  color: #ddd;
+}
+
+/* Tabs */
+html[data-theme="dark"] .tab,
+html[data-theme-effective="dark"] .tab {
+  color: #bbb;
+  border-bottom: 3px solid transparent;
+}
+
+html[data-theme="dark"] .tab.active,
+html[data-theme-effective="dark"] .tab.active {
+  color: #00d1c7;
+  border-bottom: 3px solid #00d1c7;
+}
+
+/* Alert Box */
+html[data-theme="dark"] .alert-box,
+html[data-theme-effective="dark"] .alert-box {
+  border: 1px solid #00d1c7;
+  background-color: #003c39;
+  color: #e0e0e0;
+}
+
+/* Buttons */
+html[data-theme="dark"] .view-code-btn,
+html[data-theme-effective="dark"] .view-code-btn,
+html[data-theme="dark"] .manage-btn,
+html[data-theme-effective="dark"] .manage-btn {
+  background-color: #1e1e1e;
+  border: 2px solid #00d1c7;
+  color: #00d1c7;
+}
+
+html[data-theme="dark"] .view-code-btn:hover,
+html[data-theme-effective="dark"] .view-code-btn:hover,
+html[data-theme="dark"] .manage-btn:hover,
+html[data-theme-effective="dark"] .manage-btn:hover {
+  background-color: #00d1c7;
+  color: #121212;
+}
+
+/* Provider info */
+html[data-theme="dark"] .provider-info p,
+html[data-theme-effective="dark"] .provider-info p {
+  color: #aaa;
+}
+
+/* Recovery modal */
+html[data-theme="dark"] .recovery-card,
+html[data-theme-effective="dark"] .recovery-card {
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .recovery-close,
+html[data-theme-effective="dark"] .recovery-close {
+  background: #333;
+  color: #fff;
+}
+html[data-theme="dark"] .recovery-close:hover,
+html[data-theme-effective="dark"] .recovery-close:hover {
+  background: #444;
+}
+
+html[data-theme="dark"] .recovery-code,
+html[data-theme-effective="dark"] .recovery-code {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #fff;
+}
+
+html[data-theme="dark"] .btn-primary,
+html[data-theme-effective="dark"] .btn-primary {
+  background: #00d1c7;
+  color: #121212;
+}
+
+html[data-theme="dark"] .btn-secondary,
+html[data-theme-effective="dark"] .btn-secondary {
+  background: #333;
+  color: #fff;
+}
+
+html[data-theme="dark"] .recovery-error,
+html[data-theme-effective="dark"] .recovery-error {
+  background: #3a1e1e;
+  border: 1px solid #a33;
+  color: #f88;
+}

@@ -1,0 +1,191 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wrapper h1 {
+    margin-top: 140px;
+    font-size: 30px;
+}
+
+.guide {
+    margin-top: 20px;
+    width: 62%
+}
+
+.authenticator_app {
+    color: #0dac9c;
+    font-weight: 600;
+}
+
+.auth-txt {
+    font-size: 16px;
+    padding-right: 47%;
+}
+
+#codeInput {
+    width: 700px;
+    height: 50px;
+    border-radius: 5px;
+    background: #F5F7F9;
+    border: none;
+}
+
+.info-txt {
+    display: flex;
+    margin-top: 10px;
+    padding-right: 21%;
+}
+
+.info-txt p {
+    padding-left: 10px;
+    color: rgba(0,0,0,0.7);
+}
+
+.material-symbols-outlined {
+    color: rgba(0,0,0,0.7)
+}
+
+.totp_secret-ctn {
+    margin-top: 40px;
+    background: rgba(13, 172, 156, 0.3);
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    width: 62%;
+    margin-bottom: 40px;
+}
+
+.totp_secret-ctn p {
+    padding-top: 10px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.bold-txt {
+    font-weight: bold;
+}
+
+
+.setup-btn {
+    background-color: #0dac9c;
+    border: none;
+    width: 100px;
+    height: 50px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+}
+
+.totp_qr {
+    padding: 20px;
+}
+
+.totp_secret {
+    color:#086f65;
+    font-weight: bold;
+    text-align: center;
+}
+
+.flash-messages {
+    color: red;
+    font-weight: 400;
+}
+
+/* Backup codes button */
+.backup-codes-section {
+  margin-top: 18px;
+  text-align: center;
+}
+.backup-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #0EA89A;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.05s ease, opacity 0.2s ease;
+}
+.backup-btn:active { transform: scale(0.98); }
+.backup-hint {
+  font-size: 0.9rem;
+  color: rgba(0,0,0,0.65);
+  margin-top: 8px;
+}
+
+/* Modal overlay */
+.backup-modal {
+  display: none;                /* hidden by default */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 9999;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Modal card */
+.backup-modal-content {
+  max-width: 520px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 22px 26px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.backup-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: #f2f2f2;
+  color: #333;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.backup-close:hover { background: #e9e9e9; }
+
+#backupTitle {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+
+.backup-note {
+  margin: 0 0 12px;
+  color: #555;
+}
+
+.backup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.backup-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: #f7f7f7;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.backup-empty {
+  color: #444;
+  background: #fff7e6;
+  border: 1px solid #ffe5b3;
+  border-radius: 10px;
+  padding: 12px;
+}

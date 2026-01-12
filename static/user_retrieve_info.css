@@ -1,0 +1,1001 @@
+.recycling {
+    margin-top: 100px;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+}
+
+.profile {
+    display: flex;
+}
+
+.profile h4 {
+    padding-left: 20px;
+    padding-top: 5px;
+}
+
+.review-ctn {
+    display: flex;
+}
+
+.section {
+    position: relative;
+    padding: 0 40px; /* Adjust padding as needed */
+}
+
+.section:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 1px;
+    background-color: rgba(0, 0, 0, 0.2); /* Adjust color as needed */
+}
+
+.review-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.review-wrapper h4 {
+    font-weight: 700;
+    padding-top: 8px;
+}
+
+.review {
+    display: flex;
+    align-items: center;
+}
+
+.redeem-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.redeem {
+    display: flex;
+    align-items: center;
+}
+
+.edit_profile {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.20);
+    background: #FFF;
+    width: 151px;
+    height: 65px;
+    text-align: center;
+}
+
+.edit_profile a {
+    text-decoration: none;
+    color: black;
+}
+
+#account_circles {
+    font-size: 55px;
+}
+
+#review_star {
+    height: 30px;
+    padding-left: 15px;
+}
+
+.review-wrapper p {
+    color: rgba(0, 0, 0, 0.50);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+#redeem_star {
+    height: 55px;
+}
+
+.button {
+    max-width: 200px;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+
+.button:hover {
+    color: white;
+    background-color: #0c8f84; /* slightly darker teal */
+    transform: scale(1.05);
+}
+
+.edit_profile {
+    margin-left: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.20);
+    text-align: center;
+    width: 100%;
+    height: 60px;
+    padding-top: 15px;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
+    margin-top: 13px;
+}
+
+.edit_profile:hover {
+  transform: scale(1.05);
+}
+
+.redeem-wrapper h4 {
+    font-weight: 700;
+}
+
+
+
+
+/* Listing */
+/*CURRENTLY ADDED STYLES START FROM HERE*/
+/* -------------------- FIXING SEARCH BAR TO MATCH FIGMA -------------------- */
+.search-container {
+    margin-top: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Search Form */
+  .search-form {
+    display: flex;
+    align-items: center;
+    width: 80%; /* Make it span more width */
+    max-width: 900px; /* Prevent it from being too wide on large screens */
+    background: #F5F5F5;
+    border-radius: 50px;
+    padding: 8px 15px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    border: 1px solid #DDD;
+  }
+  
+  /* Input Field */
+  .search-input {
+    flex: 1;
+    border: none;
+    padding: 14px 18px;
+    font-size: 16px;
+    border-radius: 50px;
+    outline: none;
+    background: transparent;
+  }
+  
+  /* Search Button */
+  .btn-search {
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Hover Effect */
+  .btn-search:hover {
+    background-color: #087c73;
+  }
+  
+  /* Placeholder Styling */
+  .search-input::placeholder {
+    color: #8E8E8E;
+    font-size: 15px;
+    opacity: 0.8;
+  }
+  
+  /* Ensure Responsive Behavior */
+  @media (max-width: 768px) {
+    .search-form {
+        width: 90%;
+    }
+    .btn-search {
+        padding: 12px 18px;
+    }
+  }
+  
+  
+  /* -------------------- FIXING LISTINGS GRID -------------------- */
+  .listings-section {
+    margin-bottom: 30px;
+  }
+  
+  .row-cols-md-5 > .col {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Ensuring Cards are Uniform */
+  .listing-card {
+    width: 100%;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Fix Image Display */
+  .listing-image {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* -------------------- FIXING USER INFO & BOOKMARK ICONS -------------------- */
+  .user-info {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 14px;
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .user-info i {
+    font-size: 18px;
+  }
+  
+  .bookmark-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .bookmark-icon:hover {
+    color: #0EA89A;
+  }
+  
+  /* -------------------- FIXING DROPDOWN BUTTONS -------------------- */
+  .dropdown-btn {
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  .dropdown-content {
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 140px;
+    border-radius: 6px;
+    padding: 5px 0;
+  }
+  
+  .dropdown-content a, .dropdown-content button {
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    color: black;
+  }
+  
+  .dropdown-content a:hover, .dropdown-content button:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* -------------------- CREATE NEW LISTING BUTTON FIX -------------------- */
+  .listings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .btn-create {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #D43F34;
+    color: white;
+    transition: background-color 0.3s;
+    text-align: center;
+  }
+  
+  .btn-create:hover {
+    background-color: #C32E24;
+  }
+  
+  /* -------------------- ENSURING UNIFORM LISTING CARDS -------------------- */
+  .listing-card {
+    height: 320px; /* Fixed height for uniformity */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensuring Image Size Consistency */
+  .listing-image {
+    height: 180px; /* Fixed height */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* -------------------- ALIGNING ACTION BUTTONS -------------------- */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card-body button {
+    align-self: center;
+    margin-top: auto;
+  }
+  
+  /* Align "Actions" Button */
+  .dropdown-btn {
+    width: 100%;
+    text-align: center;
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  
+  .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  /* -------------------- FIXING CARD HEIGHT & ACTION BUTTON -------------------- */
+  .listing-card {
+    height: 380px; /* Increased height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensure Image Size is Consistent */
+  .listing-image {
+    height: 200px; /* Adjust image height to match new card height */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* Ensure Card Body Stretches Correctly */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 10px; /* Extra spacing to keep button inside */
+  }
+  
+  /* Make Sure "Actions" Button Stays Inside the Card */
+  .card-body .dropdown-btn {
+    align-self: center;
+    width: 100%;
+    margin-top: auto; /* Forces button to the bottom */
+  }
+  
+  /* -------------------- FIXING CARD HEIGHT & ACTION BUTTON ALIGNMENT -------------------- */
+  .listing-card {
+    height: 420px; /* Increased to fit longer descriptions */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensure Image Size is Consistent */
+  .listing-image {
+    height: 180px; /* Keep images uniform */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* Fix Text Area & Button Alignment */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 15px;
+  }
+  
+  /* Limit Long Text in Descriptions */
+  .card-text {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limits text to 3 lines */
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Ensure "Actions" Button is Always at the Bottom */
+  .card-body .dropdown-btn {
+    align-self: center;
+    margin-top: auto; /* Pushes button to the bottom */
+    width: 100%;
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  
+  .card-body .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  /* Ensure Dropdown Menu Displays Properly */
+  .dropdown-menu {
+    display: none; /* Hide by default */
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 140px;
+    z-index: 1000;
+  }
+  
+  /* Make the Dropdown Appear on Click */
+  .dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+  /* Dropdown Item Styling */
+  .dropdown-item {
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+    display: block;
+  }
+  
+  /* Highlight Hover Effect */
+  .dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* -------------------- FORM STYLING FOR CREATE & UPDATE LISTING -------------------- */
+  .listing-form-container {
+    width: 60%;
+    margin-top: 120px;
+    margin-left: 20%;
+    padding: 40px;
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    border: 1pt solid rgba(0,0,0,0.2);
+  }
+  
+  /* Heading */
+  .page-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Labels */
+  .listing-form-container label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  
+  /* Input Fields */
+  .listing-form-container input[type="text"],
+  .listing-form-container input[type="date"],
+  .listing-form-container input[type="time"],
+  .listing-form-container select,
+  .listing-form-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  /* Textarea */
+  .listing-form-container textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  /* File Upload */
+  .listing-form-container input[type="file"] {
+    padding: 10px;
+    border: none;
+  }
+  
+  /* Submit Button */
+  .listing-form-container .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #0EA89A;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .listing-form-container .btn-primary:hover {
+    background-color: #087c73;
+  }
+  
+  #reportuser-btn {
+    margin-left: 60%;
+  }
+  
+  #create-btn {
+    background-color: #054d47;
+  }
+  
+  #create-btn:hover {
+    background-color: #022825;
+  }
+
+  .listing-wrapper {
+    display: flex;
+    margin-top: 120px;
+    margin-bottom: 90px;
+    justify-content: center; 
+    align-items: flex-start; 
+    flex-direction: column;
+}
+
+    .listings-container {
+        width: 80%; 
+        max-width: 1200px; 
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+        /* Center the container */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .nav {
+        width: 60px;
+        border-bottom: solid 2pt #008F79;
+        margin-left: 170px;
+    }
+
+    .nav p {
+        color: #008F79;
+    }
+
+
+
+    /* Wishlist */
+    /* Wishlist Section */
+.wishlist-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.wishlist-section h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.wishlist-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.wishlist-table th,
+.wishlist-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.wishlist-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+    color: #333;
+}
+
+.wishlist-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.wishlist-table .button {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.wishlist-table .button.update-btn {
+    background-color: #008F79; /* Dashboard green */
+    border: none;
+}
+
+.wishlist-table .button.delete-btn {
+    background-color: #ff0b0b; /* Red for delete */
+    border: none;
+}
+
+.wishlist-table .button:hover {
+    opacity: 0.9;
+}
+
+.wishlist-table form {
+    display: inline-block;
+}
+
+
+
+
+  
+  /* Responsive Fix */
+  @media (max-width: 768px) {
+    .listing-form-container {
+        width: 90%;
+        padding: 30px;
+    }
+  }
+  
+
+
+  /* ===================== DARK THEME: User Profile & Listings ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --text: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --brand: #0EA89A;
+  --danger: #ff6b6b;
+  --shadow: 0 8px 20px rgba(0,0,0,.55);
+}
+
+/* page background + base text */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* top profile wrapper */
+html[data-theme="dark"] .wrapper,
+html[data-theme-effective="dark"] .wrapper {
+  color: var(--text);
+}
+html[data-theme="dark"] .section:not(:last-child)::after,
+html[data-theme-effective="dark"] .section:not(:last-child)::after {
+  background-color: var(--border);
+}
+
+/* verified label and small greys */
+html[data-theme="dark"] .review-wrapper p,
+html[data-theme-effective="dark"] .review-wrapper p,
+html[data-theme="dark"] .profile p,
+html[data-theme-effective="dark"] .profile p {
+  color: var(--muted) !important;
+}
+
+/* edit profile pill */
+html[data-theme="dark"] .edit_profile,
+html[data-theme-effective="dark"] .edit_profile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+html[data-theme="dark"] .edit_profile a,
+html[data-theme-effective="dark"] .edit_profile a {
+  color: var(--text);
+}
+
+/* buttons */
+html[data-theme="dark"] .button,
+html[data-theme-effective="dark"] .button,
+html[data-theme="dark"] .dropdown-btn,
+html[data-theme-effective="dark"] .dropdown-btn,
+html[data-theme="dark"] .btn-create,
+html[data-theme-effective="dark"] .btn-create {
+  background-color: var(--brand);
+  color: #fff;
+  border-color: transparent;
+}
+html[data-theme="dark"] .button:hover,
+html[data-theme-effective="dark"] .button:hover,
+html[data-theme="dark"] .dropdown-btn:hover,
+html[data-theme-effective="dark"] .dropdown-btn:hover {
+  background-color: #087c73;
+  color: #fff;
+}
+
+/* listings container card shell */
+html[data-theme="dark"] .listings-container,
+html[data-theme-effective="dark"] .listings-container,
+html[data-theme="dark"] .listing-card,
+html[data-theme-effective="dark"] .listing-card {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+/* listing chip (user badge) & bookmark */
+html[data-theme="dark"] .user-info,
+html[data-theme-effective="dark"] .user-info {
+  background: rgba(20,25,34,.9);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .bookmark-icon,
+html[data-theme-effective="dark"] .bookmark-icon {
+  color: var(--muted);
+}
+html[data-theme="dark"] .bookmark-icon:hover,
+html[data-theme-effective="dark"] .bookmark-icon:hover {
+  color: var(--brand);
+}
+
+/* dropdown menu */
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme-effective="dark"] .dropdown-menu {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .dropdown-item,
+html[data-theme-effective="dark"] .dropdown-item {
+  color: var(--text);
+}
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme-effective="dark"] .dropdown-item:hover {
+  background: #1a2030;
+}
+
+/* “Listings” nav underline + text */
+html[data-theme="dark"] .nav,
+html[data-theme-effective="dark"] .nav {
+  border-bottom-color: var(--brand);
+}
+html[data-theme="dark"] .nav p,
+html[data-theme-effective="dark"] .nav p {
+  color: var(--brand);
+}
+
+/* wishlist panel */
+html[data-theme="dark"] .wishlist-section,
+html[data-theme-effective="dark"] .wishlist-section {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .wishlist-section h3,
+html[data-theme-effective="dark"] .wishlist-section h3 {
+  color: var(--text);
+}
+html[data-theme="dark"] .wishlist-table,
+html[data-theme-effective="dark"] .wishlist-table {
+  color: var(--text);
+  background: var(--surface);
+}
+html[data-theme="dark"] .wishlist-table th,
+html[data-theme-effective="dark"] .wishlist-table th {
+  background: var(--surface-2);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+html[data-theme="dark"] .wishlist-table td,
+html[data-theme-effective="dark"] .wishlist-table td {
+  border-bottom: 1px solid var(--border);
+}
+html[data-theme="dark"] .wishlist-table tr:nth-child(even),
+html[data-theme-effective="dark"] .wishlist-table tr:nth-child(even) {
+  background: #111720;
+}
+
+/* wishlist buttons */
+html[data-theme="dark"] .wishlist-table .button.update-btn,
+html[data-theme-effective="dark"] .wishlist-table .button.update-btn {
+  background: #008F79;
+  color: #fff;
+}
+html[data-theme="dark"] .wishlist-table .button.delete-btn,
+html[data-theme-effective="dark"] .wishlist-table .button.delete-btn {
+  background: #d84b4b;
+  color: #fff;
+}
+
+/* form shell (create/update listing shared styles) */
+html[data-theme="dark"] .listing-form-container,
+html[data-theme-effective="dark"] .listing-form-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+html[data-theme="dark"] .listing-form-container input[type="text"],
+html[data-theme-effective="dark"] .listing-form-container input[type="text"],
+html[data-theme="dark"] .listing-form-container input[type="date"],
+html[data-theme-effective="dark"] .listing-form-container input[type="date"],
+html[data-theme="dark"] .listing-form-container input[type="time"],
+html[data-theme-effective="dark"] .listing-form-container input[type="time"],
+html[data-theme="dark"] .listing-form-container select,
+html[data-theme-effective="dark"] .listing-form-container select,
+html[data-theme="dark"] .listing-form-container textarea,
+html[data-theme-effective="dark"] .listing-form-container textarea {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* minor greys */
+html[data-theme="dark"] .card-text,
+html[data-theme-effective="dark"] .card-text,
+html[data-theme="dark"] .no-listings,
+html[data-theme-effective="dark"] .no-listings {
+  color: var(--muted);
+}
+
+/* icons */
+html[data-theme="dark"] #account_circles,
+html[data-theme-effective="dark"] #account_circles {
+  color: var(--text);
+}
+
+/* ===================== ENLARGED ++ MODE (User Profile & Listings) ===================== */
+/* Trigger with: <html data-font="112"> */
+
+/* Profile section */
+html[data-font="112"] #account_circles {
+  font-size: 110px !important;   /* avatar icon much larger */
+}
+html[data-font="112"] .profile h4 {
+  font-size: 2.4rem !important;
+  padding-left: 25px !important;
+}
+html[data-font="112"] .profile p {
+  font-size: 1.4rem !important;
+  padding-left: 25px !important;
+}
+
+/* Section wrappers */
+html[data-font="112"] .section {
+  padding: 0 60px !important;
+}
+html[data-font="112"] .review-wrapper h4,
+html[data-font="112"] .redeem-wrapper h4 {
+  font-size: 2rem !important;
+}
+html[data-font="112"] .review-wrapper p {
+  font-size: 1.2rem !important;
+}
+html[data-font="112"] #review_star {
+  height: 50px !important;
+}
+html[data-font="112"] #redeem_star {
+  height: 80px !important;
+}
+
+/* Buttons */
+html[data-font="112"] .dropdown-btn,
+html[data-font="112"] .btn-create,
+html[data-font="112"] .wishlist-table .button {
+  font-size: 1.4rem !important;
+  padding: 14px 24px !important;
+  border-radius: 10px !important;
+}
+
+html[data-font="112"] .button {
+  font-size: 1.4rem !important;
+}
+
+html[data-font="112"] .edit_profile {
+  font-size: 1.4rem !important;
+  width: 200px !important;
+  height: 90px !important;
+  padding-top: 10px !important;
+}
+
+/* Listing cards */
+html[data-font="112"] .listing-card {
+  height: 500px !important;
+  border-radius: 14px !important;
+}
+html[data-font="112"] .listing-image {
+  height: 240px !important;
+}
+html[data-font="112"] .card-title {
+  font-size: 1.6rem !important;
+}
+html[data-font="112"] .card-text {
+  font-size: 1.2rem !important;
+  -webkit-line-clamp: 4 !important;
+}
+
+/* Wishlist section */
+html[data-font="112"] .wishlist-section h3 {
+  font-size: 2rem !important;
+  margin-bottom: 28px !important;
+}
+html[data-font="112"] .wishlist-table th,
+html[data-font="112"] .wishlist-table td {
+  font-size: 1.2rem !important;
+  padding: 18px !important;
+}
+

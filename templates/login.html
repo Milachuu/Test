@@ -1,0 +1,37 @@
+{% extends "before_base.html" %} 
+{% block title %}Login{% endblock %} 
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='loginsignup.css') }}">
+{% endblock %}
+ 
+{% block content %}
+{% from "_formHelper.html" import render_field %} 
+ 
+<div class="login">
+  <h1>Login</h1>
+  <div class="sign_up_here">
+    <p>Don't have an account?</p>
+    <a href="/sign_up" class="sign-up-txt">Sign up Here</a>
+  </div>
+</div>
+
+<form method="POST" action="" class="login_form"> 
+<div class="login_input-ctn">
+  <p>{{ message }}</p>
+  
+  <div class="email-input"> 
+    {{ render_field(form.email) }} 
+  </div> 
+
+  <div class="password_field"> 
+    {{ render_field(form.password) }} 
+  </div> 
+  <p>{{ message2 }}</p>
+
+  <input type="submit" value="Sign In" class="submit_form" /> 
+  <br>
+  <a href="/update_user" class="forget-btn"><span class="forget-btn-txt">Forget your password?</span></a>
+</div>
+</form> 
+{% endblock %}

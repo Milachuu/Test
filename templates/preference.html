@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t("setting_preference.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='preference.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="preference-top-spacer"></div>
+
+<div class="preference-container">
+  <div class="preference-sidebar">
+    <a href="{{ url_for('setting') }}" class="preference-sidebar-item">
+      {{ t("setting_preference.sidebar_edit_profile") }}
+    </a>
+    <a href="{{ url_for('change_password') }}" class="preference-sidebar-item">
+      {{ t("setting_preference.sidebar_security") }}
+    </a>
+    <a href="{{ url_for('preference') }}" class="preference-sidebar-item active">
+      {{ t("setting_preference.sidebar_preference") }}
+    </a>
+  </div>
+
+  <div class="preference-content">
+    <h1>{{ t("setting_preference.heading") }}</h1>
+    <p class="preference-subtext">{{ t("setting_preference.subtext") }}</p>
+
+    <form class="preference-form">
+      <!-- Font size -->
+      <div class="preference-info-line">
+        <div class="preference-info-left">
+          <label for="font-size">{{ t("setting_preference.font_size_label") }}</label>
+          <div class="preference-select-container">
+            <div
+              class="preference-select-selected"
+              id="font-size-selected"
+            >
+              {{ t("setting_preference.font_size_normal") }}
+            </div>
+            <div class="preference-select-options" id="font-size-options">
+              <div
+                class="preference-select-option selected"
+                data-font="100"
+              >
+                {{ t("setting_preference.font_size_normal") }}
+              </div>
+              <div
+                class="preference-select-option"
+                data-font="112"
+              >
+                {{ t("setting_preference.font_size_large") }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <div class="preference-info-line">
+        <div class="preference-info-left">
+          <label for="language">{{ t("setting_preference.language_label") }}</label>
+          <div class="preference-select-container">
+            <div
+              class="preference-select-selected"
+              id="language-selected"
+            >
+              {{ t("setting_preference.language_english") }}
+            </div>
+            <div class="preference-select-options" id="language-options">
+              <div
+                class="preference-select-option selected"
+                data-lang="English"
+              >
+                {{ t("setting_preference.language_english") }}
+              </div>
+              <div class="preference-select-option" data-lang="Mandarin">
+                {{ t("setting_preference.language_mandarin") }}
+              </div>
+              <div class="preference-select-option" data-lang="Bahasa Melayu">
+                {{ t("setting_preference.language_malay") }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Theme -->
+    <h2>{{ t("setting_preference.theme_heading") }}</h2>
+    <div class="preference-theme-options">
+      <div class="theme-option" data-theme="system">
+        <div class="theme-box {% if current_theme == 'system' %}selected{% endif %}">
+          <img
+            src="{{ url_for('static', filename='img/systemTheme-2a56ec277c.png') }}"
+            alt="{{ t('setting_preference.theme_system') }}"
+          >
+        </div>
+        <p>{{ t("setting_preference.theme_system") }}</p>
+      </div>
+
+      <div class="theme-option" data-theme="light">
+        <div class="theme-box {% if current_theme == 'light' %}selected{% endif %}">
+          <img
+            src="{{ url_for('static', filename='img/lightTheme-ea52b69448.png') }}"
+            alt="{{ t('setting_preference.theme_light') }}"
+          >
+        </div>
+        <p>{{ t("setting_preference.theme_light") }}</p>
+      </div>
+
+      <div class="theme-option" data-theme="dark">
+        <div class="theme-box {% if current_theme == 'dark' %}selected{% endif %}">
+          <img
+            src="{{ url_for('static', filename='img/darkTheme-104347d555.png') }}"
+            alt="{{ t('setting_preference.theme_dark') }}"
+          >
+        </div>
+        <p>{{ t("setting_preference.theme_dark") }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Current values from server
+    const CURRENT_FONT = {{ current_font_size|int }};
+    const CURRENT_LANG = {{ current_language|tojson }};
+    const root = document.documentElement;
+
+    // Localized labels from Jinja
+    const L = {
+      fontNormal: "{{ t('setting_preference.font_size_normal') }}",
+      fontLarge:  "{{ t('setting_preference.font_size_large') }}",
+      langEn:     "{{ t('setting_preference.language_english') }}",
+      langZh:     "{{ t('setting_preference.language_mandarin') }}",
+      langMs:     "{{ t('setting_preference.language_malay') }}"
+    };
+
+    function setFontOnRoot(pxPct) {
+      root.setAttribute('data-font', String(pxPct));
+    }
+
+    function setupDropdown(selId, optsId, {onPick, initValue, labelMap, datasetKey}) {
+      const sel  = document.getElementById(selId);
+      const opts = document.getElementById(optsId);
+
+      if (initValue != null && labelMap) {
+        sel.textContent = labelMap[initValue] || sel.textContent;
+        opts.querySelectorAll('.preference-select-option').forEach(o => {
+          const val = datasetKey ? o.dataset[datasetKey] : o.textContent.trim();
+          o.classList.toggle('selected', String(val) === String(initValue));
+        });
+      }
+
+      sel.addEventListener('click', e => {
+        e.stopPropagation();
+        const open = opts.style.display === 'block';
+        opts.style.display = open ? 'none' : 'block';
+        sel.classList.toggle('open', !open);
+      });
+
+      opts.querySelectorAll('.preference-select-option').forEach(o => {
+        o.addEventListener('click', e => {
+          e.stopPropagation();
+          const payload = {};
+
+          opts.querySelector('.selected')?.classList.remove('selected');
+          o.classList.add('selected');
+          sel.textContent = o.textContent;
+          opts.style.display = 'none';
+          sel.classList.remove('open');
+
+          if (o.dataset.lang) {
+            payload.language = o.dataset.lang;
+          }
+          if (o.dataset.font) {
+            const f = parseInt(o.dataset.font, 10);
+            payload.font_size = f;
+            setFontOnRoot(f);
+          }
+
+          if (Object.keys(payload).length) {
+            fetch('{{ url_for("api_update_preferences") }}', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).catch(()=>{});
+          }
+
+          if (typeof onPick === 'function') onPick(o);
+        });
+      });
+
+      document.addEventListener('click', e => {
+        if (!sel.contains(e.target) && !opts.contains(e.target)) {
+          opts.style.display = 'none';
+          sel.classList.remove('open');
+        }
+      });
+    }
+
+    // Initialize font dropdown (localized labels)
+    setupDropdown('font-size-selected', 'font-size-options', {
+      initValue: CURRENT_FONT,
+      labelMap: {100: L.fontNormal, 112: L.fontLarge},
+      datasetKey: 'font'
+    });
+
+    // Initialize language dropdown (localized labels)
+    setupDropdown('language-selected', 'language-options', {
+      initValue: CURRENT_LANG,
+      labelMap: {"English": L.langEn, "Mandarin": L.langZh, "Bahasa Melayu": L.langMs},
+      datasetKey: 'lang'
+    });
+
+    // Apply current font to <html>
+    setFontOnRoot(CURRENT_FONT || 100);
+
+    // Theme picker
+    function applyTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      if (theme === 'system') {
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-theme-effective', isDark ? 'dark' : 'light');
+      } else {
+        root.removeAttribute('data-theme-effective');
+      }
+    }
+
+    document.querySelectorAll('.theme-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const chosenTheme = opt.dataset.theme;
+        document.querySelector('.theme-box.selected')?.classList.remove('selected');
+        opt.querySelector('.theme-box').classList.add('selected');
+        applyTheme(chosenTheme);
+        fetch("{{ url_for('api_update_theme') }}", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ theme: chosenTheme })
+        }).catch(()=>{});
+      });
+    });
+  });
+</script>
+{% endblock %}

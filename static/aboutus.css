@@ -1,0 +1,39 @@
+/* About Us */
+
+.about_us_ctn {
+  margin-top: 150px;
+  margin-bottom: 20px;
+}
+
+.about_us_ctn h1 {
+  text-align: center;
+  font-size: 400%;
+  color: #0EA89A;
+}
+
+.about-section-ctn {
+  display: flex;
+  margin-top: 100px;
+  align-items: center;
+}
+
+.phone-ctn {
+  padding-left: 15%;
+}
+
+.phone-ctn img {
+  width: 500px;
+  height: 760px;
+}
+
+.about-section h3 {
+  font-size: 35px;
+  padding-top: 70px;
+}
+
+.about-section p {
+  line-height: 22px;
+  font-size: 19px;
+  padding-top: 10px;
+  max-width: 85%;
+}

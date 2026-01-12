@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}View Booking{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='viewbooking.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    {% for book in book_list %}
+    <div class="booking-card">
+        <div class="booking-badge {{ book[5]|lower }}">{{ book[5] }}</div>
+
+        <div class="booking-image">
+            <img src="{{ url_for('static', filename=book[1]) }}" alt="{{ book[0] }}">
+        </div>
+        <div class="booking-details">
+            <h2 class="booking-title">{{ book[0] }}</h2>
+            <p><strong>From:</strong> {{ book[2] }}</p>
+            <p><strong>Date:</strong> {{ book[3] }}</p>
+            <p><strong>Time:</strong> {{ book[4] }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

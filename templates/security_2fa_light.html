@@ -1,0 +1,190 @@
+<!-- templates/setting_2fa.html -->
+{% extends "base.html" %}
+{% block title %}{{ t("2fa_security.title") }}{% endblock %}
+
+{% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='security_2fa_light.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+<div class="top-spacer"></div>
+
+<div class="settings-container">
+  <div class="preference-sidebar">
+    <a href="{{ url_for('setting') }}" class="preference-sidebar-item">
+      {{ t("2fa_security.sidebar_edit_profile") }}
+    </a>
+    <a href="{{ url_for('change_password') }}" class="preference-sidebar-item active">
+      {{ t("2fa_security.sidebar_security") }}
+    </a>
+    <a href="{{ url_for('preference') }}" class="preference-sidebar-item">
+      {{ t("2fa_security.sidebar_preference") }}
+    </a>
+  </div>
+
+  <div class="settings-content">
+    <h1>{{ t("2fa_security.heading_security") }}</h1>
+
+    <div class="tabs">
+      <a
+        href="{{ url_for('change_password') }}"
+        class="tab {% if active_tab == 'password' %}active{% endif %}"
+        id="change_password"
+      >
+        {{ t("2fa_security.tab_password") }}
+      </a>
+      <a
+        href="{{ url_for('setting_2fa') }}"
+        class="tab {% if active_tab == '2fa' %}active{% endif %}"
+        id="setting_2fa"
+      >
+        {{ t("2fa_security.tab_2fa") }}
+      </a>
+    </div>
+
+    <div class="headers">
+      <h2>{{ t("2fa_security.header_title") }}</h2>
+      <h5>{{ t("2fa_security.header_subtitle") }}</h5>
+    </div>
+
+    <div class="alert-box">
+      ⚠️ <strong>{{ t("2fa_security.alert_warning_title") }}</strong><br />
+      {{ t("2fa_security.alert_warning_text") }}
+      <div class="recovery-button">
+        <form class="view-code-form">
+          <input
+            type="button"
+            value="{{ t('2fa_security.alert_view_recovery') }}"
+            class="view-code-btn"
+            id="openRecoveryModal"
+          />
+        </form>
+      </div>
+    </div>
+
+    <h2>{{ t("2fa_security.providers_title") }}</h2>
+    <div class="provider-card">
+      <div class="provider-left">
+        <img
+          src="{{ url_for('static', filename='img/authenticator_app.png') }}"
+          alt="{{ t('2fa_security.provider_app_title') }}"
+          class="provider-icon"
+        />
+      </div>
+
+      <div class="provider-main">
+        <div class="provider-info">
+          <h5>{{ t("2fa_security.provider_app_title") }}</h5>
+          <p>{{ t("2fa_security.provider_app_desc") }}</p>
+        </div>
+      </div>
+
+      <div class="provider-action">
+        <input type="button" value="{{ t('2fa_security.provider_manage') }}" class="manage-btn" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Recovery Codes Modal (hidden by default) ===== -->
+<div id="recoveryModal" class="recovery-modal" aria-hidden="true">
+  <div class="recovery-card" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
+    <button class="recovery-close" id="closeRecovery" aria-label="Close">×</button>
+    <h3 id="recoveryTitle" class="recovery-title">{{ t("2fa_security.recovery_modal_title") }}</h3>
+    <p class="recovery-note">{{ t("2fa_security.recovery_modal_note") }}</p>
+    <ul id="recoveryList" class="recovery-list"></ul>
+    <div class="recovery-error" id="recoveryError">{{ t("2fa_security.recovery_modal_error") }}</div>
+    <div class="recovery-actions">
+      <button class="btn btn-primary" id="downloadCodes">{{ t("2fa_security.recovery_modal_download") }}</button>
+      <button class="btn btn-secondary" id="closeRecoveryBottom">{{ t("2fa_security.recovery_modal_close") }}</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const openBtn   = document.getElementById('openRecoveryModal');
+    const modal     = document.getElementById('recoveryModal');
+    const closeTop  = document.getElementById('closeRecovery');
+    const closeBot  = document.getElementById('closeRecoveryBottom');
+    const listEl    = document.getElementById('recoveryList');
+    const errEl     = document.getElementById('recoveryError');
+    const dlBtn     = document.getElementById('downloadCodes');
+
+    let lastCodes = [];
+
+    function openModal() {
+      modal.style.display = 'block';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      // optional: clear list for next time
+      // listEl.innerHTML = '';
+    }
+    function renderCodes(codes) {
+      listEl.innerHTML = '';
+      codes.forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'recovery-code';
+        li.textContent = c;
+        listEl.appendChild(li);
+      });
+    }
+    function fetchCodes() {
+      errEl.style.display = 'none';
+      fetch('{{ url_for("setting_issue_backup_codes") }}', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'fetch' },
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.ok) throw new Error(data.error || 'Failed to fetch codes');
+        lastCodes = data.codes || [];
+        renderCodes(lastCodes);
+      })
+      .catch(e => {
+        errEl.textContent = e.message || 'Something went wrong.';
+        errEl.style.display = 'block';
+        listEl.innerHTML = '';
+      });
+    }
+    function downloadTxt() {
+      if (!lastCodes.length) return;
+      const blob = new Blob(
+        ["NeighbourlyNest Recovery Codes\n\n", ...lastCodes.map(c => c + "\n")],
+        { type: "text/plain;charset=utf-8" }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'NeighbourlyNest_Recovery_Codes.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    if (openBtn) {
+      openBtn.addEventListener('click', () => {
+        openModal();
+        fetchCodes();  // generate + show once
+      });
+    }
+    if (closeTop)  closeTop.addEventListener('click', closeModal);
+    if (closeBot)  closeBot.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    }
+    if (dlBtn) dlBtn.addEventListener('click', downloadTxt);
+  })();
+</script>
+{% endblock %}

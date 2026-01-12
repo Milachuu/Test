@@ -1,0 +1,114 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | 2FA Verification{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='verify_2fa.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="two_fa-wrapper">
+  <div class="two_fa-container">
+    <h1>Enter your code</h1>
+    <p class="otp-txt">Enter the 6-digit code from your authenticator app</p>
+    <p class="two-fa-txt">2FA Code:</p>
+
+    <form method="POST">
+      <input type="hidden" name="action" value="otp" />
+      <input
+        type="text"
+        id="otpInput"
+        name="otpInput"
+        pattern="\d{6}"
+        title="Please enter a 6-digit numeric code."
+        maxlength="6"
+        placeholder="123456"
+        required
+      >
+      {% if message %}
+      <p class="flash-message">{{ message }}</p>
+      {% endif %}
+      <input type="submit" value="Submit" class="submit-btn">
+    </form>
+
+    <div class="backup-entry-ctn">
+      <button type="button" class="backup-entry-btn" id="openBackupModal">
+        Use Backup Recovery Code
+      </button>
+      <p class="backup-entry-hint">
+        Lost your authenticator app? Use one of your one-time recovery codes instead.
+      </p>
+    </div>
+
+    <a href="/"><button class="back-btn">Back</button></a>
+  </div>
+
+  <div class="gradient-wrapper">
+    <div class="bubble"></div>
+    <div class="circles">
+      <div class="circle-main"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Spacer to keep content above fixed footer -->
+<div class="footer-spacer" aria-hidden="true"></div>
+
+<!-- ===== Hidden Backup Code Modal ===== -->
+<div id="backupModal" class="backup-modal" aria-hidden="true">
+  <div class="backup-modal-content" role="dialog" aria-modal="true" aria-labelledby="backupTitle">
+    <button class="backup-close" id="closeBackupModal" aria-label="Close">×</button>
+    <h3 id="backupTitle">Use a Backup Recovery Code</h3>
+    <p class="backup-desc">
+      Enter one of your unused backup recovery codes. Each code can be used <strong>only once</strong>.
+    </p>
+
+    <form method="POST" class="backup-form">
+      <input type="hidden" name="action" value="backup" />
+      <input
+        type="text"
+        name="backup_code"
+        class="backup-input"
+        maxlength="20"
+        placeholder="E.g. 7F3K9P28QD"
+        required
+      >
+      <button type="submit" class="backup-submit">Verify with Backup Code</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  const openBtn = document.getElementById('openBackupModal');
+  const modal = document.getElementById('backupModal');
+  const closeBtn = document.getElementById('closeBackupModal');
+
+  if (!openBtn || !modal || !closeBtn) return;
+
+  function openModal() {
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden', 'false');
+    closeBtn.focus();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+})();
+</script>
+{% endblock %}

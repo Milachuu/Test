@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Feedback List{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='feedback_list.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="fbk-wrap">
+  <div class="fbk-head">
+    <a href="{{ url_for('dashboard') }}" class="btn back-btn">Back</a>
+
+    <div class="title-group">
+      <h1 class="fbk-title">Feedback List</h1>
+      <p class="fbk-sub">
+        {% if count == 0 %}
+          There are no feedback.
+        {% elif count == 1 %}
+          There is 1 feedback.
+        {% else %}
+          There are {{ count }} feedbacks.
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="fbk-tools">
+      <div class="input-shell">
+        <span class="material-symbols-outlined search-ic">search</span>
+        <input id="fbkSearch" type="text" placeholder="Search name, email or message…" />
+      </div>
+      <button id="fbkClear" class="btn ghost">Clear</button>
+    </div>
+  </div>
+
+  <div class="fbk-card">
+    <div class="table-wrap">
+      <table class="fbk-table" id="fbkTable">
+        <thead>
+          <tr>
+            <th>Feedback ID</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for info in feedbacklist %}
+          <tr>
+            <td data-label="Feedback ID">{{ info[0] }}</td>
+            <td data-label="Name">{{ info[1] }}</td>
+            <td data-label="E-mail">{{ info[2] }}</td>
+            <td data-label="Message">{{ info[3] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // tiny client-side filter (searches name, email, message)
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('fbkSearch');
+    const clear = document.getElementById('fbkClear');
+    const rows  = Array.from(document.querySelectorAll('#fbkTable tbody tr'));
+
+    function applyFilter() {
+      const q = (input.value || '').toLowerCase().trim();
+      rows.forEach(tr => {
+        const text = tr.innerText.toLowerCase();
+        tr.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    input.addEventListener('input', applyFilter);
+    clear.addEventListener('click', () => { input.value = ''; applyFilter(); });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}{{ t("reward.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='reward.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-m4">
+  <div class="search-container">
+    <form action="{{ url_for('search') }}" method="GET" class="search-form">
+      <input type="text"
+             name="query"
+             placeholder="{{ t('reward.search_placeholder') }}"
+             class="search-input form-control"
+             id="searchInput">
+      <button type="button" class="btn btn-success btn-search" id="clearButton">
+        {{ t('reward.clear') }}
+      </button>
+    </form>
+  </div>
+
+  <div class="reward-ctn">
+    <h3>{{ t('reward.redeem_points') }}</h3>
+    <div class="points">
+      <h4>{{ points[0] }} {{ t('reward.points_label') }}</h4>
+      <img src="{{ url_for('static', filename='img/points.png') }}" id="redeem_star" alt="points">
+    </div>
+  </div>
+
+  <div class="grid-container" id="itemsContainer">
+    <!-- NTUC -->
+    <div class="card reward-card" data-name="{{ t('reward.ntuc_voucher')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/fairprice_padded_1280x720.jpg') }}" alt="NTUC">
+      </div>
+      <h2>{{ t('reward.ntuc_voucher') }}</h2>
+      <div class="point-ctn">
+        <img src="{{ url_for('static', filename='img/points.png') }}" id="redeem_star" alt="points">
+        <div class="points_worth">{{ t('reward.points_required') }}</div>
+      </div>
+      <a href="/reward/10-ntuc-fairprice-e-voucher" class="button">{{ t('reward.select') }}</a>
+    </div>
+
+    <!-- Koufu -->
+    <div class="card reward-card" data-name="{{ t('reward.koufu_voucher')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/Koufu_1280x720.jpg') }}" alt="Koufu">
+      </div>
+      <h2>{{ t('reward.koufu_voucher') }}</h2>
+      <div class="point-ctn">
+        <img src="{{ url_for('static', filename='img/points.png') }}" id="redeem_star" alt="points">
+        <div class="points_worth">{{ t('reward.points_required') }}</div>
+      </div>
+      <a href="/reward/10-koufu-e-voucher" class="button">{{ t('reward.select') }}</a>
+    </div>
+
+    <!-- UNIQGIFT -->
+    <div class="card reward-card" data-name="{{ t('reward.uniqgift_voucher')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/10_UNIQGIFT-eGiftcard.jpg') }}" alt="UNIQGIFT">
+      </div>
+      <h2>{{ t('reward.uniqgift_voucher') }}</h2>
+      <div class="point-ctn">
+        <img src="{{ url_for('static', filename='img/points.png') }}" id="redeem_star" alt="points">
+        <div class="points_worth">{{ t('reward.points_required') }}</div>
+      </div>
+      <a href="/reward/e-voucher-uniqgift" class="button">{{ t('reward.select') }}</a>
+      <a href="https://uniqgiftvoucher.com/egiftcard/" target="_blank" class="uniq_link">
+        {{ t('reward.uniqgift_link')|safe }}
+      </a>
+    </div>
+
+    <!-- Coming soon cards -->
+    <div class="card reward-card" data-name="{{ t('reward.coming_soon')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/giftcard_1280x720.png') }}" alt="coming-soon">
+      </div>
+      <h1>{{ t('reward.coming_soon') }}</h1>
+    </div>
+    <div class="card reward-card" data-name="{{ t('reward.coming_soon')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/giftcard_1280x720.png') }}" alt="coming-soon">
+      </div>
+      <h1>{{ t('reward.coming_soon') }}</h1>
+    </div>
+    <div class="card reward-card" data-name="{{ t('reward.coming_soon')|lower }}">
+      <div class="cardimg-ctn">
+        <img src="{{ url_for('static', filename='img/giftcard_1280x720.png') }}" alt="coming-soon">
+      </div>
+      <h1>{{ t('reward.coming_soon') }}</h1>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
+    const itemsContainer = document.getElementById("itemsContainer");
+    const items = Array.from(itemsContainer.getElementsByClassName("reward-card"));
+
+    // Filter by translated card titles stored in data-name
+    searchInput.addEventListener("input", () => {
+      const q = searchInput.value.toLowerCase().trim();
+      items.forEach(item => {
+        const name = item.dataset.name || "";
+        item.style.display = name.includes(q) ? "" : "none";
+      });
+    });
+
+    clearButton.addEventListener("click", () => {
+      searchInput.value = "";
+      items.forEach(item => item.style.display = "");
+    });
+  });
+</script>
+{% endblock %}

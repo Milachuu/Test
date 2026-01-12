@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ t("wishlists.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='wishlist.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 wishlist-container">
+    <a href="/create_wantlist">
+      <button class="create-wishlist-btn">
+        {{ t("wishlists.create_btn") }}
+      </button>
+    </a>
+
+    <div class="favorites-container">
+        <h2>{{ t("wishlists.favorited_listings") }}</h2>
+        <div class="row row-cols-1 row-cols-md-5 g-4 favorite-listings" id="favoritesContainer">
+
+            {% for listing in favourited_listings %}
+                <div class="col" data-name="{{ listing[2] | lower }}">
+                    <div class="card listing-card" data-id="{{ listing[0] }}">
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i> {{ listing[1] }}
+                        </div>
+                        <img 
+                          src="{{ url_for('static', filename= listing[4]) if listing[4] else url_for('static', filename='uploads/placeholder.png') }}" 
+                          class="card-img-top listing-image" 
+                          alt="{{ listing[2] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing[2] }}</h5>
+                            <p class="card-text description">{{ listing[3] }}</p>
+                        </div>
+                        <div class="favorite-btn">
+                            <i 
+                              class="material-icons favorite-icon" 
+                              style="font-size:36px; color:red;" 
+                              onclick="removeFavorite('{{ listing[0] }}')"
+                            >favorite</i>
+                        </div>
+                    </div>
+                </div>
+        
+            {% else %}
+                <p>{{ t("wishlists.empty") }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function removeFavorite(listingId) {
+    fetch(`/favorite/${listingId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove' })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('{{ t("wishlists.remove_failed") }}');
+        }
+    });
+}
+</script>
+{% endblock %}

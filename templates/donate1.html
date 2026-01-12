@@ -1,0 +1,94 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | Donate{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='donate1.css') }}">
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('donate1') }}" method="POST">
+    <label class="donateLabel">Donate Now</label>
+    <fieldset>
+        <header class="formHeader">Mandatory fields are indicated with an asterisk (*)</header>
+        <label class="keyLabels">Please indicate chosen payment method <span class="required">*</span></label><br>
+        <input type="button" class="paymentMethod" value="Credit Card" id="creditForm" onclick="showCreditForm()">
+        <input type="button" class="paymentMethod" value="Other" id="otherForm" onclick="showOtherForm()"><br><br>
+
+        <div id="otherPaymentOptions" style="display: none;">
+            <label class="keyLabels">Other Payment Methods</label><br>
+            <div class="other-payment-cards">
+                <div class="payment-card">
+                    <span class="other-info-header">PayNow QR</span><br>
+                    <img src="\static\img\paynow qr.png">
+                    <span class="other-info">Scan the QR code on the left to make your donation. UEN: A12BC3456D. Please indicate the UEN within the transaction so that we can process it as a donation.</span>
+                </div><br>
+                <div class="payment-card">
+                    <span class="other-info-header">Cheque</span><br>
+                    <img src="\static\img\cheque.png">
+                    <span class="other-info">Please make your cheque payable to NeighbourlyNest and mail it to our headquarters. To ensure prompt processing, please indicate [Your Name/ Donation Purpose] on the back of the cheque.</span>
+                </div><br>
+                <div class="payment-card">
+                    <span class="other-info-header">Bank Transfer</span><br>
+                    <img src="\static\img\mobile-banking.png">
+                    <span class="other-info">Make your donation via bank transfer to: POSB -- NeighbourlyNest  987-65432-1. Please include [Your Name/ Donation Purpose] in the transaction details so we can identify your donation.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="creditForm" style="display: block;">
+            <label class="keyLabels">Please specify donation type <span class="required">*</span></label>
+            <div class="donation-type-group">
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="individual" class="buttonsLeft" onclick="showDonationType('individual')">
+                    <span><a href="/donate">Individual</a></span>
+                </label>
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="corporate">
+                    <span><a href="/donate">Corporate</a></span>
+                </label>
+                <label class="donation-type-button">
+                    <input type="radio" name="donation_type" value="anonymous" onclick="showDonationType('anonymous')">
+                    <span>Anonymous</span>
+                </label>
+            </div><br><br>
+            <label class="fieldLabelsTop">Please indicate donation amount <span class="required">*</span></label>
+            <div class="donation-amount" id="individual-amount">
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="10" class="buttonsLeft">$10
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="30">$30
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="50">$50
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="100">$100
+                </label>
+                <label class="amount-option" onclick="selectDonation(this)">
+                    <input type="radio" name="donation_amount" value="other">Other Amount
+                    <input type="number" name="other_amount_value" class="otherAmount" placeholder="Amount">
+                </label>
+            </div>
+            <!-- corporate and anonymous sections same as above -->
+            <div><br>
+                <label class="sectionLabels">Declaration</label><br>
+            </div>
+            <div class="declaration">
+                <span class="fieldLabels">By submitting this form,</span><br><br>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="acknowledgement" id="acknowledgement" value="ack-yes" required>
+                    <label for="acknowledgement" class="declaration-checkboxes" id="ackCheckbox">I acknowledge that the information I have provided in this form is accurate and complete. I understand that my donation is made in support of NeighbourlyNest and will be used solely for that purpose, and I understand that information provided may be used to process this donation but will not be disclosed to any third parties under any and all circumstances.</label><br><br><br><br>
+                </div>
+                <input type="checkbox" name="promotions" id="promotions" value="promo-yes">
+                <label for="promotions" class="declaration-checkboxes">
+                    I would like to receive email updates about news, promotions, and events.
+                </label>
+            </div><br><br>
+            <div class="submitButton">
+                <input type="submit" class="submit" value="Submit">
+            </div>
+        </div>
+    </fieldset>
+</form>
+{% endblock %}

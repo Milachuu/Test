@@ -1,0 +1,32 @@
+/* Index.html */
+.welcome{
+    display: flex;
+    justify-content: center;
+    
+  }
+  
+  .welcome h2{
+    padding-top: 5%;
+    font-size: 60px;
+    color: #0EA89A;
+    font-weight: 400;
+    text-align: center;
+  }
+  
+  .welcome p{
+    font-size: 25px;
+    text-align: center;
+  }
+  
+  .webpage_images{
+    width: 516px;
+    height: 823px;
+    border-radius: 20px;
+    padding-left: 120px;
+  }
+  
+  .neighbour-img {
+    width: 100%;
+    padding-top: 50px;
+  }
+  

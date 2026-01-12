@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}User Chat{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='userchat.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="userchat-page">
+  <div class="userchat-app">
+
+    <!-- HEADER -->
+    <header class="userchat-header" aria-label="Chat header">
+      <div class="userchat-header-left">
+        <div class="userchat-avatar" aria-hidden="true">★</div>
+        <div class="userchat-username">Zoe_Farrell</div>
+      </div>
+
+      <div class="userchat-header-actions" aria-label="Window controls">
+        <span class="userchat-header-action" aria-hidden="true">—</span>
+        <span class="userchat-header-action" aria-hidden="true">✕</span>
+      </div>
+    </header>
+
+    <!-- MESSAGES -->
+    <main class="userchat-messages" aria-label="Chat messages">
+      <div class="userchat-message userchat-message-incoming">
+        Hello! I saw your listing for the Zojirushi rice cooker...may i check if its still available?
+      </div>
+
+      <div class="userchat-message userchat-message-outgoing">
+        Yes it is! Can we meet at Ang mo kio mrt, at 2pm tmr?
+      </div>
+
+      <div class="userchat-message userchat-message-incoming">
+        Okay! See you there!
+      </div>
+    </main>
+
+    <!-- INPUT (static UI only) -->
+    <footer class="userchat-input-bar" aria-label="Message input">
+      <input
+        class="userchat-input"
+        type="text"
+        placeholder="Type your message here"
+        disabled
+        aria-disabled="true"
+      />
+      <button class="userchat-send-btn" type="button" aria-label="Send" disabled>
+        ➤
+      </button>
+    </footer>
+
+  </div>
+</div>
+{% endblock %}

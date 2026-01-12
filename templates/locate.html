@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% block title %}{{ t('locate.title') }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='locate.css') }}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<form class="locateForm">
+  <img src="/static/img/locate bg.png" id="locateBgElement" alt="{{ t('locate.banner_alt') }}"><br />
+  <label id="locateTitle">{{ t('locate.where_to_find') }}</label>
+  <fieldset>
+    <select id="locationSelect" aria-label="{{ t('locate.select_region_aria') }}">
+      <option value="" selected disabled>{{ t('locate.select_region') }}</option>
+      <option value="North">{{ t('locate.region_north') }}</option>
+      <option value="East">{{ t('locate.region_east') }}</option>
+      <option value="West">{{ t('locate.region_west') }}</option>
+      <option value="Central">{{ t('locate.region_central') }}</option>
+      <option value="Northeast">{{ t('locate.region_northeast') }}</option>
+      <option value="South">{{ t('locate.region_south') }}</option>
+      <option value="Southeast">{{ t('locate.region_southeast') }}</option>
+      <option value="Northwest">{{ t('locate.region_northwest') }}</option>
+    </select>
+  </fieldset>
+</form>
+
+<div id="locateResults">
+  <button class="resultsButton" data-type="E-recycling Bin" type="button">{{ t('locate.filter_erecycling') }}</button>
+  <button class="resultsButton" data-type="Recycling Bin" type="button">{{ t('locate.filter_recycling') }}</button>
+  <button id="locateMeBtn" class="resultsButton" type="button">{{ t('locate.use_my_location') }}</button>
+</div>
+
+<div class="locateContentWrapper">
+  <div id="locationsContainer">
+    <h4 id="resultCount" style="display: none;"></h4>
+    {% for bin_id, bin in bins.items() %}
+      <div class="location-card {{ bin.region }} {{ bin.type|replace(' ', '_') }}"
+           data-lat="{{ bin.latitude }}"
+           data-lng="{{ bin.longitude }}"
+           data-name="{{ bin.name }}">
+        <img src="/static/img/{% if bin.type == 'E-recycling Bin' %}ewaste.png{% else %}waste.png{% endif %}"
+             class="wasteType" alt="{{ t('locate.bin_type_icon_alt') }}">
+        <p class="binType">{{ bin.type }}</p>
+        <p class="locationName">{{ bin.name }}</p>
+        <p>{{ t('locate.address_label') }}: {{ bin.address }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="map" style="display: none;" role="region" aria-label="{{ t('locate.map_aria_label') }}"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Data from server
+  const mapBins = {{ bins | tojson | safe }};
+
+  // Localized strings injected once for JS usage
+  const I18N = {
+    showing_results: {{ t('locate.showing_results') | tojson }},
+    showing_results_type: {{ t('locate.showing_results_type') | tojson }},
+    geolocation_not_supported: {{ t('locate.geolocation_not_supported') | tojson }},
+    select_bin_type_first: {{ t('locate.select_bin_type_first') | tojson }},
+    no_bins_found_nearby: {{ t('locate.no_bins_found_nearby') | tojson }},
+    top_closest_bins: {{ t('locate.top_closest_bins') | tojson }},
+    km_away: {{ t('locate.km_away') | tojson }}
+  };
+
+  const mapDiv = document.getElementById('map');
+  const resultCountEl = document.getElementById('resultCount');
+  const locationSelect = document.getElementById('locationSelect');
+  const filterButtons = Array.from(document.querySelectorAll('.resultsButton'));
+  const locateMeBtn = document.getElementById('locateMeBtn');
+
+  const allMarkers = [];
+  const markerMap = {};
+  let mapInitialized = false;
+  let map;
+  let currentRegion = '';
+  let currentType = '';
+
+  const recycleIcon = L.icon({
+    iconUrl: '/static/img/normalwaste_marker.png',
+    iconSize: [35, 45],
+    iconAnchor: [17, 45],
+    popupAnchor: [0, -40]
+  });
+
+  const ewasteIcon = L.icon({
+    iconUrl: '/static/img/ewaste_marker.png',
+    iconSize: [35, 45],
+    iconAnchor: [17, 45],
+    popupAnchor: [0, -40]
+  });
+
+  function setActiveButton(btn) {
+    filterButtons.forEach(b => { if (b.id !== 'locateMeBtn') b.classList.remove('active'); });
+    if (btn && btn.id !== 'locateMeBtn') btn.classList.add('active');
+  }
+
+  function clearMapMarkers() {
+    allMarkers.forEach(marker => map.removeLayer(marker));
+    allMarkers.length = 0;
+    Object.keys(markerMap).forEach(key => delete markerMap[key]);
+  }
+
+  function ensureMap() {
+    if (!mapInitialized) {
+      map = L.map('map').setView([1.3521, 103.8198], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      mapInitialized = true;
+    }
+    mapDiv.style.display = 'block';
+    setTimeout(() => map.invalidateSize(), 60);
+  }
+
+  function updateView() {
+    const cards = document.querySelectorAll('.location-card');
+    cards.forEach(card => card.style.display = 'none');
+    if (mapInitialized) clearMapMarkers();
+
+    if (!currentRegion && !currentType) {
+      resultCountEl.style.display = 'none';
+      mapDiv.style.display = 'none';
+      return;
+    }
+
+    const selectedCards = [...cards].filter(card => {
+      const regionOK = !currentRegion || card.classList.contains(currentRegion);
+      const typeOK = !currentType || card.classList.contains(currentType.replace(' ', '_'));
+      return regionOK && typeOK;
+    });
+    selectedCards.forEach(card => card.style.display = 'block');
+
+    const visibleCount = selectedCards.length;
+    if (currentType) {
+      // "{count} results for {region} - {type}"
+      resultCountEl.textContent = I18N.showing_results_type
+        .replace("{count}", visibleCount)
+        .replace("{region}", currentRegion)
+        .replace("{type}", currentType);
+    } else {
+      // "{count} results for {region}"
+      resultCountEl.textContent = I18N.showing_results
+        .replace("{count}", visibleCount)
+        .replace("{region}", currentRegion);
+    }
+    resultCountEl.style.display = 'block';
+
+    ensureMap();
+    for (const bin of Object.values(mapBins)) {
+      const regionOK = !currentRegion || bin.region === currentRegion;
+      const typeOK = !currentType || bin.type === currentType;
+      if (regionOK && typeOK && bin.latitude && bin.longitude) {
+        const iconToUse = bin.type === 'E-recycling Bin' ? ewasteIcon : recycleIcon;
+        const marker = L.marker([bin.latitude, bin.longitude], { icon: iconToUse })
+          .bindPopup(`<strong>${bin.name}</strong><br>${bin.address}<br><em>${bin.type}</em>`)
+          .addTo(map);
+        allMarkers.push(marker);
+        markerMap[bin.name] = marker;
+      }
+    }
+
+    const latlngs = allMarkers.map(m => m.getLatLng());
+    if (latlngs.length > 0) {
+      const bounds = L.latLngBounds(latlngs);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+
+    selectedCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        const name = card.dataset.name;
+        if (!isNaN(lat) && !isNaN(lng)) {
+          map.setView([lat, lng], 16);
+          const marker = markerMap[name];
+          if (marker) marker.openPopup();
+        }
+      }, { once: true });
+    });
+  }
+
+  function showLocations() {
+    currentRegion = locationSelect.value;
+    currentType = '';
+    setActiveButton(null);
+    updateView();
+  }
+
+  function filterBins(binType, btn) {
+    currentType = binType;
+    setActiveButton(btn);
+    updateView();
+  }
+
+  // Haversine for distance
+  function haversine(lat1, lon1, lat2, lon2) {
+    const toRad = x => x * Math.PI / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2)**2;
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function findClosestBin() {
+    if (!navigator.geolocation) {
+      alert(I18N.geolocation_not_supported);
+      return;
+    }
+    if (!currentType) {
+      alert(I18N.select_bin_type_first);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(position => {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+
+      const candidates = [];
+      for (const bin of Object.values(mapBins)) {
+        if (currentType && bin.type !== currentType) continue;
+        if (bin.latitude && bin.longitude) {
+          const distance = haversine(userLat, userLng, bin.latitude, bin.longitude);
+          candidates.push({ ...bin, distance });
+        }
+      }
+      if (!candidates.length) {
+        alert(I18N.no_bins_found_nearby.replace("{bin_type}", currentType));
+        return;
+      }
+
+      candidates.sort((a, b) => a.distance - b.distance);
+      const topBins = candidates.slice(0, 3);
+
+      let msg = I18N.top_closest_bins
+        .replace("{n}", topBins.length)
+        .replace("{bin_type}", currentType) + "\n";
+      topBins.forEach((bin, i) => {
+        msg += `${i + 1}. ${bin.name} (${bin.distance.toFixed(2)} km)\n`;
+      });
+      alert(msg);
+
+      ensureMap();
+      clearMapMarkers();
+      const latlngs = [];
+
+      topBins.forEach(bin => {
+        const iconToUse = bin.type === 'E-recycling Bin' ? ewasteIcon : recycleIcon;
+        const marker = L.marker([bin.latitude, bin.longitude], { icon: iconToUse })
+          .bindPopup(
+            `<strong>${bin.name}</strong><br>${bin.address}<br><em>${bin.type}</em><br>` +
+            I18N.km_away.replace("{distance}", bin.distance.toFixed(2))
+          )
+          .addTo(map)
+          .openPopup();
+        allMarkers.push(marker);
+        markerMap[bin.name] = marker;
+        latlngs.push([bin.latitude, bin.longitude]);
+      });
+
+      if (latlngs.length) {
+        const bounds = L.latLngBounds(latlngs);
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, () => {
+      alert(I18N.unable_to_retrieve_location || "Unable to retrieve your location.");
+    });
+  }
+
+  // Events
+  locationSelect.addEventListener('change', showLocations);
+
+  filterButtons.forEach(btn => {
+    if (btn.id === 'locateMeBtn') return;
+    btn.addEventListener('click', () => {
+      const type = btn.getAttribute('data-type') || '';
+      filterBins(type, btn);
+    });
+  });
+
+  locateMeBtn.addEventListener('click', () => findClosestBin());
+</script>
+{% endblock %}

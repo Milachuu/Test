@@ -1,0 +1,42 @@
+    .mission-img{
+        width: 100%;
+        height: 280px;
+    }
+    .mission-text h1{
+        padding-top: 5%;
+        font-size: 300%;
+        color: #0EA89A;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .mission-text h2{
+        font-size: 200%;
+        color: #0EA89A;
+        font-weight: 400;
+        text-align: center;
+    }
+
+    .mission-section{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: center;
+    }
+
+    .mission-section img{
+        height: 100px;
+    }
+
+    .txt-emphasise{
+        color: red;
+    }
+
+    .mission-section p{
+        width: 300px;
+        margin-left: 70px;
+    }
+
+    #mission-img {
+    height: 250px;
+    }

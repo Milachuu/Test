@@ -1,0 +1,581 @@
+/* ─── Universal Styling ─── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ─── After Login Navigation ─── */
+
+/* Logo Styling */
+.logo {
+  width: 300px;
+  cursor: pointer;
+  vertical-align: middle;
+  height: auto;
+}
+
+/* Navigation Bar */
+.menu__bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  border-bottom: 1pt solid #ccc;
+  z-index: 2000;
+}
+.menu__bar nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* logo left, actions right */
+  padding: 15px 30px;
+  gap: 24px;                       /* small breathing room */
+}
+
+/* >>> Fixed nav spacing: use gap, not margins <<< */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 90px;             /* controls spacing between links */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 0 0 auto;        /* don’t stretch across bar */
+}
+.nav-links li { margin: 0; padding: 0; }
+.nav-links li a {
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: black;
+  margin: 0;             /* kill old margins that caused drift */
+  padding: 6px 2px;      /* small hit area without pushing layout */
+}
+.nav-links li a:hover { color: #0EA89A; }
+
+/* Active state (optional) */
+.nav-links li a.active {
+  color: #0EA89A;
+  border-bottom: 2px solid #0EA89A;
+}
+
+/* User Actions Section */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.material-symbols-outlined { font-size: 24px; }
+.notification-icon,
+.chat-icon { cursor: pointer; font-size: 24px; }
+
+/* Submenu */
+.sub-menu-wrap {
+  position: absolute;
+  top: 100%;
+  right: 7%;
+  width: 300px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s;
+  z-index: 2500;
+}
+.sub-menu-wrap.open-menu { max-height: 600px; }
+
+.submenu {
+  background: #fff;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px 10px 0 0;
+}
+
+.user-infos { display: flex; align-items: center; }
+.profile-text { margin-left: 8px; }
+
+.user-info #account_circle {
+  width: 40px;
+  margin-bottom: 12px;
+  color: black;
+}
+
+.submenu .borrow-text,
+.submenu .account-text {
+  color: rgba(0, 0, 0, 0.5);
+  margin: 16px 0 8px;
+}
+
+.sub-menu-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #000;
+  margin: 20px 0;
+  gap: 8px;
+}
+.sub-menu-link:hover span,
+.sub-menu-link:hover p { color: #0EA89A; }
+
+.sub-menu-link .material-symbols-outlined {
+  padding: 8px;
+  font-size: 20px;
+}
+
+#chat-link { text-decoration: none; color: black; padding-top: 7px; }
+
+/* ─── Nested Language Submenu ─── */
+.language-wrapper { position: relative; }
+
+.language-link .down-arrow {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+.language-link.open .down-arrow { transform: rotate(180deg); }
+
+.language-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 0;
+  overflow: auto;
+  background: white;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: max-height 0.3s ease;
+  z-index: 2600;
+}
+.language-submenu.open-menu { max-height: 160px; }
+
+.language-option {
+  display: block;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  color: #000;
+}
+.language-option:hover { background: #f2f2f2; }
+
+/* ─── Before Login Navigation ─── */
+.before_menu__bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  border-bottom: 1pt solid #ccc;
+  z-index: 2000;
+}
+.before_menu__bar nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+.before_nav-links {
+  display: flex;
+  align-items: center;
+  gap: 200px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.before_nav-links li { margin: 0; padding: 0; }
+.before_nav-links li a {
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #0EA89A;
+}
+.before_nav-links li a:hover { color: #054d47; }
+
+.before_user-section a { text-decoration: none; color: black; }
+.before_user-section a span { vertical-align: middle; padding-left: 10px; }
+
+/* ─── Footer ─── */
+.footer { background-color: #0EA89A; }
+.footer p {
+  font-family: "Ovo", serif;
+  color: white;
+  text-align: center;
+  font-size: 1.4rem;
+  padding-top: 50px;
+  margin: 0; /* prevent extra space at bottom */
+}
+
+/* ─── Footer Newsletter ─── */
+.newsletter { display: flex; justify-content: center; }
+.newsletter .input {
+  flex: 0.5;
+  padding: 20px;
+  border: 3px solid #EB5444;
+  border-right: none;
+  font-size: 16px;
+}
+.newsletter button {
+  background-color: #EB5444;
+  color: white;
+  border: 3px solid #EB5444;
+  border-radius: 0 5px 5px 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.newsletter button:hover { background-color: #D43F34; }
+.newsletter .input::placeholder {
+  color: #EB5444;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* ─── Footer Social Links ─── */
+.social-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.social-container p { font-size: 1.1rem; margin-bottom: 5px; }
+.left-ctn .social-links, .right-ctn .social-links { padding-left: 20px; }
+.left-ctn .social-links a, .right-ctn .social-links a { padding-left: 10px; }
+.right-ctn p { padding-left: 25px; }
+
+/* ─── Before Login Homepage ─── */
+.welcome h2 {
+  padding-top: 5%;
+  font-size: 60px;
+  color: #0EA89A;
+  font-weight: 400;
+  text-align: center;
+}
+.welcome p { font-size: 25px; text-align: center; }
+
+.webpage_images {
+  width: 516px;
+  height: 823px;
+  border-radius: 20px;
+  padding-left: 120px;
+}
+.neighbour-img { width: 100%; padding-top: 50px; }
+
+/* ─── Chatbot ─── */
+.chatbot-toggler {
+  position: fixed;
+  right: 40px;
+  bottom: 35px;
+  height: 50px;
+  width: 50px;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  background: #0EA89A;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 1800;
+}
+.show-chatbot .chatbot-toggler { transform: rotate(90deg); }
+.chatbot-toggler span { position: absolute; }
+.show-chatbot .chatbot-toggler span:first-child,
+.chatbot-toggler span:last-child { opacity: 0; }
+.show-chatbot .chatbot-toggler span:last-child { opacity: 1; }
+
+.chatbot {
+  position: fixed;
+  right: 40px;
+  bottom: 100px;
+  width: 420px;
+  transform: scale(0.5);
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  background-color: white;
+  border-radius: 15px;
+  transform-origin: bottom right;
+  filter: drop-shadow(0 0 24px rgba(0,0,0,0.12));
+  transition: all 0.1s ease;
+  z-index: 1700;
+}
+.show-chatbot .chatbot {
+  transform: scale(1);
+  pointer-events: auto;
+  opacity: 1;
+}
+.chatbot header {
+  background-color: #0EA89A;
+  padding: 16px 0;
+  text-align: center;
+  position: relative;
+}
+.chatbot header h2 { color: #fff; font-size: 1.4rem; }
+.chatbot header span {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: none;
+  transform: translateY(-50%);
+}
+.chatbot .chatbox { height: 510px; overflow-y: auto; padding: 30px 20px 100px; }
+
+.chatbox .chat { display: flex; }
+.chatbox .incoming span {
+  height: 32px;
+  width: 32px;
+  color: #fff;
+  align-self: flex-end;
+  background: #0EA89A;
+  text-align: center;
+  line-height: 32px;
+  border-radius: 4px;
+  margin: 0 10px 20px 0;
+}
+.chatbox .outgoing { margin: 20px 0; justify-content: flex-end; }
+.chatbox .chat p {
+  color: #fff;
+  max-width: 75%;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border-radius: 10px 10px 0 10px;
+  background: #0EA89A;
+}
+.chatbox .chat p.error { color: #721c24; background: #f8d7da; }
+.chatbox .incoming p { color: #000; background: #f2f2f2; }
+
+.chatbot .chat-input {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  background: #fff;
+  padding: 5px 20px;
+  border-top: 1px solid #ccc;
+}
+.chat-input textarea {
+  height: 55px;
+  width: 100%;
+  border: none;
+  outline: none;
+  max-height: 180px;
+  font-size: 0.95rem;
+  resize: none;
+  padding: 16px 15px 16px 0;
+}
+.chat-input span {
+  align-self: flex-end;
+  height: 55px;
+  line-height: 55px;
+  color: #0EA89A;
+  font-size: 1.35rem;
+  cursor: pointer;
+  visibility: hidden;
+}
+.chat-input textarea:valid ~ span { visibility: visible; }
+
+@media (max-width: 490px) {
+  .chatbot { right: 0; bottom: 0; width: 100%; height: 100%; border-radius: 0; }
+  .chatbot .chatbox { height: 90%; }
+  .chatbot header span { display: block; }
+}
+
+/* ─── Retrieve_user_info Page ─── */
+.recycling { background-image: url(../static/img/Acts_of_Recycling.png); height: 250px; }
+#search_bar { width: 1000px; height: 30px; }
+.retrieve { margin-left: 50px; }
+.retrieve_table { width: 800px; height: 150px; margin-left: 50px; }
+.retrieve_table .table_header,
+.retrieve_table .table_body { text-align: center; }
+
+/* Sticky footer wiring */
+html, body { height: 100%; }
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.main-content { flex: 1 0 auto; padding-top: 2px; }
+.footer { margin-top: auto; }
+.footer p { margin: 0; }
+
+/* Dark Mode Styling */
+html[data-theme="dark"] .logo,
+html[data-theme-effective="dark"] .logo {
+  content: url("/static/img/Dark_Mode_Icon.png");
+  height: auto;
+}
+
+/* ===================== DARK THEME OVERRIDES ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --text: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --brand: #0EA89A;
+  --brand-600: #087c73;
+  --danger: #D43F34;
+  --danger-600: #C32E24;
+  --shadow: 0 8px 20px rgba(0,0,0,.55);
+}
+
+/* page background and text */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ─── NAVIGATION ─── */
+html[data-theme="dark"] .menu__bar,
+html[data-theme-effective="dark"] .menu__bar,
+html[data-theme="dark"] .before_menu__bar,
+html[data-theme-effective="dark"] .before_menu__bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+html[data-theme="dark"] .nav-links li a,
+html[data-theme-effective="dark"] .nav-links li a,
+html[data-theme="dark"] .before_nav-links li a,
+html[data-theme-effective="dark"] .before_nav-links li a {
+  color: var(--text);
+}
+html[data-theme="dark"] .nav-links li a:hover,
+html[data-theme-effective="dark"] .nav-links li a:hover,
+html[data-theme="dark"] .before_nav-links li a:hover,
+html[data-theme-effective="dark"] .before_nav-links li a:hover {
+  color: var(--brand);
+}
+
+/* dropdown / submenus */
+html[data-theme="dark"] .submenu,
+html[data-theme-effective="dark"] .submenu,
+html[data-theme="dark"] .language-submenu,
+html[data-theme-effective="dark"] .language-submenu {
+  background: var(--surface);
+  border: 1px solid var(--border #3a4353); /* fixed var syntax */
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .sub-menu-link,
+html[data-theme-effective="dark"] .sub-menu-link,
+html[data-theme="dark"] .language-option,
+html[data-theme-effective="dark"] .language-option {
+  color: var(--text);
+}
+html[data-theme="dark"] .sub-menu-link:hover span,
+html[data-theme-effective="dark"] .sub-menu-link:hover span,
+html[data-theme="dark"] .sub-menu-link:hover p,
+html[data-theme-effective="dark"] .sub-menu-link:hover p,
+html[data-theme="dark"] .language-option:hover,
+html[data-theme-effective="dark"] .language-option:hover {
+  color: var(--brand);
+  background: var(--surface-2);
+}
+
+/* ─── FOOTER ─── */
+html[data-theme="dark"] .footer,
+html[data-theme-effective="dark"] .footer { background-color: var(--surface); }
+html[data-theme="dark"] .footer p,
+html[data-theme-effective="dark"] .footer p { color: var(--text); }
+html[data-theme="dark"] .newsletter .input,
+html[data-theme-effective="dark"] .newsletter .input {
+  background: var(--surface-2);
+  border-color: var(--danger);
+  color: var(--text);
+}
+html[data-theme="dark"] .newsletter .input::placeholder,
+html[data-theme-effective="dark"] .newsletter .input::placeholder { color: var(--danger); }
+html[data-theme="dark"] .newsletter button,
+html[data-theme-effective="dark"] .newsletter button { background-color: var(--danger); }
+html[data-theme="dark"] .newsletter button:hover,
+html[data-theme-effective="dark"] .newsletter button:hover { background-color: var(--danger-600); }
+
+/* ─── CHATBOT ─── */
+html[data-theme="dark"] .chatbot,
+html[data-theme-effective="dark"] .chatbot { background: var(--surface); color: var(--text); }
+html[data-theme="dark"] .chatbox .chat p,
+html[data-theme-effective="dark"] .chatbox .chat p { background: var(--brand); color: #fff; }
+html[data-theme="dark"] .chatbox .incoming p,
+html[data-theme-effective="dark"] .chatbox .incoming p { background: var(--surface-2); color: var(--text); }
+html[data-theme="dark"] .chat-input,
+html[data-theme-effective="dark"] .chat-input { background: var(--surface); border-top: 1px solid var(--border); }
+html[data-theme="dark"] .chat-input textarea,
+html[data-theme-effective="dark"] .chat-input textarea { background: transparent; color: var(--text); }
+html[data-theme="dark"] .chat-input span,
+html[data-theme-effective="dark"] .chat-input span { color: var(--brand); }
+
+/* ─── RETRIEVE USER INFO PAGE ─── */
+html[data-theme="dark"] .retrieve_table .table_header,
+html[data-theme-effective="dark"] .retrieve_table .table_header,
+html[data-theme="dark"] .retrieve_table .table_body,
+html[data-theme-effective="dark"] .retrieve_table .table_body { color: var(--text); }
+
+/* keep universal hover colors aligned */
+html[data-theme="dark"] a,
+html[data-theme-effective="dark"] a { color: var(--text); }
+html[data-theme="dark"] a:hover,
+html[data-theme-effective="dark"] a:hover { color: var(--brand); }
+
+html[data-theme="dark"] .account-text,
+html[data-theme-effective="dark"] .account-text { color: white; }
+
+html[data-theme="dark"] .borrow-text,
+html[data-theme-effective="dark"] .borrow-text { color: white; }
+
+/* ─── Responsive spacing tweaks ─── */
+@media (max-width: 1100px){
+  .nav-links { gap: 18px; }
+}
+@media (max-width: 900px){
+  .nav-links { gap: 12px; flex-wrap: wrap; }
+}
+
+/* Applies when user chose Large (112) */
+html[data-font="112"] .nav-links li a,
+html[data-font="112"] .before_nav-links li a {
+  font-size: 1.6rem !important;   /* was 1.3rem */
+  font-weight: 600 !important;
+}
+
+html[data-font="112"] .username {
+  font-size: 1.4rem !important;   /* was 1.2rem */
+  font-weight: 600 !important;
+}
+
+html[data-font="112"] .sub-menu-link,
+html[data-font="112"] .language-option {
+  font-size: 1.3rem !important;   /* was 1.1rem */
+  font-weight: 500 !important;
+}
+
+html[data-font="112"] .material-symbols-outlined {
+  font-size: 1.8rem !important;   /* was 1.5rem */
+  vertical-align: middle;
+}
+
+html[data-font="112"] .sub-menu-wrap {
+  font-size: 1.3rem !important;   /* was 1.1rem */
+}
+
+/* Optional: bump general body text a bit more */
+html[data-font="112"] body {
+  font-size: 1.15rem !important;  /* was 1.05rem */
+  line-height: 1.6;               /* improves readability */
+}
+
+#chat {
+  color: black;
+}
+

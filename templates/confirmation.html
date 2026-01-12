@@ -1,0 +1,19 @@
+{% extends "before_base.html" %}
+{% block title %}Confirm Payment{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='confirmation.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <h1 class="confirmation-title">Confirm Payment</h1>
+        <p class="confirmation-message">We have successfully received your donation.</p>
+        <p class="confirmation-details">Your contribution makes a difference. We appreciate your generosity and support.</p>
+        <div class="confirmation-actions">
+            <a href="/" class="btn btn-primary">Return to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}{{ t("events.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='events.css') }}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<form class="eventsForm">
+  <img src="{{ url_for('static', filename='img/event.png') }}" id="eventsBgElement" alt="{{ t('events.banner_alt') }}"><br />
+  <label id="eventsTitle">{{ t('events.upcoming_events') }}</label>
+  <fieldset>
+    <select id="eventregionSelect" onchange="filterRegion()">
+      <option value="" selected disabled>{{ t("events.select_region") }}</option>
+      <option value="North">{{ t("events.region_north") }}</option>
+      <option value="East">{{ t("events.region_east") }}</option>
+      <option value="West">{{ t("events.region_west") }}</option>
+      <option value="Central">{{ t("events.region_central") }}</option>
+      <option value="Northeast">{{ t("events.region_northeast") }}</option>
+      <option value="South">{{ t("events.region_south") }}</option>
+      <option value="Southeast">{{ t("events.region_southeast") }}</option>
+      <option value="Northwest">{{ t("events.region_northwest") }}</option>
+    </select>
+  </fieldset>
+</form>
+
+<div class="eventsContentWrapper">
+  <div id="eventsContainer">
+
+    {% if nearest_events %}
+    <h4 class="nearestEventsTitle">
+      {{ t("events.recommended_for_you").replace("{count}", nearest_events|length|string).replace("{plural}", nearest_events|length > 1 and "s" or "") }}
+    </h4>
+    <div class="nearestEventsWrapper">
+      {% for event in nearest_events %}
+      <div class="event-card {{ event.region }}"
+           data-lat="{{ event.latitude }}"
+           data-lng="{{ event.longitude }}"
+           data-name="{{ event.title }}">
+        <p class="eventLabel">{{ t("events.near_you") }}</p>
+        <p class="eventTitle">{{ event.title }}</p>
+        <p><strong>{{ t("events.organiser") }}</strong> {{ event.organiser }}</p>
+        <p><strong>{{ t("events.date") }}</strong> {{ event.start_date.strftime('%d-%b-%Y') }} - {{ event.end_date.strftime('%d-%b-%Y') }}</p>
+        <p><strong>{{ t("events.time") }}</strong> {{ event.time }}</p>
+        <p><strong>{{ t("events.location") }}</strong> {{ event.location }}</p>
+        <p><strong>{{ t("events.price") }}</strong> {{ event.price }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <h4 id="eventCount">{{ t("events.showing_results").replace("{count}", events|length|string) }}</h4>
+
+    {% for event_id, event in events.items() %}
+    <div class="event-card {{ event.region }}"
+         data-lat="{{ event.latitude }}"
+         data-lng="{{ event.longitude }}"
+         data-name="{{ event.title }}">
+      <p class="eventLabel">{{ t("events.event") }}</p>
+      <p class="eventTitle">{{ event.title }}</p>
+      <p><strong>{{ t("events.organiser") }}</strong> {{ event.organiser }}</p>
+      <p><strong>{{ t("events.ref_code") }}</strong> {{ event.ref_code }}</p>
+      <p><strong>{{ t("events.date") }}</strong> {{ event.start_date.strftime('%d-%b-%Y') }} - {{ event.end_date.strftime('%d-%b-%Y') }}</p>
+      <p><strong>{{ t("events.time") }}</strong> {{ event.time }}</p>
+      <p><strong>{{ t("events.location") }}</strong> {{ event.location }}</p>
+      <p><strong>{{ t("events.price") }}</strong> {{ event.price }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="map" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const eventsData = {{ events | tojson | safe }};
+  const allEventMarkers = [];
+  const markerMap = {};
+  const mapDiv = document.getElementById('map');
+  let eventMapInitialized = false;
+  let eventMap;
+
+  function clearEventMarkers() {
+    allEventMarkers.forEach(marker => eventMap.removeLayer(marker));
+    allEventMarkers.length = 0;
+    Object.keys(markerMap).forEach(key => delete markerMap[key]);
+  }
+
+  function initMap() {
+    if (!eventMapInitialized) {
+      eventMap = L.map('map').setView([1.3521, 103.8198], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(eventMap);
+      eventMapInitialized = true;
+    }
+    mapDiv.style.display = 'block';
+    setTimeout(() => eventMap.invalidateSize(), 100);
+  }
+
+  function filterRegion() {
+    const currentRegion = document.getElementById('eventregionSelect').value;
+    const cards = document.querySelectorAll('.event-card');
+    let count = 0;
+
+    // hide "Recommended for You" when filtering
+    const nearestTitle = document.querySelector('.nearestEventsTitle');
+    const nearestWrapper = document.querySelector('.nearestEventsWrapper');
+    if (nearestTitle) nearestTitle.style.display = 'none';
+    if (nearestWrapper) nearestWrapper.style.display = 'none';
+
+    cards.forEach(card => {
+      if (!currentRegion || card.classList.contains(currentRegion)) {
+        card.style.display = 'block';
+        count++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.getElementById('eventCount').textContent =
+      t("events.showing_results_for_region")
+        .replace("{count}", count)
+        .replace("{region}", currentRegion);
+
+    initMap();
+    clearEventMarkers();
+
+    for (const event of Object.values(eventsData)) {
+      if (event.region === currentRegion && event.latitude && event.longitude) {
+        const marker = L.marker([event.latitude, event.longitude])
+          .bindPopup(`<strong>${event.title}</strong><br>${event.location}<br><em>${event.time}</em>`)
+          .addTo(eventMap);
+        allEventMarkers.push(marker);
+        markerMap[event.title] = marker;
+      }
+    }
+
+    const latlngs = allEventMarkers.map(marker => marker.getLatLng());
+    if (latlngs.length > 0) {
+      const bounds = L.latLngBounds(latlngs);
+      eventMap.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }
+
+  // Enable map + popup on card click even without region selected
+  document.querySelectorAll('.event-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const lat = parseFloat(card.dataset.lat);
+      const lng = parseFloat(card.dataset.lng);
+      const name = card.dataset.name;
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        initMap();
+
+        if (!markerMap[name]) {
+          const marker = L.marker([lat, lng])
+            .bindPopup(`<strong>${name}</strong><br>${card.querySelector('p:nth-of-type(6)').textContent}<br><em>${card.querySelector('p:nth-of-type(5)').textContent}</em>`)
+            .addTo(eventMap);
+          markerMap[name] = marker;
+          allEventMarkers.push(marker);
+        }
+
+        eventMap.setView([lat, lng], 15);
+        markerMap[name].openPopup();
+      }
+    });
+  });
+</script>
+{% endblock %}

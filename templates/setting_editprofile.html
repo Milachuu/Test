@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ t("profile_edit.title")}}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_profile.css') }}" />
+<style>
+  /* keep your CSS exactly as you had */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile_top_spacer"></div>
+
+<div class="profile_container">
+  <div class="profile_sidebar">
+    <a href="{{ url_for('setting') }}" class="profile_sidebar_item active">{{ t("profile_edit.sidebar_edit_profile") }}</a>
+    <a href="{{ url_for('change_password')}}" class="profile_sidebar_item">{{ t("profile_edit.sidebar_security") }}</a>
+    <a href="{{ url_for('preference') }}" class="profile_sidebar_item">{{ t("profile_edit.sidebar_preference") }}</a>
+  </div>
+
+  <div class="profile_content">
+    <h1>{{ t("profile_edit.heading") }}</h1>
+
+    <form method="POST" class="profile_form">
+      <label for="profile_username">{{ t("profile_edit.username") }}</label>
+      <input type="text" id="profile_username" name="profile_username" value="{{ details[3] }}" size="30" readonly />
+
+      <label for="profile_bio">{{ t("profile_edit.bio") }}</label>
+      <textarea id="profile_bio" name="profile_bio" maxlength="150">{{ details[9] }}</textarea>
+      <div id="profile_bio_counter" class="profile_bio_counter">0/150</div>
+
+      <h2>{{ t("profile_edit.private_info") }}</h2>
+
+      <!-- EMAIL (Read-only) -->
+      <div class="profile_info_line">
+        <div class="profile_info_left">
+          <label>{{ t("profile_edit.email") }}</label>
+          <span>{{ email | obfuscate_email }}</span>
+        </div>
+      </div>
+
+      <!-- MOBILE NUMBER -->
+      <div class="profile_info_line">
+        <div class="profile_info_left">
+          <label>{{ t("profile_edit.mobile_number") }}</label>
+          {% set mobile = (details[8] | string) %}
+          <span id="mobile_display">{{ mobile[:2] ~ '****' ~ mobile[-2:] if mobile and mobile|length == 8 else (mobile or '') }}</span>
+        </div>
+        <button type="button" class="ep_btn ep_btn--ghost" data-ep-open="mobile">{{ t("profile_edit.button_update") }}</button>
+      </div>
+
+      <!-- POSTAL CODE -->
+      <div class="profile_info_line">
+        <div class="profile_info_left">
+          <label>{{ t("profile_edit.postal_code") }}</label>
+          <span id="postal_display">{{ details[5] or '' }}</span>
+        </div>
+        <button type="button" class="ep_btn ep_btn--ghost" data-ep-open="postal">{{ t("profile_edit.button_update") }}</button>
+      </div>
+
+      <!-- Hidden inputs -->
+      <input type="hidden" name="profile_mobile" id="profile_mobile" value="{{ details[8] }}">
+      <input type="hidden" name="profile_postal" id="profile_postal" value="{{ details[5] }}">
+
+      <!-- GENDER -->
+      <label for="profile_gender">{{ t("profile_edit.gender") }}</label>
+      <div class="custom_select_container">
+        <select name="profile_gender" id="profile_gender" class="form-control">
+          <option value="Female" {% if details[4] == 'Female' %}selected{% endif %}>{{ t("profile_edit.gender_female") }}</option>
+          <option value="Male" {% if details[4] == 'Male' %}selected{% endif %}>{{ t("profile_edit.gender_male") }}</option>
+          <option value="Other" {% if details[4] == 'Other' %}selected{% endif %}>{{ t("profile_edit.gender_other") }}</option>
+        </select>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="profile_submit_container">
+        <button type="submit" class="profile_submit_btn">{{ t("profile_edit.button_save_changes") }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="ep_modal_backdrop" class="ep_modal_backdrop" aria-hidden="true">
+  <div class="ep_modal" role="dialog" aria-modal="true" aria-labelledby="ep_modal_title">
+    <header>
+      <h3 id="ep_modal_title">{{ t("profile_edit.modal_update") }}</h3>
+      <button class="ep_close" aria-label="Close" id="ep_close_btn">×</button>
+    </header>
+
+    <div class="ep_field">
+      <label id="ep_label" for="ep_input">{{ t("profile_edit.modal_mobile_label") }}</label>
+      <input id="ep_input" type="text" inputmode="numeric" autocomplete="off" />
+      <div class="ep_hint" id="ep_hint">{{ t("profile_edit.modal_mobile_hint") }}</div>
+      <div class="ep_error" id="ep_error"></div>
+    </div>
+
+    <footer>
+      <button class="ep_btn ep_btn--ghost" id="ep_cancel_btn" type="button">{{ t("profile_edit.button_cancel") }}</button>
+      <button class="ep_btn ep_btn--primary" id="ep_save_btn" type="button">{{ t("profile_edit.button_save_changes") }}</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+  /* your script remains unchanged */
+</script>
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends "before_base.html" %}
+{% block title %}2FA Set-up{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='2fa_setup.css') }}">
+<style>
+  /* ===== Backup Codes UI (modal + button) ===== */
+  .backup-codes-section {
+    margin-top: 18px;
+    text-align: center;
+  }
+  .backup-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #0EA89A;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.05s ease, opacity 0.2s ease;
+  }
+  .backup-btn:active { transform: scale(0.98); }
+  .backup-hint {
+    font-size: 0.9rem;
+    color: rgba(0,0,0,0.65);
+    margin-top: 8px;
+  }
+
+  .backup-modal {
+    display: none; /* hidden by default */
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .backup-modal-content {
+    max-width: 520px;
+    margin: 60px auto;
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 22px 26px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .backup-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: #f2f2f2;
+    color: #333;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .backup-close:hover { background: #e9e9e9; }
+  #backupTitle {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+  }
+  .backup-note {
+    margin: 0 0 12px;
+    color: #555;
+  }
+  .backup-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .backup-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    background: #f7f7f7;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .backup-empty {
+    color: #444;
+    background: #fff7e6;
+    border: 1px solid #ffe5b3;
+    border-radius: 10px;
+    padding: 12px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="wrapper">
+    <h1>Authentication App</h1>
+    <p class="guide">
+      Using an authenticator app like
+      <span class="authenticator_app">Google Authenticator, Microsoft Authenticator, Authy or iPassword,</span>
+      scan this QR code. It will generate a 6 digit code for you to enter below.
+    </p>
+
+    <div class="totp_qr">
+      <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="TOTP QR Code">
+    </div>
+
+    <h3 class="auth-txt">Enter Authentication Code</h3>
+
+    <form method="POST">
+      <input
+        type="text"
+        id="codeInput"
+        name="codeInput"
+        pattern="\d{6}"
+        title="Please enter a 6-digit numeric code."
+        maxlength="6"
+        required
+      >
+      <label for="button"></label>
+      <input type="submit" value="Setup" class="setup-btn">
+    </form>
+
+    <div class="info-txt">
+      <span class="material-symbols-outlined">info</span>
+      <p>If your app asks for an account name, you can use "NeighbourlyNest"</p>
+    </div>
+
+    <div class="totp_secret-ctn">
+      <p class="scan">
+        <span class="bold-txt">Scan not working?</span>
+        Copy this code key and enter it manually in your authentication app
+      </p>
+      <span class="totp_secret">{{ totp_secret }}</span>
+    </div>
+
+    <!-- ===== View Backup Recovery Code Button + Modal ===== -->
+    <div class="backup-codes-section">
+      <button type="button" class="backup-btn" id="openBackupModal">
+        View Backup Recovery Code
+      </button>
+      <p class="backup-hint">
+        Keep these in a safe place. Each code can be used once if you lose access to your authenticator app.
+      </p>
+    </div>
+
+    <!-- Overlay / Modal (hidden by default) -->
+    <div id="backupModal" class="backup-modal" aria-hidden="true">
+      <div class="backup-modal-content" role="dialog" aria-modal="true" aria-labelledby="backupTitle">
+        <button class="backup-close" id="closeBackupModal" aria-label="Close">×</button>
+        <h3 id="backupTitle">Your Backup Recovery Codes</h3>
+
+        {% if backup_codes %}
+          <p class="backup-note">Save these now — you won’t be able to see them again.</p>
+          <ul class="backup-list">
+            {% for code in backup_codes %}
+              <li class="backup-code">{{ code }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="backup-empty">
+            You’ve already generated backup codes earlier. For security, they aren’t shown again.<br>
+            If you’ve lost them, generate a new set from your Security settings page.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+    <!-- ===== /View Backup Recovery Code ===== -->
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const openBtn = document.getElementById('openBackupModal');
+    const modal = document.getElementById('backupModal');
+    const closeBtn = document.getElementById('closeBackupModal');
+
+    if (!openBtn || !modal || !closeBtn) return;
+
+    function openModal() {
+      modal.style.display = 'block';
+      modal.setAttribute('aria-hidden', 'false');
+      closeBtn.focus();
+      document.body.style.overflow = 'hidden'; // prevent background scroll while modal open
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = ''; // restore scroll
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // click outside content closes modal
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeModal();
+    });
+
+    // Esc closes modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
+{% endblock %}

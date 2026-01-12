@@ -1,0 +1,322 @@
+form {
+    margin-bottom: 5%;
+}
+
+.donateLabel {
+    width: 85%;
+    margin-left: 5%;
+    font-size: 200%;
+    color: #0dac9c;
+    position: relative;
+    display: inline-block;
+    margin-top: 3%;
+}
+
+fieldset {
+    padding: 2%;
+    width: 85%;
+    margin: auto;
+    margin-top: 2%;
+    border-radius: 10px;
+}
+
+.keyLabels {
+    margin-bottom: 1%;
+    font-size: 140%;
+    margin-left: 5%;
+}
+
+.fieldLabelsTop {
+    margin-left: 5%;
+    margin-bottom: 1%;
+    font-size: 120%;
+}
+
+.fieldLabels, .title, .first-name, .last-name, .email, .country-code, .contact, .address1, .address2, .postal-code, .commentsHeader {
+    margin-bottom: 1%;
+    font-size: 120%;
+}
+
+.sectionLabels {
+    margin-bottom: 1%;
+    font-size: 180%;
+    margin-left: 5%;
+}
+
+.paymentMethod {
+    padding: 2% 1.5%;
+    width: 35%;
+    border-radius: 50px;
+    border: solid 2px #259984;
+    background-color: #f1ffff;
+    color: #259984;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.paymentMethod:active {
+    background-color: #259984;
+    color: white;
+}
+
+.paymentMethod:hover {
+    background-color: #259984;
+    color: white;
+}
+
+.required {
+    color: #e82e2e;
+}
+
+.formHeader {
+    margin-bottom: 2%;
+    font-size: 90%;
+    color: grey;
+}
+
+.donation-type-button {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 1.5% 7%;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    user-select: none;
+    transition: all 0.3s ease;
+    width: 33%;
+    text-align: center;
+}
+
+.donation-type-button input[type='radio']:checked + span {
+    background-color: transparent;
+}
+
+.donation-type-button:hover {
+    background-color: #e0f2f1;
+    color: black;
+}
+
+.donation-type-button input[type='radio'] {
+    display: none;
+}
+
+.frequency-option {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 1.5% 7%;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    user-select: none;
+    transition: all 0.3s ease;
+    width: 23%;
+}
+
+.frequency-option input[type='radio'] {
+    position: absolute;
+    opacity: 0;
+}
+
+.amount-option {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #436e6e;
+    padding: 2% 3.17%;
+    border-radius: 20px;
+    background-color: #ffffff;
+    user-select: none;
+    transition: all 0.3s ease;
+    border-style: dashed;
+
+}
+
+.otherAmount {
+    border-radius: 5px;
+    border: solid 1px grey;
+    padding-left: 10px;
+}
+
+.title, .first-name, .email, .address1, .postal-code, .commentsHeader {
+    margin-left: 10%;
+    width: 40%;
+}
+
+.country-code, .contact {
+    width: 20%
+}
+
+.title-options {
+    width: 80%;
+    margin-left: 10%;
+    padding: 0.8% 30% 0.8% 1%;
+    border-radius: 10px;
+}
+
+.inputFieldsLeft {
+    margin-left: 10%;
+    width: 40%;
+    border-radius: 10px;
+    padding: 0.8% 0% 0.8% 1%;
+    border: solid 1px grey;
+}
+
+.inputFields {
+    width: 40%;
+    border-radius: 10px;
+    padding: 0.8% 0% 0.8% 1%;
+    border: solid 1px grey;
+}
+
+.inputFieldsMiddle {
+    width: 19.8%;
+    border-radius: 10px;
+    padding: 0.8% 0% 0.8% 1%;
+    border: solid 1px grey;
+}
+
+.inputFieldsRight {
+    width: 19.8%;
+    border-radius: 10px;
+    padding: 0.8% 0% 0.8% 1%;
+    border: solid 1px grey;
+}
+
+.declaration {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.declaration-checkboxes {
+    font-size: 105%;
+}
+
+#corporate-amount {
+    width: 62%;
+}
+
+.creditForm, .otherForm, #corporate-amount, #anonymous-amount, #otherPaymentOptions {
+    display: none;
+}
+
+.other-payment-cards {
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.payment-card {
+    margin-left: 15%;
+    width: 70%;
+    padding: 30px 5px 170px 60px;
+    border-radius: 10px;
+    border: 1px solid #259984;
+    background: linear-gradient(to bottom, #F1FFFF, #CFC7F8);
+    transition: background-color 0.3s;
+}
+
+.frequency-option.selected {
+    background-color: #259984 !important;
+    color: white !important;
+}
+
+.donation-type-group {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.donation-type-group {
+    margin-left: 10%;
+}
+
+.donation-amount {
+    width: 60%;
+    margin-left: 20%;
+}
+
+.donation-frequency {
+    margin-left: 34.5%;
+}
+
+#frequencyLabel {
+    margin-left: 42.5%;
+}
+
+#creditForm {
+    margin-left: 14.5%;
+}
+
+.commentBox {
+    width: 80.5%;
+    margin-left: 10%;
+}
+
+textarea {
+    width: 100%;
+    border: solid 2px grey;
+}
+
+#ackCheckbox {
+    position: absolute;
+    width: 62%;
+    margin-left: 10px;
+}
+
+.declaration input[type='checkbox'] {
+    width: 1em;
+    height: 1rem;
+    accent-color: pink;
+}
+
+.submitButton {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.submit {
+    margin-left: 40%;
+    width: 20%;
+    padding: 1.5%;
+    border-radius: 25px;
+    border: 1px solid lightgray;
+    background-color: #0dac9c;
+    color: white;
+    font-size: 120%;
+    font-weight: 450;
+}
+
+.submit:hover {
+    background-color: #f1ffff;
+    border: 1px solid #0dac9c;
+    color: black;
+}
+
+.inputFields:focus, .inputFieldsLeft:focus, .inputFieldsMiddle:focus, .inputFieldsRight:focus, .title-options:focus {
+    border-color: #5a7ee1;
+    box-shadow: 0 0 8px #304b96;
+    outline: none;
+}
+
+.payment-card img {
+    position: absolute;
+    margin-top: 1.5%;
+    width: 8%;
+}
+
+.other-info-header {
+    font-size: 150%;
+    font-weight: 500;
+}
+
+.other-info {
+    position: absolute;
+    text-align: center;
+    margin-left: 18%;
+    font-size: 105%;
+}
+
+.donation-type-button a {
+    text-decoration: none;
+    color: black;
+}

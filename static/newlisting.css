@@ -1,0 +1,273 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    margin-top: 150px;
+    background-image: url('/static/img/good-background-iaaruoreug7ouxpv.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.listing-form-container {
+    max-width: 900px;              /* wider */
+    margin: 50px auto;
+    padding: 50px;                 /* more padding */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    position: relative;
+    z-index: 1;
+}
+
+.page-title {
+    font-size: 2.5rem;             /* bigger title */
+    color: #333333;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+/* Photo Upload Section */
+.photo-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.photo-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;                  /* bigger box */
+    height: 200px;
+    border: 3px dashed #cccccc;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+    font-size: 1.2rem;
+}
+
+.photo-label:hover {
+    border-color: #007bff;
+    transform: scale(1.03);
+}
+
+.photo-placeholder p {
+    font-size: 1.2rem;
+    color: #666666;
+    margin: 0;
+}
+
+.photo-placeholder small {
+    font-size: 1rem;
+    color: #999999;
+}
+
+.photo-input {
+    display: none;
+}
+
+/* Item Details, Category Selection, and Availability */
+.item-details,
+.category-selection,
+.availability {
+    margin-bottom: 25px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 1.2rem;              /* bigger labels */
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;            /* bigger input padding */
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 1.1rem;             /* bigger input text */
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+/* Error Message */
+#date-error {
+    color: red;
+    font-size: 1rem;
+    display: none;
+    margin-top: 8px;
+}
+
+/* Submit Button */
+.btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 14px 28px;            /* bigger button */
+    border-radius: 8px;
+    font-size: 1.3rem;             /* bigger button text */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block;
+    margin: 20px auto 0;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Preview Image */
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+/* ===================== DARK THEME ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --text: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --brand: #0EA89A;
+  --brand-600: #087c73;
+  --shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+
+/* Page background */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(12,15,19,.75), rgba(12,15,19,.75)),
+    url('/static/img/good-background-iaaruoreug7ouxpv.jpg');
+  background-size: cover;
+  background-position: center;
+  color: var(--text);
+}
+
+/* Main card */
+html[data-theme="dark"] .listing-form-container,
+html[data-theme-effective="dark"] .listing-form-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+/* Labels & title */
+html[data-theme="dark"] .page-title,
+html[data-theme-effective="dark"] .page-title,
+html[data-theme="dark"] label,
+html[data-theme-effective="dark"] label {
+  color: var(--text);
+}
+
+/* Inputs */
+html[data-theme="dark"] .form-control,
+html[data-theme-effective="dark"] .form-control {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 1.1rem;
+}
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme-effective="dark"] .form-control::placeholder {
+  color: var(--muted);
+}
+
+/* Focus highlight */
+html[data-theme="dark"] .form-control:focus,
+html[data-theme-effective="dark"] .form-control:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* Upload box */
+html[data-theme="dark"] .photo-label,
+html[data-theme-effective="dark"] .photo-label {
+  border-color: var(--border);
+}
+html[data-theme="dark"] .photo-label:hover,
+html[data-theme-effective="dark"] .photo-label:hover {
+  border-color: var(--brand);
+}
+html[data-theme="dark"] .photo-placeholder p,
+html[data-theme-effective="dark"] .photo-placeholder p,
+html[data-theme="dark"] .photo-placeholder small,
+html[data-theme-effective="dark"] .photo-placeholder small {
+  color: var(--muted);
+}
+
+/* Primary button */
+html[data-theme="dark"] .btn-primary,
+html[data-theme-effective="dark"] .btn-primary {
+  background: var(--brand);
+  color: #fff;
+}
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme-effective="dark"] .btn-primary:hover {
+  background: var(--brand-600);
+}
+
+html[data-theme="dark"] .username{
+  color: white;
+}
+
+/* Username styling in navbar */
+.username {
+  margin-left: 6px;              /* spacing from the icon */
+  font-weight: 500;
+  font-size: 1rem;
+  color: black;                   /* adjust for light/dark themes */
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 150px;              /* prevents overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure "Hello," text is lighter so the name stands out */
+.username strong {
+  font-weight: 600;
+  color: var(--brand, #0EA89A);  /* your site accent color */
+}
+
+/* --- Fix image preview sizing inside the upload box --- */
+.photo-label{
+  position: relative;        /* new: contain absolutely-positioned preview */
+  overflow: hidden;          /* new: clip the image to the box */
+}
+
+/* keep preview locked to the label box */
+.image-preview{
+  position: absolute;
+  inset: 0;                  /* top/right/bottom/left: 0 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* fill without distortion */
+  border-radius: inherit;    /* match the label’s rounded corners */
+  display: none;             /* shown by JS when a file is picked */
+}
+
+/* optional: nicer transition when the image appears */
+.image-preview{ transition: opacity .15s ease; }
+.image-preview.is-visible{ display:block; opacity:1; }

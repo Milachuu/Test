@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}{{ t("retrieve_user_profile.title") }}{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='user_retrieve_info.css') }}">
+{% endblock %}
+{% block content %}
+<div class="recycling"></div>
+<div class="wrapper">
+    <div class="profile">
+        <span class="material-symbols-outlined" id="account_circles">
+            account_circle
+        </span>
+        <div>
+            <h4>{{username}}</h4>
+            <p style="padding-left: 20px; color: rgba(0, 0, 0, 0.50)">{{ t("retrieve_user_profile.verified") }}</p>
+        </div>
+    </div>
+    <div class="review-ctn">
+        <div class="section review-wrapper">
+            <div class="review">
+                <h4>5.0</h4>
+                <img src="../static/img/reviews.png" id="review_star">
+            </div>
+            <p>50 {{ t("retrieve_user_profile.reviews") }}</p>
+        </div>
+        
+        <div class="section redeem-wrapper">
+            <div class="redeem">
+                <h4>{{points[0]}}</h4>
+                <img src="../static/img/points.png" id="redeem_star">
+            </div>
+            <a href="/reward" class="button">{{ t("retrieve_user_profile.redeem") }}</a>
+        </div>
+        <div class="section edit_profile">
+            <a href="settings/editprofile">{{ t("retrieve_user_profile.edit_profile") }}</a>
+        </div>
+    </div>
+</div>
+
+<div class="listing-wrapper">
+    <div class="nav">
+        <p>{{ t("retrieve_user_profile.listings") }}</p>
+    </div>
+    <div class="listings-container">
+        <!-- Combined Listings Section -->
+        <div class="listings-section">
+            <div class="row row-cols-1 row-cols-md-5 g-4">
+                {% for detail in details %}
+                {% if detail[1] == username %}
+                <div class="col">
+                    <div class="card listing-card">
+                        <!-- User Info & Bookmark -->
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i> {{ detail[1] }}
+                        </div>
+                        <img src="{{ url_for('static', filename=detail[4]) if detail[4] else url_for('static', filename='uploads/placeholder.png') }}" class="card-img-top listing-image">
+                        <i class="far fa-bookmark bookmark-icon"></i>
+          
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <h5 class="card-title">{{ detail[2] }}</h5>
+                            <p class="card-text">{{ detail[3] }}</p>
+                            <!-- Dropdown Menu -->
+                            <div class="dropdown">
+                                <button class="dropdown-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Actions
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('update_listing', listing_id=detail[0]) }}">Update</a>
+                                    </li>
+                                    <li>
+                                        <form action="{{ url_for('delete_listing', listing_id=detail[0]) }}" method="POST" onsubmit='return confirmDelete()'>
+                                            <script>
+                                              function confirmDelete() {
+                                                return confirm('{{ t("retrieve_user_profile.confirm_delete") }}');
+                                              }
+                                            </script>
+                                            <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+          
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wishlist-section">
+    <h3>{{ t("retrieve_user_profile.wishlist_title") }}</h3>
+    <table class="wishlist-table">
+        <thead>
+            <tr>    
+                <th>{{ t("retrieve_user_profile.wishlist_item") }}</th>
+                <th>{{ t("retrieve_user_profile.wishlist_description") }}</th>
+                <th>{{ t("retrieve_user_profile.wishlist_update") }}</th>
+                <th>{{ t("retrieve_user_profile.wishlist_delete") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for desire in desires %}
+            <tr>
+                <td>{{ desire[1] }}</td>
+                <td>{{ desire[2] }}</td>
+                <td><a href="{{ url_for('update_wantlist', desire_id=desire[0]) }}" class="button update-btn">{{ t("retrieve_user_profile.wishlist_update") }}</a></td>
+                <td>
+                    <form action="{{ url_for('delete_wishlist', desire_id=desire[0]) }}" method="POST" onsubmit="return confirmDeleteWishlist()">
+                        <script>
+                            function confirmDeleteWishlist() {
+                              return confirm('{{ t("retrieve_user_profile.confirm_delete_wishlist") }}');
+                            }
+                        </script>
+                        <input type="submit" value="{{ t("retrieve_user_profile.wishlist_delete") }}" class="button delete-btn">
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <p class="no-listings">{{ t("retrieve_user_profile.wishlist_empty") }}</p>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

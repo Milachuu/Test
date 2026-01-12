@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}NeighbourlyNest Singapore | Feedback{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='feedback.css') }}">
+{% endblock %}
+
+{% block content %}
+    <img src="\static\img\feedback bg.png" class="feedbackBgElement">
+    <form id="feedbackform" method="POST" onsubmit="validateForm(event)">
+        <input type="hidden" id="feedbackId" name="feedbackId">
+        <label class="feedbackLabel">Get in touch</label>
+        <fieldset>
+            <input type="text" placeholder="Your Name" name="name" class="userDetails" required>
+            <br/><br/>
+            <input type="email" placeholder="Your Email" name="email" class="userDetails" required>
+            <br/><br/>
+            <textarea rows="10" cols="50" placeholder="Your Message" name="message" required></textarea>
+            <br/><br/>
+            <input type="submit" name="submit" value="Submit" class="buttons" onclick="validateForm(event)">
+        </fieldset>
+        <br/>
+        <div id="feedbackContainer">
+            <h2>Your Submissions</h2>
+            {% for key, feedback in feedbacks.items() %}
+            <div class="feedbackCard">
+                <p>Your Name: Your Name</p>
+                <p>Your Email: Your Email</p>
+                <p>Feedback: Your Message</p>
+                <button onclick="editFeedback('{{ key }}')" class="buttons">Edit</button>
+                <button onclick="deleteFeedback('{{ key }}')" class="buttons">Delete</button>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function editFeedback(id) {
+        fetch(`/edit_feedback/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('input[name="name"]').value = data.name;
+                document.querySelector('input[name="email"]').value = data.email;
+                document.querySelector('textarea[name="message"]').value = data.message;
+                document.getElementById('feedbackId').value = id;
+            });
+    }
+
+    function deleteFeedback(id) {
+        fetch(`/delete_feedback/${id}`, { method: 'POST' })
+            .then(() => location.reload());
+    }
+
+    function validateForm(event) {
+        let name = document.querySelector('input[name="name"]');
+        let email = document.querySelector('input[name="email"]');
+        let message = document.querySelector('textarea[name="message"]');
+        let errorMessage = '';
+
+        if (name.value.trim().length < 3) {
+            errorMessage += "Name must be at least 3 characters long.\n";
+        }
+
+        let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email.value.trim())) {
+            errorMessage += "Please enter a valid email address.\n";
+        }
+
+        if (message.value.trim().length < 10) {
+            errorMessage += "Message must be at least 10 characters long.\n";
+        }
+
+        if (errorMessage) {
+            event.preventDefault();
+            alert(errorMessage);
+        }
+    }
+</script>
+{% endblock %}

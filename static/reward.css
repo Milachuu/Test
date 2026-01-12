@@ -1,0 +1,321 @@
+.search-container {
+    margin-top: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px
+  }
+
+.search-form {
+    display: flex;
+    align-items: center;
+    width: 80%; /* Make it span more width */
+    max-width: 900px; /* Prevent it from being too wide on large screens */
+    background: #F5F5F5;
+    border-radius: 50px;
+    padding: 8px 15px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    border: 1px solid #DDD;
+}
+  
+/* Input Field */
+.search-input {
+    flex: 1;
+    border: none;
+    padding: 14px 18px;
+    font-size: 16px;
+    border-radius: 50px;
+    outline: none;
+    background: transparent;
+}
+  
+/* Search Button */
+.btn-search {
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+/* Reward */
+
+.reward-ctn {
+    display: flex;
+    flex-direction: row;
+}
+
+.reward-ctn h3 {
+    padding-left: 85px;
+}
+
+.points {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 65%;
+    color: black;
+    font-weight: bold;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1350px;
+    margin: 0 auto;
+    padding-bottom: 100px;
+}
+
+.card {
+    background-color: #F4F4F4;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.card h1 {
+    text-align: center;
+    color: #484848;
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+.card h2 {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
+
+
+
+.points_worth {
+    color: #099084;
+    font-weight: bold;
+}
+
+.button {
+    max-width: 100px;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+
+.button:hover {
+    color: white;
+    background-color: #0c8f84; /* slightly darker teal */
+    transform: scale(1.05);
+}
+
+.point-ctn {
+    display: flex;
+    flex-direction: row;
+}
+
+.grid-container #redeem_star {
+    width: 30px;                 /* Match star size in the image */
+    height: auto;
+}
+
+.uniq_link {
+    text-decoration: none;
+    color: #7D7D7D;
+    font-size: 18px;
+    margin-top: 20px    ;
+}
+
+.uniq_link:hover {
+    color: #7D7D7D;
+    text-decoration: none;
+}
+
+.link-text {
+    color: #0EA89A;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+    background-color: #121212;
+    color: #E0E0E0;
+}
+
+/* Search Bar Dark */
+html[data-theme="dark"] .search-form,
+html[data-theme-effective="dark"] .search-form {
+    background: #1E1E1E;
+    border: 1px solid #333;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="dark"] .search-input,
+html[data-theme-effective="dark"] .search-input {
+    color: #E0E0E0;
+}
+
+html[data-theme="dark"] .btn-search,
+html[data-theme-effective="dark"] .btn-search {
+    background-color: #0EA89A;
+    color: white;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Reward Container */
+html[data-theme="dark"] .reward-ctn h3,
+html[data-theme-effective="dark"] .reward-ctn h3 {
+    color: #E0E0E0;
+}
+
+html[data-theme="dark"] .points,
+html[data-theme-effective="dark"] .points {
+    color: #E0E0E0;
+}
+
+/* Cards */
+html[data-theme="dark"] .card,
+html[data-theme-effective="dark"] .card {
+    background-color: #1E1E1E;
+    color: #E0E0E0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="dark"] .card h1,
+html[data-theme-effective="dark"] .card h1 {
+    color: #B0B0B0;
+}
+
+html[data-theme="dark"] .card h2,
+html[data-theme-effective="dark"] .card h2 {
+    color: #E0E0E0;
+}
+
+html[data-theme="dark"] .points_worth,
+html[data-theme-effective="dark"] .points_worth {
+    color: #22CFC0;
+}
+
+/* Buttons */
+html[data-theme="dark"] .button,
+html[data-theme-effective="dark"] .button {
+    background-color: #0EA89A;
+    color: #FFF;
+}
+
+html[data-theme="dark"] .button:hover,
+html[data-theme-effective="dark"] .button:hover {
+    background-color: #0c8f84;
+}
+
+/* Links */
+html[data-theme="dark"] .uniq_link,
+html[data-theme-effective="dark"] .uniq_link {
+    color: #B0B0B0;
+}
+
+html[data-theme="dark"] .link-text,
+html[data-theme-effective="dark"] .link-text {
+    color: #22CFC0;
+}
+
+/* Dark mode overrides */
+html[data-theme="dark"] .cardimg-ctn img[alt="NTUC"],
+html[data-theme-effective="dark"] .cardimg-ctn img[alt="NTUC"] {
+  content: url("../static/img/fairprice_padded_1280x720_dark.jpg");
+}
+
+html[data-theme="dark"] .cardimg-ctn img[alt="Koufu"],
+html[data-theme-effective="dark"] .cardimg-ctn img[alt="Koufu"] {
+  content: url("../static/img/Koufu_1280x720_dark.jpg");
+}
+
+html[data-theme="dark"] .cardimg-ctn img[alt="UNIQGIFT"],
+html[data-theme-effective="dark"] .cardimg-ctn img[alt="UNIQGIFT"] {
+  content: url("../static/img/10_UNIQGIFT-eGiftcard_dark_mode.jpg");
+}
+
+html[data-theme="dark"] .cardimg-ctn img[alt="coming-soon"],
+html[data-theme-effective="dark"] .cardimg-ctn img[alt="coming-soon"] {
+  content: url("../static/img/giftcard_1280x720_dark.png");
+}
+
+/* ===================== Enlarged Mode (html[data-font="112"]) ===================== */
+
+/* Search container */
+html[data-font="112"] .search-form {
+  padding: 16px 24px !important;
+  border-radius: 60px !important;
+}
+
+html[data-font="112"] .search-input {
+  font-size: 1.4rem !important;
+  padding: 18px 24px !important;
+}
+
+html[data-font="112"] .search-input::placeholder {
+  font-size: 1.4rem !important;
+}
+
+html[data-font="112"] .btn-search {
+  font-size: 1.3rem !important;
+  padding: 18px 32px !important;
+  border-radius: 60px !important;
+}
+
+/* Headings & points */
+html[data-font="112"] .reward-ctn h3 {
+  font-size: 2rem !important;
+}
+
+html[data-font="112"] .points h4 {
+  font-size: 1.6rem !important;
+}
+
+/* Cards */
+html[data-font="112"] .card {
+  padding: 28px !important;
+}
+
+html[data-font="112"] .card h1 {
+  font-size: 1.8rem !important;
+}
+
+html[data-font="112"] .card h2 {
+  font-size: 1.4rem !important;
+}
+
+html[data-font="112"] .points_worth {
+  font-size: 1.2rem !important;
+}
+
+html[data-font="112"] .button {
+  font-size: 1.3rem !important;
+  padding: 14px 24px !important;
+  border-radius: 28px !important;
+  max-width: 140px !important;
+}

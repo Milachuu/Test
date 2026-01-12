@@ -1,0 +1,358 @@
+\/* static/preference.css */
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.preference-top-spacer {
+  height: 80px;
+}
+
+.preference-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ——— sidebar + indicator ——— */
+.preference-sidebar {
+  width: 200px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ccc;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* added for indicator */
+}
+
+/* sidebar links */
+.preference-sidebar-item {
+  padding: 15px 20px;
+  cursor: pointer;
+  color: #666;
+  border-left: 4px solid transparent;
+  text-decoration: none;
+}
+
+.preference-sidebar-item.active {
+  background-color: #e6f9f6;
+  color: #000;
+  font-weight: bold;
+  border-left: 4px solid #00a99d;
+}
+
+/* Remove underline from all sidebar links */
+.preference-sidebar a {
+  text-decoration: none;
+}
+
+/* Non-active link styling */
+.preference-sidebar a:not(.active),
+.preference-sidebar a:visited:not(.active),
+.preference-sidebar a:hover:not(.active),
+.preference-sidebar a:active:not(.active) {
+  color: #666;
+}
+
+/* Content section */
+.preference-content {
+  flex: 1;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.preference-content h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.preference-subtext {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Info rows */
+.preference-info-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.preference-info-left {
+  flex: 1;
+  min-width: 300px;
+}
+
+.preference-info-left label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+/* Custom dropdown */
+.preference-select-container {
+  position: relative;
+  width: 50%;
+}
+
+.preference-select-selected {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.preference-select-selected:after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.preference-select-selected.open {
+  border-color: #00a99d;
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.2);
+}
+
+.preference-select-options {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.preference-select-options .preference-select-option {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.preference-select-options .preference-select-option:hover {
+  background: #f0f0f0;
+}
+
+.preference-select-options .selected {
+  font-weight: bold;
+  color: #00a99d;
+}
+
+/* Theme section */
+.preference-content h2 {
+  margin-top: 40px;
+  font-size: 1.5rem;
+}
+
+.preference-theme-options {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.theme-option {
+  text-align: center;
+  cursor: pointer;
+}
+
+.theme-box {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.theme-box img {
+  width: 200px;
+  border-radius: 8px;
+  display: block;
+}
+
+.theme-box:hover {
+  border: 2px solid #00a99d;
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.2);
+}
+
+.theme-box.selected {
+  border: 2px solid #00a99d;
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.2);
+}
+
+.theme-option p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* closed = down arrow */
+.preference-select-selected::after {
+  content: '▼';
+}
+
+/* open = up arrow */
+.preference-select-selected.open::after {
+  content: '▲';
+}
+
+/* ==== Dark Mode Overrides — Preference Page ==== */
+
+/* Page + container */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .preference-container,
+html[data-theme-effective="dark"] .preference-container {
+  background: transparent;
+}
+
+/* Sidebar */
+html[data-theme="dark"] .preference-sidebar,
+html[data-theme-effective="dark"] .preference-sidebar {
+  background-color: #1e1e1e;
+  border-right: 1px solid #333;
+}
+
+html[data-theme="dark"] .preference-sidebar-item,
+html[data-theme-effective="dark"] .preference-sidebar-item {
+  color: #aaa;
+  border-left-color: transparent;
+}
+
+html[data-theme="dark"] .preference-sidebar-item.active,
+html[data-theme-effective="dark"] .preference-sidebar-item.active {
+  background-color: #003c39;          /* deep teal tint */
+  color: #fff;
+  border-left: 4px solid #00d1c7;     /* teal accent */
+}
+
+/* Main content */
+html[data-theme="dark"] .preference-content,
+html[data-theme-effective="dark"] .preference-content {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .preference-content h1,
+html[data-theme-effective="dark"] .preference-content h1,
+html[data-theme="dark"] .preference-content h2,
+html[data-theme-effective="dark"] .preference-content h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .preference-subtext,
+html[data-theme-effective="dark"] .preference-subtext {
+  color: #b5b5b5;
+}
+
+/* Info rows + labels */
+html[data-theme="dark"] .preference-info-left label,
+html[data-theme-effective="dark"] .preference-info-left label {
+  color: #e0e0e0;
+}
+
+/* Custom dropdown — trigger */
+html[data-theme="dark"] .preference-select-selected,
+html[data-theme-effective="dark"] .preference-select-selected {
+  background: #181818;
+  border: 1.5px solid #333;
+  color: #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+}
+
+html[data-theme="dark"] .preference-select-selected.open,
+html[data-theme-effective="dark"] .preference-select-selected.open {
+  border-color: #00d1c7;
+  box-shadow: 0 0 0 3px rgba(0, 209, 199, 0.2);
+}
+
+html[data-theme="dark"] .preference-select-selected::after,
+html[data-theme-effective="dark"] .preference-select-selected::after {
+  color: #9aa0a6;
+}
+
+/* Custom dropdown — options panel */
+html[data-theme="dark"] .preference-select-options,
+html[data-theme-effective="dark"] .preference-select-options {
+  background: #181818;
+  border: 1.5px solid #333;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+}
+
+html[data-theme="dark"] .preference-select-options .preference-select-option,
+html[data-theme-effective="dark"] .preference-select-options .preference-select-option {
+  color: #ddd;
+}
+
+html[data-theme="dark"] .preference-select-options .preference-select-option:hover,
+html[data-theme-effective="dark"] .preference-select-options .preference-select-option:hover {
+  background: #262626;
+}
+
+html[data-theme="dark"] .preference-select-options .selected,
+html[data-theme-effective="dark"] .preference-select-options .selected {
+  color: #00d1c7;
+  font-weight: 700;
+}
+
+/* Theme tiles */
+html[data-theme="dark"] .preference-theme-options .theme-box,
+html[data-theme-effective="dark"] .preference-theme-options .theme-box {
+  border-color: transparent;
+  background: #181818;
+}
+
+html[data-theme="dark"] .preference-theme-options .theme-box:hover,
+html[data-theme-effective="dark"] .preference-theme-options .theme-box:hover {
+  border-color: #00d1c7;
+  box-shadow: 0 0 0 3px rgba(0, 209, 199, 0.2);
+}
+
+html[data-theme="dark"] .preference-theme-options .theme-box.selected,
+html[data-theme-effective="dark"] .preference-theme-options .theme-box.selected {
+  border-color: #00d1c7;
+  box-shadow: 0 0 0 3px rgba(0, 209, 199, 0.2);
+}
+
+html[data-theme="dark"] .theme-option p,
+html[data-theme-effective="dark"] .theme-option p {
+  color: #d6d6d6;
+}
+
+.username {
+  margin-left: 6px;              /* spacing from the icon */
+  font-weight: 500;
+  font-size: 1rem;
+  color: #000000;                   /* adjust for light/dark themes */
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 150px;              /* prevents overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure "Hello," text is lighter so the name stands out */
+.username strong {
+  font-weight: 600;
+  color: var(--brand, #0EA89A);  /* your site accent color */
+}
+
+html[data-theme="dark"] .username,
+html[data-theme-effective="dark"] .username {
+    color: #ffffff;
+}

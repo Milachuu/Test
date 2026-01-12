@@ -1,0 +1,84 @@
+{% extends "base.html" %} 
+{% block title %}Retrieve Users{% endblock %} 
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename=' ') }}">
+{% endblock %}
+
+{% block content %} 
+
+<div class="recycling">
+  <form action="#">
+    <input type="text" name="search" id="search_bar"placeholder="Search for items">
+    <input type="submit" value="Search">
+  </form>
+
+</div>
+<br><br>
+
+<div class="profile">
+  <span class="material-symbols-outlined" id="account_circle">
+    account_circle
+  </span>
+  <h4>{{username}}</h4>
+
+  <div class="profile_right">
+
+    <img src="../static/img/reviews.png" alt="reviews" class="reviews">
+    <img src="../static/img/Line.png" alt="Line">
+    <img src="../static/img/points.png" alt="points" class="points">
+    <img src="../static/img/Line.png" alt="Line">
+    <a href="/user_retrieve_info">Back</a>
+    
+  </div>
+
+</div>
+
+<div class="profile">
+  <p>No reviews</p>
+  <a href="#">Redeem</a>
+</div>
+
+
+<br><br>
+<h1 class="retrieve">Retrieve Users</h1> 
+
+
+<div> 
+<table border="1" class="retrieve_table"> 
+  <thead class="table_header"> 
+    <tr> 
+      <th>User ID</th>
+      <th>Username</th>
+      <th>Gender</th> 
+      <th>Address</th> 
+      <th>Email</th>
+      <th>Phone Number</th> 
+      <th>Bio</th> 
+      <th></th>
+      <th></th>
+
+    </tr> 
+  </thead> 
+  <tbody class="table_body"> 
+
+    <tr> 
+      <td>{{ user_info.get_login_email() }}</td> 
+      <td>{{ user_info.get_username() }}</td>
+      <td>{{ user_info.get_gender() }}</td> 
+      <td>{{ user_info.get_address() }}</td>
+      <td>{{ user_info.get_email() }}</td> 
+      <td>{{ user_info.get_phone_number() }}</td> 
+      <td>{{ user_info.get_bio() }}</td> 
+      <td><a href="/update_user_info" class="button">Update</a></td> 
+      <td> 
+       
+      </td> 
+    </tr> 
+
+</tbody> 
+</table> 
+</div> 
+    </table> 
+    </div> 
+{% endblock %}

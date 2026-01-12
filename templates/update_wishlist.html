@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Wishlist{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='update_wishlist.css') }}">
+{% endblock %}
+
+{% block content %}
+{% from "_formHelper.html" import render_field %}
+
+<div class="container">
+    <div class="header">
+        <h1>Update Your Wishlist</h1>
+    </div>
+
+    <form method="POST" action="" class="wishlist-form">
+        <fieldset>
+            <legend>Your Details</legend>
+
+            <div class="form-group">
+                {{ render_field(form.item, class="form-control", placeholder="Item") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.description, class="form-control", placeholder="Description") }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

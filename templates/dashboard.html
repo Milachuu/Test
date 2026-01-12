@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+<!-- material symbols (if not already in base.html) -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+  <!-- Left Nav -->
+  <div class="navigation-link">
+    <div class="main">
+      <a href="#">
+        <span class="material-symbols-outlined" id="icon">grid_view</span>
+        <p>Dashboard</p>
+      </a>
+    </div>
+    <div class="feedback">
+      <a href="/dashboard_feedback">
+        <span class="material-symbols-outlined" id="icon">feedback</span>
+        <p>Feedbacks</p>
+      </a>
+      <div class="report_count"><span>{{ count or 0 }}</span></div>
+    </div>
+    <div class="reported_user">
+      <a href="/view_report">
+        <span class="material-symbols-outlined" id="icon">person_alert</span>
+        <p>Reported Users</p>
+      </a>
+      <div class="report_count"><span>{{ count_report or 0 }}</span></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="dashboard-content">
+    <h1>Dashboard</h1>
+
+    <!-- KPI cards (unchanged – keep your styles if you have them) -->
+    <div class="items-ctn">
+      <div class="totaluser_ctn">
+        <div class="user-img"><span class="material-symbols-outlined" id="icon">person</span></div>
+        <p>Total Users</p>
+        <span id="pull-ct">{{ count }}</span>
+      </div>
+      <div class="totalitem-ctn">
+        <div class="item-img"><span class="material-symbols-outlined" id="icon">inventory_2</span></div>
+        <p>Total Item Listed (borrow &amp; free)</p>
+        <span id="pull-ct">{{ listing_count }}</span>
+      </div>
+      <div class="reportuser-ctn">
+        <div class="report-img"><span class="material-symbols-outlined" id="icon">person_alert</span></div>
+        <p>Total number of reported user</p>
+        <span id="pull-ct">{{ count_report }}</span>
+      </div>
+    </div>
+
+    <!-- ===== User List 2.0 ===== -->
+    <h3 class="userlist-txt">User List</h3>
+    <div class="userlist">
+
+      <!-- toolbar -->
+      <div class="ul-toolbar">
+        <div class="ul-left">
+          <input id="ul-search" class="ul-input" type="search" placeholder="Search username or email…">
+          <select id="ul-role" class="ul-select" aria-label="Filter by role">
+            <option value="">All roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Normal">Normal</option>
+          </select>
+        </div>
+        <div class="ul-right">
+          <span class="ul-chip">Total: {{ count }}</span>
+          <span class="ul-chip">Listings: {{ listing_count }}</span>
+          <span class="ul-chip">Reports: {{ count_report }}</span>
+        </div>
+      </div>
+
+      <!-- table -->
+      <div class="ul-table-wrap">
+        <table class="ul-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Gender</th>
+              <th>Postal</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Bio</th>
+              <th>Points</th>
+              <th>Role</th>
+              <th class="ul-actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ul-body">
+            {% for info in user_info %}
+            <tr data-role="{{ info[11] or '' }}" data-search="{{ (info[3] ~ ' ' ~ info[7]) | lower }}">
+              <td class="ul-mono">{{ info[0] }}</td>
+              <td class="ul-strong">{{ info[3] }}</td>
+              <td>{{ info[4] }}</td>
+              <td>{{ info[5] }}</td>
+              <td class="ul-ellipsis" title="{{ info[7] }}">{{ info[7] }}</td>
+              <td class="ul-ellipsis" title="{{ info[8] }}">{{ info[8] }}</td>
+              <td class="ul-ellipsis" title="{{ info[9] }}">{{ info[9] }}</td>
+              <td><span class="ul-chip ul-chip--points">{{ info[10] }}</span></td>
+              <td>
+                <span class="ul-pill {{ 'ul-pill--admin' if info[11]=='Admin' else 'ul-pill--normal' }}">
+                  {{ info[11] }}
+                </span>
+              </td>
+              <td class="ul-actions">
+                <form action="/delete_user_info" method="POST" class="ul-inline-form">
+                  <input type="hidden" name="email" value="{{ info[7] }}">
+                  <button type="submit" class="ul-btn ul-btn--danger"
+                    onclick="return confirm('Are you sure you want to delete {{ info[7] }}?');">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function(){
+    const search = document.getElementById('ul-search');
+    const role = document.getElementById('ul-role');
+    const rows = Array.from(document.querySelectorAll('#ul-body tr'));
+
+    function applyFilter(){
+      const q = (search?.value || '').toLowerCase().trim();
+      const r = role?.value || '';
+      rows.forEach(tr => {
+        const matchText = tr.dataset.search || '';
+        const matchRole = tr.dataset.role || '';
+        const passQ = !q || matchText.includes(q);
+        const passR = !r || matchRole === r;
+        tr.style.display = (passQ && passR) ? '' : 'none';
+      });
+    }
+    search?.addEventListener('input', applyFilter);
+    role?.addEventListener('change', applyFilter);
+  })();
+</script>
+{% endblock %}

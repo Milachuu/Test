@@ -1,0 +1,181 @@
+/* =====================================
+   View Booking — Compact, Centered Grid
+   ===================================== */
+
+:root{
+  /* Layout tokens */
+  --container-max: 300px;   /* <- controls the overall width of the grid */
+  --gap: 24px;
+  --card-min-w: 300px;       /* min width a card column can shrink to */
+  --card-h: 500px;           /* fixed card height for uniform rows */
+  --media-h: 100px;          /* fixed image area height */
+
+  /* Light theme tokens */
+  --surface: #ffffff;
+  --surface-2: #f6f8fa;
+  --ink-900: #222;
+  --ink-700: #444;
+  --border: #e2e8f0;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* page background + default font */
+body {
+  background: var(--surface-2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Compact container (centered, NOT full width) ===== */
+.booking-container {
+  margin: 150px auto 48px;       /* vertical spacing */
+  padding: 0 40px;               /* space from page edge */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  justify-content: start;        /* align grid items to the left */
+  max-width: 1200px;             /* enough space for ~3 cards */
+}
+
+
+/* ===== Card shell — uniform height via fixed tokens ===== */
+.booking-card {
+  position: relative;
+  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform .3s, box-shadow .3s;
+
+  display: flex;
+  flex-direction: column;
+  height: var(--card-h);                /* <- every card same height */
+}
+
+.booking-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Fixed-height media area keeps rows aligned */
+.booking-image {
+  width: 100%;
+  height: var(--media-h);
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 0 0 var(--media-h);
+}
+
+.booking-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Details area fills remaining space uniformly */
+.booking-details {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.booking-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--ink-900);
+}
+
+.booking-details p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--ink-700);
+}
+
+/* Status badge */
+.booking-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.booking-badge.upcoming { background-color: #3fb984; } /* green  */
+.booking-badge.today    { background-color: #f9a825; } /* yellow */
+.booking-badge.past     { background-color: #e53935; } /* red    */
+
+/* ===== Small screens: keep it comfy ===== */
+@media (max-width: 520px){
+  :root{
+    --card-min-w: 260px;
+    --card-h: 480px;
+    --media-h: 260px;
+  }
+  .booking-container{ padding: 0 16px; }
+}
+
+/* =========================
+   Dark Theme (required format)
+   ========================= */
+
+/* tokens */
+html[data-theme="dark"],
+html[data-theme-effective="dark"]{
+  --surface: #141922;
+  --surface-2: #0c0f13;
+  --ink-900: #e7eaf0;
+  --ink-700: #c9d1e0;
+  --border: #2a3140;
+  --shadow: 0 8px 24px rgba(0,0,0,.55);
+
+  /* keep card sizing identical in dark mode */
+  --card-h: 500px;
+  --media-h: 300px;
+}
+
+/* page bg/text */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body{
+  background: var(--surface-2);
+  color: var(--ink-900);
+}
+
+/* card & media */
+html[data-theme="dark"] .booking-card,
+html[data-theme-effective="dark"] .booking-card{
+  background: linear-gradient(135deg, #151b27, #121826);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .booking-image,
+html[data-theme-effective="dark"] .booking-image{
+  background: #0e1420;
+}
+html[data-theme="dark"] .booking-image img,
+html[data-theme-effective="dark"] .booking-image img{
+  border-bottom: 1px solid var(--border);
+}
+
+/* text colors */
+html[data-theme="dark"] .booking-title,
+html[data-theme-effective="dark"] .booking-title{
+  color: var(--ink-900);
+}
+html[data-theme="dark"] .booking-details p,
+html[data-theme-effective="dark"] .booking-details p{
+  color: var(--ink-700);
+}

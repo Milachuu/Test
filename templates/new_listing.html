@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ t("create_newlisting.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='newlisting.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="bg">
+  <div class="listing-form-container">
+    <h1 class="page-title">{{ t("create_newlisting.page_title") }}</h1>
+    <form method="POST" action="{{ url_for('create_listing') }}" enctype="multipart/form-data">
+      
+      <!-- Photo Upload Section -->
+      <div class="photo-upload">
+        <label for="photo" class="photo-label">
+          <div id="photoPlaceholder" class="photo-placeholder">
+            <p>{{ t("create_newlisting.photo_label") }}</p>
+            <small>{{ t("create_newlisting.photo_subtext") }}</small>
+          </div>
+          <img id="imagePreview" class="image-preview" src="#" alt="Preview" style="display: none;">
+          <input type="file" name="photo" id="photo" class="photo-input form-control" accept="image/*" required />
+        </label>
+      </div>
+
+      <!-- Item Details -->
+      <div class="item-details">
+        <label for="title">{{ t("create_newlisting.listing_title") }}</label>
+        <input type="text" id="title" name="title"
+               placeholder="{{ t('create_newlisting.title_placeholder') }}"
+               class="form-control" required pattern=".{5,}"
+               title="{{ t('create_listing.title_rule') }}">
+
+        <label for="description">{{ t("create_newlisting.description") }}</label>
+        <textarea id="description" name="description"
+                  placeholder="{{ t('create_newlisting.description_placeholder') }}"
+                  class="form-control" rows="3" required minlength="10"></textarea>
+      </div>
+
+      <!-- Category Selection -->
+      <div class="category-selection">
+        <label for="category">{{ t("create_newlisting.category") }}</label>
+        <select id="category" name="category" class="form-control" required>
+          <option value="">{{ t("create_newlisting.category_select") }}</option>
+          <option value="food">{{ t("create_newlisting.category_food") }}</option>
+          <option value="non-food">{{ t("create_newlisting.category_non_food") }}</option>
+        </select>
+
+        <label for="type">{{ t("create_newlisting.type") }}</label>
+        <select id="type" name="type" class="form-control" required>
+          <option value="">{{ t("create_newlisting.type_select") }}</option>
+          <option value="borrow">{{ t("create_newlisting.type_borrow") }}</option>
+          <option value="free">{{ t("create_newlisting.type_free") }}</option>
+        </select>
+      </div>
+
+      <!-- Availability -->
+      <div class="availability">
+        <h2>{{ t("create_newlisting.availability") }}</h2>
+        <label for="availability_date" class="form-label">{{ t("create_newlisting.availability_date") }}</label>
+        <input type="date" id="availability_date" name="availability_date" class="form-control" required>
+
+        <label for="availability_time">{{ t("create_newlisting.availability_time") }}</label>
+        <input type="time" id="availability_time" name="availability_time" class="form-control" required>
+        <p id="date-error" class="error-msg" style="display:none;">
+          {{ t("create_newlisting.date_error") }}
+        </p>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">{{ t("create_newlisting.submit") }}</button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("availability_date");
+    const errorMsg = document.getElementById("date-error");
+    const minDate = new Date(2025, 1, 5); // Feb 5, 2025
+    dateInput.setAttribute("min", minDate.toISOString().split("T")[0]);
+
+    dateInput.addEventListener("change", function () {
+        const selectedDate = new Date(dateInput.value);
+        if (selectedDate < minDate) {
+            errorMsg.style.display = "block";
+            dateInput.value = "";
+        } else {
+            errorMsg.style.display = "none";
+        }
+    });
+
+    // Image preview
+    const photoInput = document.getElementById('photo');
+    const imagePreview = document.getElementById('imagePreview');
+    const placeholder = document.getElementById('photoPlaceholder');
+
+    photoInput.addEventListener('change', function () {
+        const file = photoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
+    });
+});
+</script>
+{% endblock %}

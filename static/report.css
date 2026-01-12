@@ -1,0 +1,249 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Set the background image */
+    background-image: url('../static/img/good-background-iaaruoreug7ouxpv.jpg'); /* Replace with the path to your image */
+    background-size: cover; /* This will make the image cover the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+.content-container {
+    max-width: 600px;
+    margin: 50px auto;
+    margin-top: 150px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the container */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    text-align: center;
+    color: #333;
+    font-size: 2em;
+    margin-bottom: 30px;
+}
+
+.report-form {
+    display: flex;
+    flex-direction: column;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+legend {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* ===================== DARK THEME for Report Form ===================== */
+html[data-theme="dark"] .content-container,
+html[data-theme-effective="dark"] .content-container {
+    background: rgba(20, 25, 34, 0.95); /* dark surface */
+    color: #e7eaf0;
+    border: 1px solid #2a3140;
+    box-shadow: 0 8px 24px rgba(0,0,0,.6);
+}
+
+html[data-theme="dark"] .page-title,
+html[data-theme-effective="dark"] .page-title,
+html[data-theme="dark"] legend,
+html[data-theme-effective="dark"] legend {
+    color: #e7eaf0;
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme-effective="dark"] .form-control {
+    background: #141922;
+    color: #e7eaf0;
+    border: 1px solid #2a3140;
+}
+
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme-effective="dark"] .form-control::placeholder {
+    color: #9aa4b2;
+}
+
+html[data-theme="dark"] .btn-primary,
+html[data-theme-effective="dark"] .btn-primary {
+    background-color: #00b362; /* brand green */
+    color: #fff;
+    border: none;
+}
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme-effective="dark"] .btn-primary:hover {
+    filter: brightness(.9);
+}
+
+/* Username styling in navbar */
+.username {
+  margin-left: 6px;              /* spacing from the icon */
+  font-weight: 500;
+  font-size: 1rem;
+  color: #fff;                   /* adjust for light/dark themes */
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 150px;              /* prevents overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure "Hello," text is lighter so the name stands out */
+.username strong {
+  font-weight: 600;
+  color: var(--brand, #0EA89A);  /* your site accent color */
+}
+
+/* ===================== ENLARGED ++ MODE (Report Form) ===================== */
+/* Trigger with: <html data-font="112"> */
+
+html[data-font="112"] .content-container {
+  max-width: 880px !important;
+  padding: 40px !important;
+  border-radius: 14px !important;
+}
+
+/* Title + legend */
+html[data-font="112"] .page-title {
+  font-size: 3.2rem !important;   /* HUGE heading */
+  line-height: 1.2 !important;
+  margin-bottom: 44px !important;
+  font-weight: 800 !important;
+}
+html[data-font="112"] legend {
+  font-size: 2rem !important;
+  margin-bottom: 28px !important;
+  font-weight: 700 !important;
+}
+
+/* Labels */
+html[data-font="112"] label {
+  font-size: 1.6rem !important;
+  margin-bottom: 10px !important;
+}
+
+/* Inputs / selects / textarea */
+html[data-font="112"] .form-control {
+  font-size: 1.6rem !important;
+  padding: 20px 22px !important;
+  border-radius: 14px !important;
+  min-height: 70px !important;       /* taller fields */
+  line-height: 1.5 !important;
+}
+html[data-font="112"] .form-control::placeholder {
+  font-size: 1.4rem !important;
+}
+html[data-font="112"] select.form-control {
+  font-size: 1.6rem !important;
+  padding-right: 36px !important;   /* space for arrow */
+}
+html[data-font="112"] textarea.form-control {
+  min-height: 220px !important;
+}
+
+/* Button (submit) */
+html[data-font="112"] .btn {
+  font-size: 1.6rem !important;
+  padding: 18px 28px !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+}
+html[data-font="112"] .btn-primary {
+  box-shadow: 0 12px 26px rgba(0,0,0,.15) !important;
+  transition: transform .08s ease, box-shadow .2s ease !important;
+}
+html[data-font="112"] .btn-primary:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* Form spacing */
+html[data-font="112"] .form-group {
+  margin-bottom: 26px !important;
+}
+
+/* THEME GROUPED (keeps consistency in both modes) */
+html[data-theme="light"][data-font="112"] .form-control,
+html[data-theme-effective="light"][data-font="112"] .form-control,
+html[data-theme="dark"][data-font="112"] .form-control,
+html[data-theme-effective="dark"][data-font="112"] .form-control {
+  font-size: 1.6rem !important;
+  padding: 20px 22px !important;
+  min-height: 70px !important;
+  border-radius: 14px !important;
+}
+
+html[data-theme="light"][data-font="112"] .btn-primary,
+html[data-theme-effective="light"][data-font="112"] .btn-primary,
+html[data-theme="dark"][data-font="112"] .btn-primary,
+html[data-theme-effective="dark"][data-font="112"] .btn-primary {
+  font-size: 1.6rem !important;
+  padding: 18px 28px !important;
+  border-radius: 14px !important;
+}
+
+/* Username styling in navbar */
+.username {
+  margin-left: 6px;              /* spacing from the icon */
+  font-weight: 500;
+  font-size: 1rem;
+  color: #000000;                   /* adjust for light/dark themes */
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 150px;              /* prevents overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure "Hello," text is lighter so the name stands out */
+.username strong {
+  font-weight: 600;
+  color: var(--brand, #0EA89A);  /* your site accent color */
+}
+
+html[data-theme="dark"] .username,
+html[data-theme-effective="dark"] .username {
+    color: #ffffff;
+}

@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}{{ t("uniqgift_voucher.title") }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='reward_redemption.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="reward-container">
+  <!-- Current Balance -->
+  <div class="reward-balance-box">
+    <div class="reward-balance-label">{{ t("uniqgift_voucher.current_balance") }}</div>
+    <div class="reward-balance-points"><span class="star-icon">★</span>{{ points[0] }}</div>
+  </div>
+
+  <h1 class="header-text">{{ t("uniqgift_voucher.redeem_e_voucher") }}</h1>
+
+  <div class="reward-section">
+    <div class="reward-subtitle">{{ t("uniqgift_voucher.amount_to_redeem") }}</div>
+
+    <div class="reward-card">
+      <img src="{{ url_for('static', filename='img/10_UNIQGIFT-eGiftcard.jpg') }}" alt="{{ t('uniqgift_voucher.card_alt') }}" />
+    </div>
+
+    <p class="reward-note">
+      {{ t("uniqgift_voucher.click_here_view_merchants") | safe }}
+    </p>
+
+    <!-- Global not-enough-points alert -->
+    <div class="reward-alert" id="reward-alert" style="display:none;">
+      {{ t("uniqgift_voucher.not_enough_points") }}
+    </div>
+
+    <!-- Redeem Flow: Quantity -> Verify -> Success -->
+    <div id="redeem-flow">
+
+      <!-- 1) Quantity & Redeem -->
+      <div id="quantity-block" class="rf-section">
+        <label class="rf-label">{{ t("uniqgift_voucher.quantity") }}</label>
+
+        <div class="rf-row">
+          <div class="rf-qty">
+            <button type="button" id="minus-btn" class="rf-qty-btn" aria-label="{{ t('uniqgift_voucher.decrease') }}">−</button>
+            <input type="text" id="quantity-input" class="rf-qty-input" value="1" readonly aria-live="polite">
+            <button type="button" id="plus-btn" class="rf-qty-btn" aria-label="{{ t('uniqgift_voucher.increase') }}">+</button>
+          </div>
+
+          <button class="rf-redeem" id="redeem-btn" type="button">{{ t("uniqgift_voucher.redeem") }}</button>
+
+          <p class="rf-points">{{ t("uniqgift_voucher.points_worth") }}</p>
+        </div>
+
+        <!-- Inline alert under quantity -->
+        <div class="rf-alert" id="rf-alert" role="alert" style="display:none;">
+          {{ t("uniqgift_voucher.not_enough_points") }}
+        </div>
+      </div>
+
+      <!-- 2) Verify Email (hidden until Redeem) -->
+      <div id="verify-block" class="rf-section rf-hidden" aria-hidden="true">
+        <h2 class="rf-title">{{ t("uniqgift_voucher.verify_title") }}</h2>
+
+        <p class="rf-summary">
+          {{ t("uniqgift_voucher.summary_html") | safe }}
+        </p>
+
+        <p class="rf-help">
+          {{ t("uniqgift_voucher.otp_help") }}
+        </p>
+
+        <label for="otp-input" class="rf-label">{{ t("uniqgift_voucher.otp_label") }}</label>
+        <div class="rf-otp-wrap">
+          <input id="otp-input"
+                 type="text"
+                 inputmode="numeric"
+                 maxlength="6"
+                 placeholder="••••••"
+                 autocomplete="one-time-code" />
+        </div>
+
+        <div class="rf-actions">
+          <button type="button" class="rf-resend" id="resend-otp">{{ t("uniqgift_voucher.resend_otp") }}</button>
+        </div>
+
+        <button class="rf-submit" id="otp-submit" type="button" disabled>{{ t("uniqgift_voucher.submit") }}</button>
+      </div>
+
+      <!-- 3) Success (hidden until OTP success) -->
+      <div id="success-block" class="rf-section rf-hidden" aria-hidden="true">
+        <p class="rf-success-title">{{ t("uniqgift_voucher.success_title") }}</p>
+        <p class="rf-success-text">{{ t("uniqgift_voucher.success_text") }}</p>
+        <p class="rf-success-sub">
+          {{ t("uniqgift_voucher.success_sub_html") | safe }}
+        </p>
+        <a id="success-return" class="rf-submit" href="{{ url_for('reward') }}">{{ t("uniqgift_voucher.return") }}</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Terms -->
+  <div class="reward-terms-box">
+    <h2>{{ t("uniqgift_voucher.terms_conditions") }}</h2>
+    <ul>
+      <li>{{ t("uniqgift_voucher.terms_exclusion") | safe }}</li>
+      <li>{{ t("uniqgift_voucher.terms_denomination") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_issuer") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_present_before_payment") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_no_cash_exchange") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_no_replacement") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_variation_right") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_no_responsibility") }}</li>
+      <li>{{ t("uniqgift_voucher.terms_usage") | safe }}</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* (unchanged) your existing JS here */
+document.addEventListener("DOMContentLoaded", function () {
+  const minusBtn      = document.getElementById("minus-btn");
+  const plusBtn       = document.getElementById("plus-btn");
+  const quantityInput = document.getElementById("quantity-input");
+  const redeemBtn     = document.getElementById("redeem-btn");
+  const rewardAlert   = document.getElementById("reward-alert");
+
+  const quantityBlock = document.getElementById("quantity-block");
+  const verifyBlock   = document.getElementById("verify-block");
+  const successBlock  = document.getElementById("success-block");
+
+  const otpInput   = document.getElementById("otp-input");
+  const resendBtn  = document.getElementById("resend-otp");
+  const submitBtn  = document.getElementById("otp-submit");
+
+  const sumQtySpan    = document.getElementById("rf-sum-qty");
+  const sumPointsSpan = document.getElementById("rf-sum-points");
+
+  const pointsPerVoucher = 500;
+  const currentPoints = parseInt("{{ points[0] }}", 10) || 0;
+
+  function setBusy(el, busy) {
+    if (!el) return;
+    el.disabled = !!busy;
+    el.classList.toggle("is-busy", !!busy);
+  }
+  function show(el){ el.classList.remove("rf-hidden"); el.setAttribute("aria-hidden","false"); }
+  function hide(el){ el.classList.add("rf-hidden");    el.setAttribute("aria-hidden","true");  }
+
+  // Quantity +/- controls
+  minusBtn.addEventListener("click", () => {
+    const v = Math.max(1, (parseInt(quantityInput.value, 10) || 1) - 1);
+    quantityInput.value = v;
+  });
+  plusBtn.addEventListener("click", () => {
+    const v = (parseInt(quantityInput.value, 10) || 1) + 1;
+    quantityInput.value = v;
+  });
+
+  // Redeem -> send OTP
+  redeemBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const qty = parseInt(quantityInput.value, 10) || 1;
+    const totalCost = qty * pointsPerVoucher;
+
+    if (totalCost > currentPoints) { 
+      rewardAlert.style.display = "block"; 
+      return; 
+    }
+    rewardAlert.style.display = "none";
+
+    sumQtySpan.textContent = String(qty);
+    sumPointsSpan.textContent = String(totalCost);
+
+    setBusy(redeemBtn, true);
+    try {
+      const res = await fetch("/voucher/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: qty })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { 
+        alert(data.message || "Failed to send OTP."); 
+        return; 
+      }
+
+      hide(quantityBlock);
+      show(verifyBlock);
+      otpInput.focus();
+    } catch {
+      alert("Could not send OTP. Please try again.");
+    } finally { setBusy(redeemBtn, false); }
+  });
+
+  // OTP input behavior
+  function syncOtpState() {
+    otpInput.value = otpInput.value.replace(/\D/g, "").slice(0, 6);
+    submitBtn.disabled = otpInput.value.length !== 6;
+  }
+  otpInput.addEventListener("input", syncOtpState);
+  otpInput.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text") || "";
+    otpInput.value = text.replace(/\D/g, "").slice(0, 6);
+    syncOtpState();
+  });
+
+  // Resend OTP
+  resendBtn.addEventListener("click", async () => {
+    setBusy(resendBtn, true);
+    try {
+      const res = await fetch("/voucher/resend-otp", { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 429) { 
+        alert(data.message || "Please wait before requesting another OTP."); 
+        return; 
+      }
+      if (!res.ok || !data.ok) { 
+        alert(data.message || "Could not resend OTP."); 
+        return; 
+      }
+      alert(data.message || "A new OTP has been sent to your email.");
+    } catch {
+      alert("Could not resend OTP. Please try again.");
+    } finally { setBusy(resendBtn, false); }
+  });
+
+  // Submit OTP -> verify redemption
+  submitBtn.addEventListener("click", async () => {
+    const code = otpInput.value;
+    const qty  = parseInt(quantityInput.value, 10) || 1;
+    if (code.length !== 6) return;
+
+    setBusy(submitBtn, true);
+    try {
+      const res = await fetch("/voucher/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, quantity: qty })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { 
+        alert(data.message || "Invalid or expired code."); 
+        return; 
+      }
+
+      // Update displayed balance
+      if (typeof data.remaining_points === "number") {
+        const balEl = document.querySelector(".reward-balance-points");
+        if (balEl) balEl.textContent = `★${data.remaining_points}`;
+      }
+
+      // Swap UI: hide verify, show success
+      hide(verifyBlock);
+      show(successBlock);
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally { setBusy(submitBtn, false); }
+  });
+});
+</script>
+{% endblock %}

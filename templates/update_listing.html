@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}NeighbourlyNest Singapore | Update Listing{% endblock %}
+{% block css %}
+<!-- Ensure CSS is loaded properly -->
+<link rel="stylesheet" href="{{ url_for('static', filename='update_listing.css') }}">
+{% endblock %}
+{% block content %}
+<div class="listing-form-container">
+    <h1 class="page-title">Update Listing</h1>
+    <form class="update-listing-form" method="POST" action="{{ url_for('update_listing', listing_id=listing_id) }}" enctype="multipart/form-data">
+        <!-- Listing Title -->
+        <div class="form-group">
+            <label for="title">Listing Title</label>
+            <input type="text" id="title" name="title" class="form-control" value="{{ listing[2] }}" required pattern=".{5,}" title="Title must be at least 5 characters">
+        </div>
+        <!-- Description -->
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="3" required minlength="10">{{ listing[3] }}</textarea>
+        </div>
+        <!-- Category -->
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="food" {% if listing[4] == 'food' %}selected{% endif %}>Food</option>
+                <option value="non-food" {% if listing[4] == 'non-food' %}selected{% endif %}>Non-Food</option>
+            </select>
+        </div>
+        <!-- Type -->
+        <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" name="type" class="form-control" required>
+                <option value="borrow" {% if listing[5] == 'borrow' %}selected{% endif %}>Borrow</option>
+                <option value="free" {% if listing[5] == 'free' %}selected{% endif %}>Free</option>
+            </select>
+        </div>
+        <!-- Availability Date -->
+        <div class="form-group">
+            <label for="availability_date">Availability Date</label>
+            <input type="date" id="availability_date" name="availability_date" class="form-control" value="{{ listing[6] }}" required min="{{ today }}">
+            <p id="date-error" style="color: red; font-size: 14px; display: none;">⚠ Date must be from 5th February 2025 onwards.</p>
+        </div>
+        <!-- Availability Time -->
+        <div class="form-group">
+            <label for="availability_time">Availability Time</label>
+            <input type="time" id="availability_time" name="availability_time" class="form-control" value="{{  listing[7] }}" required>
+        </div>
+        <!-- Upload New Photo -->
+        <div class="form-group">
+            <label for="photo">Upload New Photo</label>
+            <input type="file" id="photo" name="photo" class="form-control" required accept="image/*">
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Update Listing</button>
+    </form>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

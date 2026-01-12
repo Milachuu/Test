@@ -1,0 +1,190 @@
+{% block content %}
+    <button class="chatbot-toggler">
+        <span class="material-symbols-outlined">smart_toy</span>  
+        <span class="material-symbols-outlined">close</span>     
+    </button>
+    <div class="chatbot">
+        <header>
+            <h2>{{ t("chatbot.title") }}</h2>
+            <span class="close-btn material-symbols-outlined">close</span>    
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>{{ t("chatbot.greeting") }}</p>   
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="{{ t('chatbot.placeholder') }}" required></textarea>
+            <span id="send-btn" class="material-symbols-outlined">send</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // ----- Chatbot core -----
+  const chatInput        = document.querySelector(".chat-input textarea");
+  const sendChatBtn      = document.querySelector(".chat-input span");
+  const chatbox          = document.querySelector(".chatbox");
+  const chatbotToggler   = document.querySelector(".chatbot-toggler");
+  const chatbotCloseBtn  = document.querySelector(".close-btn");
+  const chatbot          = document.querySelector(".chatbot");
+
+  let userMessage = "";
+  const API_KEY = '{{CHATGPT_SECRET_KEY}}';
+  const inputInitHeight = chatInput.scrollHeight;
+
+  const createChatLi = (message, className) => {
+    const chatLi = document.createElement("li");
+    chatLi.classList.add("chat", className);
+    const chatContent = className === "outgoing"
+      ? `<p></p>`
+      : `<span class="material-symbols-outlined">smart_toy</span><p></p>`;
+    chatLi.innerHTML = chatContent;
+    chatLi.querySelector("p").textContent = message;
+    return chatLi;
+  };
+
+  const generateResponse = (incomingChatLi) => {
+    const API_URL = "https://api.openai.com/v1/chat/completions";
+    const messageElement = incomingChatLi.querySelector("p");
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: userMessage }]
+      })
+    };
+
+    fetch(API_URL, requestOptions)
+      .then(res => res.json())
+      .then(data => {
+        messageElement.textContent = data?.choices?.[0]?.message?.content ?? "Sorry, I didn't catch that.";
+      })
+      .catch(() => {
+        messageElement.classList.add("error");
+        messageElement.textContent = "Oops! Something went wrong. Please try again.";
+      })
+      .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+  };
+
+  const handleChat = () => {
+    userMessage = chatInput.value.trim();
+    if (!userMessage) return;
+
+    // reset textarea
+    chatInput.value = "";
+    chatInput.style.height = `${inputInitHeight}px`;
+
+    // append user's message
+    chatbox.appendChild(createChatLi(userMessage, "outgoing"));
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+
+    // bot placeholder + fetch
+    setTimeout(() => {
+      const incomingChatLi = createChatLi("Thinking...", "incoming");
+      chatbox.appendChild(incomingChatLi);
+      chatbox.scrollTo(0, chatbox.scrollHeight);
+      generateResponse(incomingChatLi);
+    }, 400);
+  };
+
+  // auto-grow textarea
+  chatInput.addEventListener("input", () => {
+    chatInput.style.height = `${inputInitHeight}px`;
+    chatInput.style.height = `${chatInput.scrollHeight}px`;
+  });
+
+  // enter to send (desktop)
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+      e.preventDefault();
+      handleChat();
+    }
+  });
+
+  // buttons
+  sendChatBtn.addEventListener("click", handleChat);
+  chatbotToggler.addEventListener("click", () => {
+    document.body.classList.toggle("show-chatbot");
+  });
+
+  // FIX: close button removes the correct class
+  chatbotCloseBtn.addEventListener("click", () => {
+    document.body.classList.remove("show-chatbot");
+  });
+
+  // Close when clicking outside the panel/toggler
+  document.addEventListener("click", (e) => {
+    if (!document.body.classList.contains("show-chatbot")) return;
+    const insidePanel = chatbot.contains(e.target);
+    const onToggler  = chatbotToggler.contains(e.target);
+    if (!insidePanel && !onToggler) {
+      document.body.classList.remove("show-chatbot");
+    }
+  });
+
+  // (Optional hardening) prevent clicks inside from bubbling to document
+  chatbot.addEventListener("click", (e) => e.stopPropagation());
+</script>
+
+<script>
+  // ----- Translation helpers (deduped) -----
+  const API_URL_TRANSLATE = "https://api.openai.com/v1/chat/completions";
+
+  async function translateText(text, targetLanguage) {
+    try {
+      const response = await fetch(API_URL_TRANSLATE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer {{CHATGPT_SECRET_KEY}}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You are a translation assistant. Translate text into " + targetLanguage + "." },
+            { role: "user", content: text }
+          ]
+        })
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json();
+      return result?.choices?.[0]?.message?.content?.trim() || text;
+    } catch (err) {
+      console.error("Translation error:", err);
+      return text;
+    }
+  }
+
+  async function translatePage(languageCode) {
+    const elementsToTranslate = document.querySelectorAll("[data-translate]");
+    for (const el of elementsToTranslate) {
+      const originalText = el.innerText.trim();
+      const translatedText = await translateText(originalText, languageCode);
+      if (translatedText) el.innerText = translatedText;
+    }
+  }
+
+  // Example wiring (keep if you have the controls on page)
+  const changeLangBtn = document.getElementById("change-language");
+  const langSelect    = document.getElementById("language-select");
+
+  if (changeLangBtn && langSelect) {
+    const languageMap = { "Chinese": "Chinese (Simplified)", "Hindi": "Hindi", "Malay": "Malay" };
+    changeLangBtn.addEventListener("click", () => {
+      const selected = langSelect.value;
+      const code = languageMap[selected];
+      if (code) translatePage(code);
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "before_base.html" %} 
+{% block title %}Forget Password{% endblock %} 
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='loginsignup.css') }}">
+{% endblock %}
+ 
+{% block content %} 
+{% from "_formHelper.html" import render_field %} 
+
+<h1 class="forget-password-txt">Forget Password</h1>
+
+<form method="POST" action="" class="login_form"> 
+<div class="forget_password-ctn">
+  <div class="email-input"> 
+    {{ render_field(form.email, placeholder="Email") }} 
+  </div> 
+  
+  <div class="password_field"> 
+    {{ render_field(form.password, placeholder="New Password") }} 
+  </div> 
+  <p>{{ message1 }}</p>
+  <input type="submit" value="Submit" class="submit_form" id="submit-btn" /> 
+</div>
+</form> 
+{% endblock %}

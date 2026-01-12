@@ -1,0 +1,27 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | About Us{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='aboutus.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="about_us_ctn">
+    <h1>Discover your neighbourhood with NeighbourlyNest</h1>
+    <div class="about-section-ctn">
+        <div class="phone-ctn">
+            <img src="../static/img/Phone.png" alt="NeighbourlyNest Phone Interface">
+        </div>
+        <div class="about-section">
+            <h3 style="padding-top: 50px;">Built by NYP Students, for the Community</h3>
+            <p>NeighbourlyNest is a student-driven initiative from NYP, designed to foster trust and togetherness in local neighborhoods through seamless sharing and collaboration.</p>
+            
+            <h3>Share More, Waste Less</h3>
+            <p>From borrowing tools to giving away unused items, NeighbourlyNest promotes a culture of sharing, reducing waste, and helping neighbors access what they need.</p>
+
+            <h3>Bringing the Kampung Spirit Online</h3>
+            <p>Inspired by the kampung spirit, our platform fosters a connected and supportive neighborhood where lending and giving strengthen community ties.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

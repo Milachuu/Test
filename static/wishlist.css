@@ -1,0 +1,608 @@
+/*CURRENTLY ADDED STYLES START FROM HERE*/
+/* -------------------- FIXING SEARCH BAR TO MATCH FIGMA -------------------- */
+.search-container {
+    margin-top: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Search Form */
+  .search-form {
+    display: flex;
+    align-items: center;
+    width: 80%; /* Make it span more width */
+    max-width: 900px; /* Prevent it from being too wide on large screens */
+    background: #F5F5F5;
+    border-radius: 50px;
+    padding: 8px 15px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    border: 1px solid #DDD;
+  }
+  
+  /* Input Field */
+  .search-input {
+    flex: 1;
+    border: none;
+    padding: 14px 18px;
+    font-size: 16px;
+    border-radius: 50px;
+    outline: none;
+    background: transparent;
+  }
+  
+  /* Search Button */
+  .btn-search {
+    background-color: #0EA89A;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Hover Effect */
+  .btn-search:hover {
+    background-color: #087c73;
+  }
+  
+  /* Placeholder Styling */
+  .search-input::placeholder {
+    color: #8E8E8E;
+    font-size: 15px;
+    opacity: 0.8;
+  }
+  
+  /* Ensure Responsive Behavior */
+  @media (max-width: 768px) {
+    .search-form {
+        width: 90%;
+    }
+    .btn-search {
+        padding: 12px 18px;
+    }
+  }
+  
+  
+  /* -------------------- FIXING LISTINGS GRID -------------------- */
+  .listings-section {
+    margin-bottom: 30px;
+  }
+  
+  .row-cols-md-5 > .col {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Ensuring Cards are Uniform */
+  .listing-card {
+    width: 100%;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Fix Image Display */
+  .listing-image {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* -------------------- FIXING USER INFO & BOOKMARK ICONS -------------------- */
+  .user-info {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 14px;
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .user-info i {
+    font-size: 18px;
+  }
+  
+  .bookmark-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .bookmark-icon:hover {
+    color: #0EA89A;
+  }
+  
+  /* -------------------- FIXING DROPDOWN BUTTONS -------------------- */
+  .dropdown-btn {
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  .dropdown-content {
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 140px;
+    border-radius: 6px;
+    padding: 5px 0;
+  }
+  
+  .dropdown-content a, .dropdown-content button {
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    color: black;
+  }
+  
+  .dropdown-content a:hover, .dropdown-content button:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* -------------------- CREATE NEW LISTING BUTTON FIX -------------------- */
+  .listings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .btn-create {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #D43F34;
+    color: white;
+    transition: background-color 0.3s;
+    text-align: center;
+  }
+  
+  .btn-create:hover {
+    background-color: #C32E24;
+  }
+  
+  /* -------------------- ENSURING UNIFORM LISTING CARDS -------------------- */
+  .listing-card {
+    height: 320px; /* Fixed height for uniformity */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensuring Image Size Consistency */
+  .listing-image {
+    height: 180px; /* Fixed height */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* -------------------- ALIGNING ACTION BUTTONS -------------------- */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card-body button {
+    align-self: center;
+    margin-top: auto;
+  }
+  
+  /* Align "Actions" Button */
+  .dropdown-btn {
+    width: 100%;
+    text-align: center;
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  
+  .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  /* -------------------- FIXING CARD HEIGHT & ACTION BUTTON -------------------- */
+  .listing-card {
+    height: 380px; /* Increased height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensure Image Size is Consistent */
+  .listing-image {
+    height: 200px; /* Adjust image height to match new card height */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* Ensure Card Body Stretches Correctly */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 10px; /* Extra spacing to keep button inside */
+  }
+  
+  /* Make Sure "Actions" Button Stays Inside the Card */
+  .card-body .dropdown-btn {
+    align-self: center;
+    width: 100%;
+    margin-top: auto; /* Forces button to the bottom */
+  }
+  
+  /* -------------------- FIXING CARD HEIGHT & ACTION BUTTON ALIGNMENT -------------------- */
+  .listing-card {
+    height: 420px; /* Increased to fit longer descriptions */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Ensure Image Size is Consistent */
+  .listing-image {
+    height: 180px; /* Keep images uniform */
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  /* Fix Text Area & Button Alignment */
+  .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 15px;
+  }
+  
+  /* Limit Long Text in Descriptions */
+  .card-text {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limits text to 3 lines */
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Ensure "Actions" Button is Always at the Bottom */
+  .card-body .dropdown-btn {
+    align-self: center;
+    margin-top: auto; /* Pushes button to the bottom */
+    width: 100%;
+    background-color: #0EA89A;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  
+  .card-body .dropdown-btn:hover {
+    background-color: #087c73;
+  }
+  
+  /* Ensure Dropdown Menu Displays Properly */
+  .dropdown-menu {
+    display: none; /* Hide by default */
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 140px;
+    z-index: 1000;
+  }
+  
+  /* Make the Dropdown Appear on Click */
+  .dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+  /* Dropdown Item Styling */
+  .dropdown-item {
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+    display: block;
+  }
+  
+  /* Highlight Hover Effect */
+  .dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* -------------------- FORM STYLING FOR CREATE & UPDATE LISTING -------------------- */
+  .listing-form-container {
+    width: 60%;
+    margin-top: 120px;
+    margin-left: 20%;
+    padding: 40px;
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    border: 1pt solid rgba(0,0,0,0.2);
+  }
+  
+  /* Heading */
+  .page-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Labels */
+  .listing-form-container label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  
+  /* Input Fields */
+  .listing-form-container input[type="text"],
+  .listing-form-container input[type="date"],
+  .listing-form-container input[type="time"],
+  .listing-form-container select,
+  .listing-form-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  /* Textarea */
+  .listing-form-container textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  /* File Upload */
+  .listing-form-container input[type="file"] {
+    padding: 10px;
+    border: none;
+  }
+  
+  /* Submit Button */
+  .listing-form-container .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #0EA89A;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .listing-form-container .btn-primary:hover {
+    background-color: #087c73;
+  }
+  
+  #reportuser-btn {
+    margin-left: 60%;
+  }
+  
+  #create-btn {
+    background-color: #054d47;
+  }
+  
+  #create-btn:hover {
+    background-color: #022825;
+  }
+  
+  
+  /* Responsive Fix */
+  @media (max-width: 768px) {
+    .listing-form-container {
+        width: 90%;
+        padding: 30px;
+    }
+  }
+  
+
+  .favorite-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.favorite-icon {
+    font-size: 36px; /* Size of the icon */
+    color: black; /* Default color */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* When hovering over the favorite button */
+.favorite-icon:hover {
+    color: #D43F34; /* Color change on hover */
+}
+
+.create-wishlist-btn {
+    margin-top: 100px;
+}
+
+.favorites-container {
+    margin-bottom: 50px;
+    align-items: center;
+}
+
+.create-wishlist-btn {
+    margin-top: 100px;
+    margin-bottom: 50px;
+    left: 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #0EA89A;
+    border: none;
+    color: white;
+    transition: background-color 0.3s;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.create-wishlist-btn:hover {
+    background-color: #087c73;
+}
+
+
+/* =========================
+   Wishlist — Dark Mode Fix
+   (data-attr format as requested)
+   ========================= */
+
+/* Page base */
+html[data-theme="dark"],
+html[data-theme-effective="dark"] {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+/* Section headings / buttons */
+html[data-theme="dark"] .favorites-container h2,
+html[data-theme-effective="dark"] .favorites-container h2 {
+  color: #e6edf3;
+}
+
+html[data-theme="dark"] .create-wishlist-btn,
+html[data-theme-effective="dark"] .create-wishlist-btn {
+  background-color: #0EA89A;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.45);
+}
+html[data-theme="dark"] .create-wishlist-btn:hover,
+html[data-theme-effective="dark"] .create-wishlist-btn:hover {
+  background-color: #087c73;
+}
+
+/* Cards (override Bootstrap) */
+html[data-theme="dark"] .card.listing-card,
+html[data-theme-effective="dark"] .card.listing-card,
+html[data-theme="dark"] .listing-card,
+html[data-theme-effective="dark"] .listing-card {
+  background-color: #161b22 !important;   /* <-- kills the white */
+  border: 1px solid #30363d !important;
+  color: #e6edf3 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.55);
+}
+
+html[data-theme="dark"] .listing-card .card-body,
+html[data-theme-effective="dark"] .listing-card .card-body {
+  background: transparent !important;
+  color: #c9d1d9 !important;
+}
+
+html[data-theme="dark"] .listing-card .card-title,
+html[data-theme-effective="dark"] .listing-card .card-title {
+  color: #e6edf3 !important;
+}
+
+html[data-theme="dark"] .listing-card .card-text,
+html[data-theme-effective="dark"] .listing-card .card-text {
+  color: #c9d1d9 !important;
+}
+
+/* Image area background (while loading/letterboxing) */
+html[data-theme="dark"] .listing-image,
+html[data-theme-effective="dark"] .listing-image {
+  background-color: #0b1220; /* deep navy to blend with dark */
+}
+
+/* Small badge with username in corner */
+html[data-theme="dark"] .user-info,
+html[data-theme-effective="dark"] .user-info {
+  background: rgba(22, 27, 34, 0.9);
+  color: #e6edf3;
+  border: 1px solid #30363d;
+}
+
+/* Favorite icon */
+html[data-theme="dark"] .favorite-icon,
+html[data-theme-effective="dark"] .favorite-icon {
+  color: #ff6b6b; /* visible on dark */
+}
+html[data-theme="dark"] .favorite-icon:hover,
+html[data-theme-effective="dark"] .favorite-icon:hover {
+  color: #d43f34;
+}
+
+/* Dropdowns (if used in this page) */
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme-effective="dark"] .dropdown-menu,
+html[data-theme="dark"] .dropdown-content,
+html[data-theme-effective="dark"] .dropdown-content {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+}
+html[data-theme="dark"] .dropdown-item,
+html[data-theme-effective="dark"] .dropdown-item {
+  color: #e6edf3;
+}
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme-effective="dark"] .dropdown-item:hover {
+  background-color: #1f2430;
+}

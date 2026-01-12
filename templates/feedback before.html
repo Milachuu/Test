@@ -1,0 +1,47 @@
+{% extends "before_base.html" %}
+{% block title %}NeighbourlyNest Singapore | Feedback{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='feedback.css') }}">
+{% endblock %}
+
+{% block content %}
+<img src="{{ url_for('static', filename='img/feedback bg.png') }}" class="feedbackBgElement">
+
+<form id="feedbackform" method="POST" action="{{ url_for('feedbackb4') }}" onsubmit="return handleSubmit(event)">
+  <label class="feedbackLabel">Get in touch</label>
+  <fieldset class="feedback-fieldset">
+    <input type="text" placeholder="Your Name" name="name" class="userDetails" required>
+    <br/><br/>
+    <input type="email" placeholder="Your Email" name="email" class="userDetails" required>
+    <br/><br/>
+    <textarea rows="10" cols="50" placeholder="Your Message" name="message" class="feedback-textarea" required></textarea>
+    <br/><br/>
+    <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+    <br>
+    <input type="submit" name="submit" value="Submit" class="feedback-submit">
+  </fieldset>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function handleSubmit(event) {
+  const captchaResponse = grecaptcha.getResponse();
+  if (!captchaResponse) {
+    event.preventDefault();
+    alert("Please complete the CAPTCHA before submitting.");
+    return false;
+  }
+
+  const name = document.querySelector('input[name="name"]').value;
+  const email = document.querySelector('input[name="email"]').value;
+  const message = document.querySelector('input[name="message"]').value;
+
+  // Optional courtesy message; then allow normal submit
+  alert(`Thank you ${name}, we appreciate your feedback and will get back to you soon at ${email}!`);
+  return true; // allow form to submit
+}
+</script>
+{% endblock %}

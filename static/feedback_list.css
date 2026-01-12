@@ -1,0 +1,209 @@
+/* =======================================================
+   Feedback List – Card + Table redesign
+   ======================================================= */
+
+:root{
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f7f9fb;
+  --ink: #0f1720;
+  --muted: #667085;
+  --border: #e6eaef;
+  --brand: #0EA89A;
+  --brand-2:#0c8f84;
+  --radius: 14px;
+  --shadow: 0 10px 28px rgba(16,24,40,.08);
+}
+
+/* layout */
+.fbk-wrap{
+  max-width: 1200px;
+  margin: 110px auto 40px;   /* space below fixed navbar */
+  padding: 0 20px;
+  color: var(--ink);
+}
+
+.fbk-head{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.title-group{
+  text-align: center;
+}
+
+.fbk-title{
+  margin: 0;
+  font-size: clamp(28px, 2.8vw, 40px);
+  font-weight: 900;
+  letter-spacing: .2px;
+  color: var(--ink);
+}
+
+.fbk-sub{
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* tools */
+.fbk-tools{
+  display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
+}
+
+.input-shell{
+  display:flex; align-items:center; gap:8px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 280px;
+}
+.input-shell input{
+  border:0; outline:0; background:transparent; width: 260px; color: var(--ink);
+}
+.search-ic{ font-size: 20px; color: var(--muted); }
+
+/* buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding: 10px 14px; border-radius:10px;
+  font-weight: 700; cursor:pointer; border:1px solid var(--border);
+  background:#fff; color:#0f1720; transition: .15s ease-in-out;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn.ghost{ background:#fff; }
+.back-btn{ background:#fff; }
+.back-btn:hover{ box-shadow: var(--shadow); }
+
+/* card */
+.fbk-card{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+/* table */
+.table-wrap{ overflow:auto; border-radius: 12px; }
+.fbk-table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+
+.fbk-table thead th{
+  background: var(--brand);
+  color:#fff;
+  text-align:left;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+.fbk-table tbody td{
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  vertical-align: top;
+}
+.fbk-table tbody tr:nth-child(even){ background:#f9fbfc; }
+
+/* responsive “cards” under 760px */
+@media (max-width: 760px){
+  .fbk-head{ grid-template-columns: 1fr; justify-items: start; }
+  .title-group{ text-align: left; }
+  .fbk-tools{ width: 100%; }
+  .input-shell{ flex:1; min-width: 0; width: 100%; }
+  .input-shell input{ width: 100%; }
+
+  .fbk-table{ min-width: 0; }
+  .fbk-table thead{ display:none; }
+  .fbk-table tbody tr{
+    display:grid; gap: 8px 12px;
+    grid-template-columns: 1fr 1fr;
+    padding:14px; border-bottom:1px solid var(--border); background:#fff;
+  }
+  .fbk-table tbody td{ border:0; padding:0; }
+  .fbk-table tbody td::before{
+    content: attr(data-label);
+    display:block; margin-bottom:2px; font-size:12px;
+    color: var(--muted); text-transform:uppercase; letter-spacing:.08em;
+  }
+}
+
+/* ---------------- DARK MODE ---------------- */
+html[data-theme="dark"],
+html[data-theme-effective="dark"]{
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --ink: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --shadow: 0 12px 30px rgba(0,0,0,.55);
+}
+
+html[data-theme="dark"] .fbk-title,
+html[data-theme-effective="dark"] .fbk-title{ color: var(--ink); }
+
+html[data-theme="dark"] .fbk-sub,
+html[data-theme-effective="dark"] .fbk-sub{ color: var(--muted); }
+
+html[data-theme="dark"] .input-shell,
+html[data-theme-effective="dark"] .input-shell{
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+html[data-theme="dark"] .input-shell input,
+html[data-theme-effective="dark"] .input-shell input{ color: var(--ink); }
+
+/* button style you asked for */
+html[data-theme="dark"] .btn,
+html[data-theme-effective="dark"] .btn{
+  background:#0f141b; color:#e7eaf0; border-color: var(--border);
+}
+html[data-theme="dark"] .btn:hover,
+html[data-theme-effective="dark"] .btn:hover{
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .btn.primary,
+html[data-theme-effective="dark"] .btn.primary{
+  background:#0EA89A; color:#121212;
+}
+html[data-theme="dark"] .btn.primary:hover,
+html[data-theme-effective="dark"] .btn.primary:hover{
+  background:#00d1c7; color:#121212; /* exact format you prefer */
+}
+
+/* table dark */
+html[data-theme="dark"] .fbk-card,
+html[data-theme-effective="dark"] .fbk-card{
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .fbk-table,
+html[data-theme-effective="dark"] .fbk-table{
+  background: var(--surface);
+  border-color: var(--border);
+}
+html[data-theme="dark"] .fbk-table thead th,
+html[data-theme-effective="dark"] .fbk-table thead th{
+  background: var(--brand); color: #fff;
+}
+html[data-theme="dark"] .fbk-table tbody td,
+html[data-theme-effective="dark"] .fbk-table tbody td{
+  color: var(--ink);
+  border-bottom-color: var(--border);
+}
+html[data-theme="dark"] .fbk-table tbody tr:nth-child(even),
+html[data-theme-effective="dark"] .fbk-table tbody tr:nth-child(even){
+  background: #0f141b;
+}

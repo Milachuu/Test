@@ -1,0 +1,315 @@
+/* =========================================================
+   Moderation Center / View Report – Full CSS
+   File: viewreport_redesign.css
+   ========================================================= */
+
+/* ---------- Root / tokens ---------- */
+:root{
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f7f9fb;
+  --ink: #0f1720;
+  --ink-2: #3b4754;
+  --muted: #667085;
+  --border: #e6eaef;
+  --shadow: 0 8px 24px rgba(16,24,40,.08);
+  --brand: #0EA89A;
+  --brand-2:#0c8f84;
+  --danger:#D43F34;
+  --danger-2:#C32E24;
+  --success:#12B76A;
+  --warn:#F59E0B;
+  --radius: 14px;
+}
+
+/* ---------- Page background ---------- */
+html,body{background:var(--bg); color:var(--ink);}
+
+/* ---------- Header / Title ---------- */
+.vrp-header{
+  max-width: 1400px;
+  margin: 110px auto 16px;      /* clear fixed navbar */
+  padding: 0 24px;
+}
+.vrp-title{
+  font-size: clamp(28px,2vw,36px);
+  font-weight: 800;
+  letter-spacing:.2px;
+  color: var(--ink);
+}
+
+/* ---------- Metrics row (optional counters) ---------- */
+.vrp-metrics{
+  display:flex; gap:16px; margin:12px 0 8px; flex-wrap:wrap;
+}
+.metric{
+  min-width:160px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:14px 18px;
+}
+.metric .kicker{
+  font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+.metric .value{
+  font-size:26px; font-weight:800; color:var(--ink);
+}
+
+/* ---------- Card ---------- */
+.vrp-card{
+  max-width: 1400px;
+  margin: 18px auto;
+  padding: 20px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.vrp-card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:14px;
+}
+.vrp-card-title{
+  font-size:22px; font-weight:800; color:var(--ink);
+}
+
+/* ---------- Controls (search + clear) ---------- */
+.vrp-tools{ display:flex; gap:8px; flex-wrap:wrap; }
+.vrp-input{
+  width: min(520px, 100%);
+  display:flex; align-items:center; gap:8px;
+  padding: 10px 12px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius: 10px;
+}
+.vrp-input input{
+  flex:1; border:0; outline:0; background:transparent; color:var(--ink);
+}
+.vrp-input .icon{ font-size:20px; color:var(--muted); }
+
+.btn,
+.button{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding: 10px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#fff; color:#0f1720; font-weight:700; cursor:pointer;
+  transition:.15s ease-in-out;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn.primary{ background: var(--brand); color:#fff; border-color:transparent; }
+.btn.primary:hover{ background: var(--brand-2); }
+.btn.danger{ background: var(--danger); color:#fff; border-color:transparent; padding: 8px 12px; }
+.btn.danger:hover{ background: var(--danger-2); }
+
+/* ---------- Table ---------- */
+.vrp-table-wrap{
+  overflow:auto; border-radius:12px;
+  margin-right:-4px; padding-right:4px; /* small gutter for scrollbar */
+}
+.vrp-table{
+  width:100%; border-collapse: collapse; min-width: 960px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+}
+.vrp-table thead th{
+  background: var(--brand); color:#fff; text-align:left;
+  padding: 10px 14px; font-weight:800; font-size:14px; white-space:nowrap;
+}
+.vrp-table tbody td{
+  padding: 10px 14px; border-bottom:1px solid var(--border); font-size:14px;
+  white-space: normal; word-break: break-word;
+}
+.vrp-table tbody tr:nth-child(even){ background:#f9fbfc; }
+.ta-center{ text-align:center; }
+
+/* Column hints to reduce squeeze */
+.vrp-table thead th:nth-child(1){ width: 90px;  } /* ID */
+.vrp-table thead th:nth-child(2){ width: 260px; } /* Email */
+.vrp-table thead th:nth-child(3){ width: 200px; } /* By Who / Failed Login */
+.vrp-table thead th:nth-child(4){ width: 180px; } /* Reason / Date */
+.vrp-table thead th:nth-child(5){ width: 160px; } /* Others / Time */
+.vrp-table thead th:nth-child(6){ width: 220px; } /* Description / Status */
+.vrp-table thead th:last-child{ width: 120px; text-align:center; }
+
+/* ---------- Chips (statuses) ---------- */
+.chip{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 10px;
+  border-radius:999px; font-weight:700; font-size:12px;
+  border:1px solid var(--border); background:#fff;
+}
+.chip .dot{ width:8px; height:8px; border-radius:999px; }
+.chip.success{ color: var(--success); background: #f1fdf6; border-color:#e6f7ec; }
+.chip.success .dot{ background: var(--success); }
+.chip.warn{ color: var(--warn); background: #fff8e6; border-color:#ffefc2; }
+.chip.warn .dot{ background: var(--warn); }
+.chip.fail{ color: var(--danger); background: #fff1f0; border-color:#ffd5d1; }
+.chip.fail .dot{ background: var(--danger); }
+
+/* ---------- Inline form inside rows ---------- */
+.row-form{
+  display:flex; align-items:center; gap:8px; justify-content:flex-end;
+}
+.row-form label{ font-size:12px; color:var(--muted); }
+.row-form input[type="email"]{
+  height:36px; padding:0 10px; border-radius:8px; border:1px solid var(--border);
+  background: var(--surface-2); color: var(--ink);
+}
+
+.badge {
+  color:var(--ink);
+}
+
+/* ---------- “Count” helper text ---------- */
+.feedback-count{ color:var(--muted); margin: 2px 0 12px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px){
+  .vrp-card-head{ flex-direction:column; align-items:stretch; gap:12px; }
+  .vrp-tools{ width:100%; }
+  .vrp-input{ width:100%; }
+}
+
+/* Switch to stacked “cards” table at earlier breakpoint to avoid squeeze */
+@media (max-width: 980px){
+  .vrp-table{ min-width: 0; }
+  .vrp-table thead{ display:none; }
+  .vrp-table tbody tr{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    padding:14px;
+    border-bottom:1px solid var(--border);
+    background:#fff;
+  }
+  .vrp-table tbody td{ border:0; padding:0; }
+  .vrp-table tbody td::before{
+    content: attr(data-label);
+    display:block; margin-bottom:2px;
+    font-size:12px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.08em;
+  }
+  .ta-center{ text-align:left; }
+}
+
+/* ---------- DARK MODE ---------- */
+html[data-theme="dark"],
+html[data-theme-effective="dark"]{
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --ink: #e7eaf0;
+  --ink-2: #c6cfdd;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --shadow: 0 12px 30px rgba(0,0,0,.55);
+}
+
+html[data-theme="dark"] .vrp-title,
+html[data-theme-effective="dark"] .vrp-title{ color: var(--ink); }
+
+html[data-theme="dark"] .metric,
+html[data-theme-effective="dark"] .metric{
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .metric .value,
+html[data-theme-effective="dark"] .metric .value{ color: var(--ink); }
+html[data-theme="dark"] .metric .kicker,
+html[data-theme-effective="dark"] .metric .kicker{ color: var(--muted); }
+
+html[data-theme="dark"] .vrp-card,
+html[data-theme-effective="dark"] .vrp-card{
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+
+html[data-theme="dark"] .vrp-input,
+html[data-theme-effective="dark"] .vrp-input{
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+html[data-theme="dark"] .vrp-input input,
+html[data-theme-effective="dark"] .vrp-input input{ color: var(--ink); }
+
+html[data-theme="dark"] .btn,
+html[data-theme-effective="dark"] .btn{
+  background: #0f141b; color:#e7eaf0; border-color: var(--border);
+}
+html[data-theme="dark"] .btn.primary,
+html[data-theme-effective="dark"] .btn.primary{
+  background: var(--brand); color:#111; border-color: transparent;
+}
+html[data-theme="dark"] .btn.primary:hover,
+html[data-theme-effective="dark"] .btn.primary:hover{ background:#00d1c7; color:#121212; } /* requested format */
+html[data-theme="dark"] .btn.danger,
+html[data-theme-effective="dark"] .btn.danger{ background: var(--danger); color:#fff; }
+
+html[data-theme="dark"] .vrp-table,
+html[data-theme-effective="dark"] .vrp-table{
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .vrp-table thead th,
+html[data-theme-effective="dark"] .vrp-table thead th{
+  background: var(--brand); color:#fff;
+}
+html[data-theme="dark"] .vrp-table tbody td,
+html[data-theme-effective="dark"] .vrp-table tbody td{
+  color: var(--ink);
+  border-bottom-color: var(--border);
+}
+html[data-theme="dark"] .vrp-table tbody tr:nth-child(even),
+html[data-theme-effective="dark"] .vrp-table tbody tr:nth-child(even){
+  background: #0f141b;
+}
+
+/* Dark chips */
+html[data-theme="dark"] .chip.success,
+html[data-theme-effective="dark"] .chip.success{
+  background:#052b1a; border-color:#0d3a24; color:#98f5c5;
+}
+html[data-theme="dark"] .chip.warn,
+html[data-theme-effective="dark"] .chip.warn{
+  background:#2a1e03; border-color:#3b2b06; color:#ffd27b;
+}
+html[data-theme="dark"] .chip.fail,
+html[data-theme-effective="dark"] .chip.fail{
+  background:#3a1010; border-color:#4a1515; color:#ffb0a8;
+}
+
+/* Inputs inside row (dark) */
+html[data-theme="dark"] .row-form input[type="email"],
+html[data-theme-effective="dark"] .row-form input[type="email"]{
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+/* ---------- Compatibility with legacy table class (if still used) ---------- */
+/* Apply the new look to .retrieve_table too, without changing HTML */
+table.retrieve_table{ composes: vrp-table; } /* If your build system supports CSS Modules */
+/* Fallback manual mapping: */
+table.retrieve_table{
+  width:100%; border-collapse:collapse; min-width:960px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; box-shadow: var(--shadow);
+}
+thead.table_header th{
+  background: var(--brand); color:#fff; text-align:left;
+  padding:10px 14px; font-weight:800; font-size:14px; white-space:nowrap;
+}
+tbody.table_body td{
+  padding:10px 14px; border-bottom:1px solid var(--border); font-size:14px;
+  white-space:normal; word-break:break-word;
+}
+tbody.table_body tr:nth-child(even){ background:#f9fbfc; }
+html[data-theme="dark"] tbody.table_body tr:nth-child(even),
+html[data-theme-effective="dark"] tbody.table_body tr:nth-child(even){ background:#0f141b; }

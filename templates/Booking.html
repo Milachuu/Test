@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+{% block title %}Collection{% endblock %}
+
+{% block content %}
+<style>
+  /* ===== Layout ===== */
+  .main-container{
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    display:flex; justify-content:center; align-items:flex-start;
+    gap:28px; padding:24px; margin:6vh auto 6vh; max-width:1400px;
+  }
+
+  .listing-details{ width:100%; text-align:center; margin:2vh 0 1vh; }
+  .listing-details h1{ font-size:2.2rem; font-weight:800; letter-spacing:.2px; }
+
+  .booking-image{
+    display:block; width:100%; max-width:840px; height:420px;
+    object-fit:cover; border-radius:16px; margin:16px auto 12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+  }
+
+  /* ===== Left column: Notes ===== */
+  .rules-container{
+    width:32%; min-width:320px;
+    padding:28px 28px 22px;
+    border:2px solid #ccc; border-radius:14px; background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  .rules-container h2{ font-size:1.8rem; margin:6px 0 12px; font-weight:800; }
+  .rules-container ul{ padding-left:22px; }
+  .rules-container li{ margin-bottom:12px; font-size:1.05rem; line-height:1.55; }
+
+  /* ===== Right column: Calendar block ===== */
+  #calendarForm{
+    width:66%; max-width:1200px;
+    border:2px solid #ccc; border-radius:14px; background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+    padding:26px;
+  }
+  #calendarForm .container{ display:flex; gap:22px; }
+
+  .calendar-container, .time-container{ flex:1; }
+
+  .select-container{ display:flex; gap:12px; margin-bottom:16px; }
+  #calendarForm select{
+    width:50%; font-size:1.1rem; padding:14px 12px; border-radius:12px;
+    border:1px solid #d0d5dd; background:#fff;
+  }
+
+  /* Calendar grid */
+  #calendar{ }
+  .calendar-header{
+    display:grid; grid-template-columns:repeat(7,1fr);
+    gap:12px; text-align:center; font-weight:800; font-size:1.05rem;
+    margin-bottom:10px; letter-spacing:.2px;
+  }
+  .calendar-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:12px; }
+
+  .calendar-day{
+    height:62px; display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; font-weight:800; border-radius:10px; cursor:pointer;
+    transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+    user-select:none;
+  }
+  .calendar-day:hover{ background:#f3f6fa; box-shadow:inset 0 0 0 2px #e5e9f0; }
+  .calendar-day.disabled{ color:#c2c7d0; font-weight:600; pointer-events:none; }
+  .calendar-day.selected{
+    background:#6FCF97; color:#0b1118; box-shadow:0 6px 14px rgba(111,207,151,.35);
+  }
+
+  /* Selected date + timezone */
+  #selectedDateHeader{
+    text-align:right; font-size:1.25rem; font-weight:700; margin:4px 0 2px;
+    font-family: Ovo, Georgia, serif;
+    text-shadow:0 1px 1px rgba(126,126,126,.4);
+  }
+  #timezone{ text-align:right; color:#555; margin-bottom:6px; }
+
+  /* Time buttons grid */
+  .time-buttons{
+    margin-top:18px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+  }
+  .time-button{
+    font-size:1.15rem; font-weight:800; padding:16px 10px;
+    background:#fff; color:#00b362; border:2px solid #00b362;
+    border-radius:14px; width:100%; cursor:pointer; transition:all .15s ease;
+    box-shadow:0 4px 12px rgba(0,179,98,.08);
+  }
+  .time-button:hover{ background:#e8f5e9; }
+  .time-button.selected{ background:#00b362; color:#fff; box-shadow:0 8px 18px rgba(0,179,98,.22); }
+
+  /* Book Now CTA */
+  .book-now-button{
+    display:block; width:100%; margin:18px auto 4px;
+    background:#2ccf53; color:#fff; border:none;
+    padding:18px 24px; font-size:1.25rem; font-weight:800;
+    border-radius:12px; cursor:pointer; transition:filter .15s ease, transform .06s ease;
+    box-shadow:0 10px 26px rgba(44,207,83,.25);
+  }
+  .book-now-button:hover{ filter:brightness(.96); transform:translateY(-1px); }
+
+  /* ===== ENLARGED MODE (html[data-font="112"]) ===== */
+  html[data-font="112"] .listing-details h1{ font-size:2.6rem; }
+  html[data-font="112"] .booking-image{ height:460px; border-radius:18px; }
+
+  html[data-font="112"] .rules-container{ padding:32px; }
+  html[data-font="112"] .rules-container h2{ font-size:2rem; }
+  html[data-font="112"] .rules-container li{ font-size:1.2rem; line-height:1.65; }
+
+  html[data-font="112"] #calendarForm{ padding:30px; }
+  html[data-font="112"] #calendarForm select{ font-size:1.25rem; padding:16px 14px; border-radius:14px; }
+  html[data-font="112"] .calendar-header{ font-size:1.2rem; gap:14px; }
+  html[data-font="112"] .calendar-grid{ gap:14px; }
+  html[data-font="112"] .calendar-day{ height:72px; font-size:1.35rem; border-radius:12px; }
+
+  html[data-font="112"] #selectedDateHeader{ font-size:1.45rem; }
+  html[data-font="112"] #timezone{ font-size:1.05rem; }
+
+  html[data-font="112"] .time-buttons{ gap:16px; }
+  html[data-font="112"] .time-button{
+    font-size:1.35rem; padding:18px 12px; border-radius:16px;
+    box-shadow:0 10px 24px rgba(0,179,98,.22);
+  }
+
+  html[data-font="112"] .book-now-button{
+    padding:22px 28px; font-size:1.45rem; border-radius:14px;
+    box-shadow:0 14px 32px rgba(44,207,83,.28);
+  }
+
+  /* ===== Dark theme bindings (match your site tokens) ===== */
+  html[data-theme="dark"], html[data-theme-effective="dark"]{
+    --bg:#0c0f13; --surface:#141922; --surface-2:#0f141b;
+    --text:#e7eaf0; --muted:#9aa4b2; --border:#2a3140;
+    --brand:#00b362; --brand-soft:rgba(0,179,98,.12); --shadow:0 10px 30px rgba(0,0,0,.55);
+  }
+  html[data-theme="dark"] body, html[data-theme-effective="dark"] body{ background:var(--bg); color:var(--text); }
+
+  html[data-theme="dark"] .rules-container,
+  html[data-theme-effective="dark"] .rules-container{
+    background:var(--surface); border:1px solid var(--border); color:var(--text); box-shadow:var(--shadow);
+  }
+  html[data-theme="dark"] #calendarForm,
+  html[data-theme-effective="dark"] #calendarForm{
+    background:var(--surface); border:1px solid var(--border); color:var(--text); box-shadow:var(--shadow);
+  }
+
+  html[data-theme="dark"] #calendarForm select,
+  html[data-theme-effective="dark"] #calendarForm select{
+    background:var(--surface-2); color:var(--text); border:1px solid var(--border);
+  }
+  html[data-theme="dark"] #calendarForm select:focus,
+  html[data-theme-effective="dark"] #calendarForm select:focus{
+    outline:2px solid var(--brand); outline-offset:1px;
+  }
+
+  html[data-theme="dark"] .calendar-header span,
+  html[data-theme-effective="dark"] .calendar-header span{ color:var(--muted); }
+  html[data-theme="dark"] .calendar-day,
+  html[data-theme-effective="dark"] .calendar-day{ color:var(--text); }
+  html[data-theme="dark"] .calendar-day:hover,
+  html[data-theme-effective="dark"] .calendar-day:hover{ background:#19202b; box-shadow:inset 0 0 0 1px #2a3140; }
+  html[data-theme="dark"] .calendar-day.disabled,
+  html[data-theme-effective="dark"] .calendar-day.disabled{ color:rgba(231,234,240,.25); }
+  html[data-theme="dark"] .calendar-day.selected,
+  html[data-theme-effective="dark"] .calendar-day.selected{ background:#6FCF97; color:#0b1118; }
+
+  html[data-theme="dark"] #selectedDateHeader,
+  html[data-theme-effective="dark"] #selectedDateHeader{ color:var(--text); text-shadow:none; }
+  html[data-theme="dark"] #timezone,
+  html[data-theme-effective="dark"] #timezone{ color:var(--muted); }
+
+  html[data-theme="dark"] .time-button,
+  html[data-theme-effective="dark"] .time-button{
+    background:var(--surface-2); color:var(--brand); border:2px solid var(--brand);
+    box-shadow:0 6px 16px rgba(0,0,0,.28);
+  }
+  html[data-theme="dark"] .time-button:hover,
+  html[data-theme-effective="dark"] .time-button:hover{ background:var(--brand-soft); }
+  html[data-theme="dark"] .time-button.selected,
+  html[data-theme-effective="dark"] .time-button.selected{ background:var(--brand); color:#fff; }
+
+  html[data-theme="dark"] .book-now-button,
+  html[data-theme-effective="dark"] .book-now-button{
+    background:var(--brand); color:#fff; box-shadow:0 12px 28px rgba(0,179,98,.28);
+  }
+  html[data-theme="dark"] .booking-image,
+  html[data-theme-effective="dark"] .booking-image{ box-shadow:0 10px 28px rgba(0,0,0,.5); }
+</style>
+
+<div class="listing-details" style="margin-top: 130px;">
+  <h1>{{ listings[2] }}</h1>
+</div>
+
+<img src="{{ url_for('static', filename=listings[8]) }}" alt="{{ listings[2] }}" class="booking-image">
+<p class="listing-details">{{ message }}</p>
+
+<div class="main-container">
+  <!-- LEFT: Notes -->
+  <div class="rules-container">
+    <h2>IMPORTANT NOTES</h2>
+    <ul>
+      <li>Borrowing Duration: The standard borrowing duration is 1 week. Please ensure the item is returned on time.</li>
+      <li>Late Return Fine: A fine of $2 per day will be applied for items returned after the borrowing period.</li>
+      <li>Condition of Items: All items should be returned in the same condition as when borrowed. Damages may incur additional charges.</li>
+      <li>Item Inspection: Borrowers and lenders are encouraged to inspect items together at exchange to ensure transparency and verify condition.</li>
+      <li>Maximum Borrowing Limit: Users can borrow up to 3 items simultaneously to ensure fair access for all.</li>
+    </ul>
+
+    <h2>Safety Guidelines</h2>
+    <ul>
+      <li>Use the in-app chat for secure, private exchanges.</li>
+      <li>Avoid sharing personal contact details outside the platform.</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT: Calendar + Time -->
+  <form id="calendarForm" method="POST">
+    <div class="container">
+      <!-- Calendar side -->
+      <div class="calendar-container">
+        <div class="select-container">
+          <select id="yearSelect" name="year" aria-label="Year select">
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+          </select>
+          <select id="monthSelect" name="month" aria-label="Month select">
+            <option>January</option><option>February</option><option>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+          </select>
+        </div>
+
+        <div id="calendar">
+          <div class="calendar-header">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div id="calendarDays" class="calendar-grid"></div>
+        </div>
+      </div>
+
+      <!-- Time side -->
+      <div class="time-container">
+        <p id="selectedDateHeader">Monday, August 18</p>
+        <p id="timezone">TIME ZONE: Singapore (GMT +8:00)</p>
+
+        <div class="time-buttons">
+          <button type="button" class="time-button" value="11:00 AM">11:00 AM</button>
+          <button type="button" class="time-button" value="12:00 PM">12:00 PM</button>
+          <button type="button" class="time-button" value="1:00 PM">1:00 PM</button>
+
+          <button type="button" class="time-button" value="2:00 PM">2:00 PM</button>
+          <button type="button" class="time-button" value="3:00 PM">3:00 PM</button>
+          <button type="button" class="time-button" value="4:00 PM">4:00 PM</button>
+
+          <button type="button" class="time-button" value="5:00 PM">5:00 PM</button>
+          <button type="button" class="time-button" value="6:00 PM">6:00 PM</button>
+          <button type="button" class="time-button" value="7:00 PM">7:00 PM</button>
+
+          <button type="button" class="time-button" value="8:00 PM">8:00 PM</button>
+          <button type="button" class="time-button" value="9:00 PM">9:00 PM</button>
+          <button type="button" class="time-button" value="10:00 PM">10:00 PM</button>
+        </div>
+      </div>
+    </div>
+
+    <input type="hidden" id="selectedDate" name="selectedDate">
+    <input type="hidden" id="selectedTime" name="selectedTime">
+    <button type="submit" class="book-now-button">Book Now</button>
+  </form>
+</div>
+
+<script>
+  const yearSelect = document.getElementById("yearSelect");
+  const monthSelect = document.getElementById("monthSelect");
+  const calendarDays = document.getElementById("calendarDays");
+  const timeButtons = document.querySelectorAll(".time-button");
+  const selectedDateInput = document.getElementById("selectedDate");
+  const selectedTimeInput = document.getElementById("selectedTime");
+  const selectedDateHeader = document.getElementById("selectedDateHeader");
+
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const weekdays   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  let selectedDayEl = null;
+  let selectedTimeEl = null;
+
+  function updateSelectedDateHeader() {
+    const y = Number(yearSelect.value);
+    const m = monthNames.indexOf(monthSelect.value);
+    const d = selectedDayEl ? Number(selectedDayEl.textContent) : new Date().getDate();
+    const dt = new Date(y, m, d);
+    const label = `${weekdays[dt.getDay()]}, ${monthNames[m]} ${d}`;
+    selectedDateHeader.textContent = label;
+  }
+
+  function generateCalendar(year, monthIndex) {
+    calendarDays.innerHTML = "";
+    const first = new Date(year, monthIndex, 1);
+    const last  = new Date(year, monthIndex + 1, 0);
+    const total = last.getDate();
+    const pad   = first.getDay();
+
+    for (let i = 0; i < pad; i++) {
+      const empty = document.createElement("div");
+      calendarDays.appendChild(empty);
+    }
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    for (let day = 1; day <= total; day++) {
+      const cell = document.createElement("div");
+      cell.className = "calendar-day";
+      cell.textContent = day;
+
+      const thisDate = new Date(year, monthIndex, day);
+      if (thisDate < today) cell.classList.add("disabled");
+
+      cell.addEventListener("click", () => {
+        if (cell.classList.contains("disabled")) return;
+        if (selectedDayEl) selectedDayEl.classList.remove("selected");
+        selectedDayEl = cell;
+        cell.classList.add("selected");
+        selectedDateInput.value = `${year}-${String(monthIndex + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+        updateSelectedDateHeader();
+      });
+
+      calendarDays.appendChild(cell);
+    }
+  }
+
+  // Time buttons select behaviour
+  timeButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (selectedTimeEl) selectedTimeEl.classList.remove("selected");
+      selectedTimeEl = btn;
+      btn.classList.add("selected");
+      selectedTimeInput.value = btn.value;
+    });
+  });
+
+  // Init with current month/year
+  const now = new Date();
+  yearSelect.value = String(now.getFullYear());
+  monthSelect.value = monthNames[now.getMonth()];
+  generateCalendar(now.getFullYear(), now.getMonth());
+  updateSelectedDateHeader();
+
+  // React to changes
+  yearSelect.addEventListener("change", () => {
+    generateCalendar(Number(yearSelect.value), monthNames.indexOf(monthSelect.value));
+    updateSelectedDateHeader();
+  });
+  monthSelect.addEventListener("change", () => {
+    generateCalendar(Number(yearSelect.value), monthNames.indexOf(monthSelect.value));
+    updateSelectedDateHeader();
+  });
+</script>
+{% endblock %}

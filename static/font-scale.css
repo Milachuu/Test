@@ -1,0 +1,31 @@
+/* Only applies when user chose Large (112) */
+html[data-font="112"] .nav-links li a,
+html[data-font="112"] .before_nav-links li a {
+  font-size: 1.3rem !important;
+  font-weight: 500 !important;
+}
+
+html[data-font="112"] .username {
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+}
+
+html[data-font="112"] .sub-menu-link,
+html[data-font="112"] .language-option {
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+}
+
+html[data-font="112"] .material-symbols-outlined {
+  font-size: 1.5rem !important; /* 24px → 1.5rem, larger */
+  vertical-align: middle;
+}
+
+html[data-font="112"] .sub-menu-wrap {
+  font-size: 1.1rem !important;
+}
+
+/* Optional: bump some general body text a touch if you want */
+html[data-font="112"] body {
+  font-size: 1.05rem;
+}

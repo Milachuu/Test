@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Retrieve Report{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='viewreport.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="vrp-spacer"></div>
+
+<header class="vrp-header">
+  <h1 class="vrp-title">Moderation Center</h1>
+  <div class="vrp-metrics">
+    <div class="metric">
+      <div class="metric-k">{{ count }}</div>
+      <div class="metric-l">Reports</div>
+    </div>
+    <div class="metric">
+      <div class="metric-k">{{ num_of_log }}</div>
+      <div class="metric-l">Login Logs</div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= Reports ================= -->
+<section class="vrp-card">
+  <div class="vrp-card-head">
+    <div>
+      <h2 class="vrp-h2">Retrieve Report</h2>
+      {% if count == 0 %}
+        <p class="vrp-sub">There are no users reported.</p>
+      {% elif count == 1 %}
+        <p class="vrp-sub">There is 1 user reported.</p>
+      {% else %}
+        <p class="vrp-sub">There are {{ count }} users reported.</p>
+      {% endif %}
+    </div>
+    <div class="vrp-tools">
+      <input id="reportSearch" class="vrp-input" type="search" placeholder="Search email / reason / description…">
+      <button class="btn ghost" id="clearReport">Clear</button>
+    </div>
+  </div>
+
+  {% if count == 0 %}
+  <div class="empty">
+    <div class="empty-ico">🕊️</div>
+    <div>No reports yet. Enjoy the calm!</div>
+  </div>
+  {% else %}
+  <div class="vrp-table-wrap">
+    <table class="vrp-table" id="reportTable">
+      <thead>
+        <tr>
+          <th>Report ID</th>
+          <th>Email Being Reported</th>
+          <th>By Who</th>
+          <th>Reason</th>
+          <th>Others</th>
+          <th>Description</th>
+          <th class="ta-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for info in report_list %}
+        <tr>
+          <td data-label="Report ID">{{ info[0] }}</td>
+          <td data-label="Email Being Reported">{{ info[1] }}</td>
+          <td data-label="By Who">{{ info[2] }}</td>
+          <td data-label="Reason">{{ info[3] }}</td>
+          <td data-label="Others">{{ info[4] }}</td>
+          <td data-label="Description">{{ info[5] }}</td>
+          <td class="ta-center" data-label="Action">
+            <form action="/delete_user_info" method="POST"
+                  onsubmit="return confirm('Delete {{ info[1] }}?');" class="inline">
+              <!-- keep the API the same but hide the email field -->
+              <input type="hidden" name="email" value="{{ info[1] }}">
+              <button type="submit" class="btn danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ================= Logs ================= -->
+<section class="vrp-card">
+  <div class="vrp-card-head">
+    <div>
+      <h2 class="vrp-h2">Retrieve Logs</h2>
+      {% if num_of_log == 0 %}
+        <p class="vrp-sub">There are no logs reported.</p>
+      {% elif num_of_log == 1 %}
+        <p class="vrp-sub">There is 1 log reported.</p>
+      {% else %}
+        <p class="vrp-sub">There are {{ num_of_log }} logs reported.</p>
+      {% endif %}
+    </div>
+    <div class="vrp-tools">
+      <input id="logSearch" class="vrp-input" type="search" placeholder="Search email / status…">
+      <button class="btn ghost" id="clearLog">Clear</button>
+    </div>
+  </div>
+
+  {% if num_of_log == 0 %}
+  <div class="empty">
+    <div class="empty-ico">📭</div>
+    <div>No logs at the moment.</div>
+  </div>
+  {% else %}
+  <div class="vrp-table-wrap">
+    <table class="vrp-table" id="logTable">
+      <thead>
+        <tr>
+          <th>Log ID</th>
+          <th>Email Being Reported</th>
+          <th>Failed Login</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Logout Date</th>
+          <th>Logout Time</th>
+          <th class="ta-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in log_list %}
+        <tr>
+          <td data-label="Log ID">{{ log[0] }}</td>
+          <td data-label="Email Being Reported">{{ log[1] }}</td>
+          <td data-label="Failed Login">{{ log[2] }}</td>
+          <td data-label="Date">{{ log[3] }}</td>
+          <td data-label="Time">{{ log[4] }}</td>
+          <td data-label="Status">
+            <span class="badge {{ (log[5] or '')|lower }}">{{ log[5] }}</span>
+          </td>
+          <td data-label="Logout Date">{{ log[6] }}</td>
+          <td data-label="Logout Time">{{ log[7] }}</td>
+          <td class="ta-center" data-label="Action">
+            <form action="/delete_user_info" method="POST"
+                  onsubmit="return confirm('Delete {{ log[1] }}?');" class="inline">
+              <input type="hidden" name="email" value="{{ log[1] }}">
+              <button type="submit" class="btn danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function attachFilter(inputId, tableId) {
+    const q = document.getElementById(inputId);
+    const table = document.getElementById(tableId);
+    if (!q || !table) return;
+    q.addEventListener('input', () => {
+      const needle = q.value.toLowerCase().trim();
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        tr.style.display = tr.innerText.toLowerCase().includes(needle) ? '' : 'none';
+      });
+    });
+  }
+  function clearSearch(btnId, inputId, tableId) {
+    const btn = document.getElementById(btnId);
+    const inp = document.getElementById(inputId);
+    const table = document.getElementById(tableId);
+    if (!btn || !inp || !table) return;
+    btn.addEventListener('click', () => {
+      inp.value = '';
+      table.querySelectorAll('tbody tr').forEach(tr => tr.style.display = '');
+    });
+  }
+  attachFilter('reportSearch', 'reportTable');
+  attachFilter('logSearch', 'logTable');
+  clearSearch('clearReport', 'reportSearch', 'reportTable');
+  clearSearch('clearLog', 'logSearch', 'logTable');
+</script>
+{% endblock %}

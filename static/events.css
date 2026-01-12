@@ -1,0 +1,305 @@
+/* FORM SECTION */
+.eventsForm {
+  padding-top: 2%;
+  padding-bottom: 2%;
+  text-align: center;
+  background: linear-gradient(to bottom, #FFE6E6, #E6F2FF);
+  margin-top: 70px;
+}
+
+#eventsBgElement {
+  padding-top: 3%;
+  padding-bottom: 1%;
+  width: 40%;
+}
+
+#eventsTitle {
+  font-size: 200%;
+  font-weight: bold;
+  color: #444;
+}
+
+#eventregionSelect {
+  border-radius: 5px;
+  width: 40%;
+  padding: 10px;
+  border: 2px solid #6A9AC4;
+  color: #333;
+  font-size: 16px;
+}
+
+/* MAIN CONTENT LAYOUT */
+.eventsContentWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 2% 10%;
+}
+
+#eventsContainer {
+  width: 100%;
+}
+
+/* EVENT CARDS */
+.event-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 2%;
+  margin: 2% 0;
+  background: linear-gradient(to bottom, #E6F2FF, #FFE6E6);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+  transform: scale(1.02);
+}
+
+/* EVENT LABEL */
+.eventLabel {
+  background-color: #6A9AC4;
+  color: white;
+  padding: 5px 10px;
+  width: fit-content;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+/* EVENT TITLE */
+.eventTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* EVENT COUNT */
+#eventCount {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #333;
+}
+
+/* BIN NAME */
+.locationName {
+    font-weight: bold;
+}
+
+/* BIN IMAGE ICON */
+.wasteType {
+    width: 60px;
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}
+
+
+/* MAP SECTION */
+#map {
+    width: 40%;
+    height: 600px;
+    border-radius: 10px;
+    position: sticky;
+    top: 100px;  /* distance from top of page (adjust to your navbar height) */
+    display: none;
+}
+
+/* RESULT COUNT */
+#resultCount {
+    font-weight: bold;
+    display: none;
+}
+
+
+#resultsMapContainer {
+    display: flex;
+    justify-content: space-between;
+    padding: 2% 10%;
+    flex-wrap: wrap;
+}
+
+#locationsContainer {
+    width: 55%;
+}
+
+#map {
+    width: 40%;
+    height: 600px;
+    border-radius: 10px;
+    margin-left: 2%;
+    display: none;
+}
+
+.location-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 2%;
+    margin: 2% 0;
+    background: linear-gradient(to bottom, #CFC7F8, #EBBBA7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: none;
+}
+
+/* ===================== DARK THEME – Events ===================== */
+html[data-theme="dark"],
+html[data-theme-effective="dark"]{
+  --bg: #0c0f13;
+  --surface: #141922;
+  --surface-2: #0f141b;
+  --text: #e7eaf0;
+  --muted: #9aa4b2;
+  --border: #2a3140;
+  --brand: #0EA89A;   /* site accent */
+  --brand-600: #087c73;
+  --shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+
+/* Page text baseline */
+html[data-theme="dark"] body,
+html[data-theme-effective="dark"] body{
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Hero / form strip ---------- */
+html[data-theme="dark"] .eventsForm,
+html[data-theme-effective="dark"] .eventsForm{
+  background: linear-gradient(180deg, #2a3140 0%, #1a202c 100%);
+}
+
+html[data-theme="dark"] #eventsTitle,
+html[data-theme-effective="dark"] #eventsTitle{
+  color: var(--text);
+  text-shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+
+html[data-theme="dark"] #eventregionSelect,
+html[data-theme-effective="dark"] #eventregionSelect{
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] #eventregionSelect:focus,
+html[data-theme-effective="dark"] #eventregionSelect:focus{
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* ---------- Cards ---------- */
+html[data-theme="dark"] .event-card,
+html[data-theme-effective="dark"] .event-card{
+  background: linear-gradient(180deg, #1d2430 0%, #141922 100%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+html[data-theme="dark"] .event-card:hover,
+html[data-theme-effective="dark"] .event-card:hover{
+  transform: translateY(-2px) scale(1.01);
+}
+
+html[data-theme="dark"] .eventTitle,
+html[data-theme-effective="dark"] .eventTitle{
+  color: var(--text);
+}
+html[data-theme="dark"] .eventLabel,
+html[data-theme-effective="dark"] .eventLabel{
+  background: var(--brand);
+  color: #fff;
+}
+
+html[data-theme="dark"] #eventCount,
+html[data-theme-effective="dark"] #eventCount{
+  color: var(--text);
+}
+
+/* ---------- Map container ---------- */
+html[data-theme="dark"] #map,
+html[data-theme-effective="dark"] #map{
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Leaflet UI theming (keeps OSM tiles as-is) */
+html[data-theme="dark"] .leaflet-popup-content-wrapper,
+html[data-theme-effective="dark"] .leaflet-popup-content-wrapper{
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .leaflet-popup-tip,
+html[data-theme-effective="dark"] .leaflet-popup-tip{
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+html[data-theme="dark"] .leaflet-control-zoom a,
+html[data-theme-effective="dark"] .leaflet-control-zoom a{
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+html[data-theme="dark"] .leaflet-control-zoom a:hover,
+html[data-theme-effective="dark"] .leaflet-control-zoom a:hover{
+  background: var(--surface);
+}
+
+/* optional: dim the banner illustration slightly on dark */
+html[data-theme="dark"] #eventsBgElement,
+html[data-theme-effective="dark"] #eventsBgElement{
+  filter: brightness(.9) contrast(1.05);
+}
+
+/* ===================== Enlarged (html[data-font="112"]) — dropdown & text ===================== */
+
+/* Bigger banner title */
+html[data-font="112"] #eventsTitle {
+  font-size: 2.8rem !important;
+}
+
+/* The select box itself */
+html[data-font="112"] #eventregionSelect {
+  font-size: 1.6rem !important;
+  padding: 16px 20px !important;
+  width: 60% !important;
+  min-height: 60px !important;   /* taller hit area */
+  line-height: 1.4 !important;
+  border-radius: 10px !important;
+}
+
+/* Options inside the dropdown (works on most browsers; native pickers may ignore) */
+html[data-font="112"] #eventregionSelect option {
+  font-size: 1.4rem !important;
+  padding: 12px !important;
+}
+
+/* Supporting text & cards a bit larger to match */
+html[data-font="112"] .nearestEventsTitle,
+html[data-font="112"] #eventCount {
+  font-size: 1.6rem !important;
+}
+
+html[data-font="112"] .event-card {
+  padding: 3% !important;
+  margin: 2.5% 0 !important;
+}
+
+html[data-font="112"] .eventLabel {
+  font-size: 1.1rem !important;
+  padding: 8px 14px !important;
+}
+
+html[data-font="112"] .eventTitle {
+  font-size: 1.6rem !important;
+}
+
+html[data-font="112"] .event-card p {
+  font-size: 1.25rem !important;
+}
+
+/* Map & popup text */
+html[data-font="112"] #map { height: 700px !important; }
+html[data-font="112"] .leaflet-popup-content { font-size: 1.25rem !important; }
