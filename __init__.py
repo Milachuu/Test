@@ -77,7 +77,8 @@ def _format_time_value(time_value):
         return ""
     if isinstance(time_value, str):
         return time_value[:5]
-    return time_value.strftime("%H:%M")
+    parsed = _parse_time_value(time_value)
+    return parsed.strftime("%H:%M")
 
 
 def _format_time_label(time_value):
