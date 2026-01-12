@@ -74,7 +74,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def fetch_available_listings(listing_type, viewer_email, requested_date=None, requested_time=None):
+def fetch_available_listings(listing_type, viewer_email):
     status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     query = f"""
         SELECT
@@ -95,21 +95,13 @@ def fetch_available_listings(listing_type, viewer_email, requested_date=None, re
             FROM Booking AS b
             WHERE b.book_listing_id = l.listing_id
               AND b.status IN ({status_placeholders})
-              AND b.booking_email <> %s
               AND l.listing_email <> %s
-              AND (%s IS NULL OR b.selected_date = %s)
-              AND (%s IS NULL OR b.selected_time = %s)
           )
     """
     params = [
         listing_type.lower(),
         *ACTIVE_BOOKING_STATUSES,
         viewer_email,
-        viewer_email,
-        requested_date,
-        requested_date,
-        requested_time,
-        requested_time,
     ]
     mycursor.execute(query, params)
     return mycursor.fetchall()
@@ -1525,15 +1517,11 @@ def booking(listing_id):
         [listing_id, *ACTIVE_BOOKING_STATUSES],
     )
     active_bookings = mycursor.fetchall()
-    if active_bookings:
-        has_access = owner_email == get_email or any(
-            booking_email == get_email for booking_email, _, _ in active_bookings
-        )
-        if not has_access:
-            flash("This listing is already booked and unavailable.", "error")
-            if listings[5].lower() == "borrow":
-                return redirect(url_for("borrow"))
-            return redirect(url_for("free"))
+    if active_bookings and owner_email != get_email:
+        flash("Listing no longer available.", "error")
+        if listings[5].lower() == "borrow":
+            return redirect(url_for("borrow"))
+        return redirect(url_for("free"))
 
     booked_slots = {
         (str(selected_date), str(selected_time))
