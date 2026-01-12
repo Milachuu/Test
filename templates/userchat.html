@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="userchat-page">
+<div class="userchat-page" data-user-email="{{ user_email }}" data-active-chat-id="{{ active_chat_id or '' }}">
   <div class="userchat-app">
     <!-- SIDEBAR -->
     <aside class="userchat-sidebar" aria-label="Chat list">
@@ -30,6 +30,7 @@
               class="userchat-chat-item {% if chat.chat_id == active_chat_id %}userchat-chat-item-active{% endif %}"
               href="{{ url_for('userchat', chat_id=chat.chat_id) }}"
               role="listitem"
+              data-chat-id="{{ chat.chat_id }}"
               {% if chat.chat_id == active_chat_id %}aria-current="true"{% endif %}
             >
               <span class="userchat-chat-name">{{ chat.other_username }}</span>
@@ -87,10 +88,10 @@
               {% endif %}
             {% endfor %}
           {% else %}
-            <div class="userchat-message userchat-message-system">No messages yet. Say hello!</div>
+            <div class="userchat-message userchat-message-system" data-placeholder="empty-chat">No messages yet. Say hello!</div>
           {% endif %}
         {% else %}
-          <div class="userchat-message userchat-message-system">Your messages will appear here.</div>
+          <div class="userchat-message userchat-message-system" data-placeholder="no-thread">Your messages will appear here.</div>
         {% endif %}
       </main>
 
@@ -126,4 +127,10 @@
     </section>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='userchat.js') }}"></script>
 {% endblock %}
