@@ -24,63 +24,105 @@
         />
       </div>
       <div class="userchat-chat-list" role="list">
-        <button class="userchat-chat-item userchat-chat-item-active" type="button" aria-current="true" disabled>
-          <span class="userchat-chat-name">Zoe_Farrell</span>
-          <span class="userchat-chat-preview">Okay! See you there!</span>
-        </button>
-        <button class="userchat-chat-item" type="button" disabled>
-          <span class="userchat-chat-name">Jordan Lee</span>
-          <span class="userchat-chat-preview">Thanks for the update.</span>
-        </button>
-        <button class="userchat-chat-item" type="button" disabled>
-          <span class="userchat-chat-name">Support</span>
-          <span class="userchat-chat-preview">We received your request.</span>
-        </button>
+        {% if chats %}
+          {% for chat in chats %}
+            <a
+              class="userchat-chat-item {% if chat.chat_id == active_chat_id %}userchat-chat-item-active{% endif %}"
+              href="{{ url_for('userchat', chat_id=chat.chat_id) }}"
+              role="listitem"
+              {% if chat.chat_id == active_chat_id %}aria-current="true"{% endif %}
+            >
+              <span class="userchat-chat-name">{{ chat.other_username }}</span>
+              <span class="userchat-chat-title">{{ chat.listing_title }}</span>
+              <span class="userchat-chat-preview">{{ chat.last_message or "No messages yet." }}</span>
+            </a>
+          {% endfor %}
+        {% else %}
+          <div class="userchat-empty-state">No chats yet. Book a listing to start one.</div>
+        {% endif %}
       </div>
     </aside>
 
     <section class="userchat-chat-panel">
       <!-- HEADER -->
       <header class="userchat-header" aria-label="Chat header">
-        <div class="userchat-header-left">
-          <div class="userchat-avatar" aria-hidden="true">★</div>
-          <div class="userchat-username">Zoe_Farrell</div>
-        </div>
-
-        <div class="userchat-header-actions" aria-label="Window controls">
-          <span class="userchat-header-action" aria-hidden="true">—</span>
-          <span class="userchat-header-action" aria-hidden="true">✕</span>
-        </div>
+        {% if selected_chat %}
+          <div class="userchat-header-left">
+            <img
+              class="userchat-listing-image"
+              src="{{ url_for('static', filename=selected_chat.listing_photo) }}"
+              alt="{{ selected_chat.listing_title }}"
+            />
+            <div class="userchat-header-info">
+              <div class="userchat-listing-title">{{ selected_chat.listing_title }}</div>
+              <div class="userchat-listing-meta">
+                {{ selected_chat.listing_category }} · {{ selected_chat.listing_type }}
+                {% if selected_chat.availability_date or selected_chat.availability_time %}
+                  <span class="userchat-listing-meta-divider">•</span>
+                  <span>{{ selected_chat.availability_date }} {{ selected_chat.availability_time }}</span>
+                {% endif %}
+              </div>
+              <div class="userchat-listing-partner">Chatting with {{ selected_chat.other_username }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="userchat-header-left">
+            <div class="userchat-avatar" aria-hidden="true">★</div>
+            <div class="userchat-username">Select a chat</div>
+          </div>
+        {% endif %}
       </header>
 
       <!-- MESSAGES -->
       <main class="userchat-messages" aria-label="Chat messages">
-        <div class="userchat-message userchat-message-incoming">
-          Hello! I saw your listing for the Zojirushi rice cooker...may i check if its still available?
-        </div>
-
-        <div class="userchat-message userchat-message-outgoing">
-          Yes it is! Can we meet at Ang mo kio mrt, at 2pm tmr?
-        </div>
-
-        <div class="userchat-message userchat-message-incoming">
-          Okay! See you there!
-        </div>
+        {% if selected_chat %}
+          {% if messages %}
+            {% for message in messages %}
+              {% if message.message_type == "system" %}
+                <div class="userchat-message userchat-message-system">{{ message.message_text }}</div>
+              {% else %}
+                <div class="userchat-message {% if message.sender_email == user_email %}userchat-message-outgoing{% else %}userchat-message-incoming{% endif %}">
+                  {{ message.message_text }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <div class="userchat-message userchat-message-system">No messages yet. Say hello!</div>
+          {% endif %}
+        {% else %}
+          <div class="userchat-message userchat-message-system">Your messages will appear here.</div>
+        {% endif %}
       </main>
 
-      <!-- INPUT (static UI only) -->
-      <footer class="userchat-input-bar" aria-label="Message input">
-        <input
-          class="userchat-input"
-          type="text"
-          placeholder="Type your message here"
-          disabled
-          aria-disabled="true"
-        />
-        <button class="userchat-send-btn" type="button" aria-label="Send" disabled>
-          ➤
-        </button>
-      </footer>
+      <!-- INPUT -->
+      {% if selected_chat %}
+        <form class="userchat-input-bar" method="post" action="{{ url_for('send_chat_message', chat_id=selected_chat.chat_id) }}" aria-label="Message input">
+          <input
+            class="userchat-input"
+            type="text"
+            name="message"
+            placeholder="Type your message here"
+            required
+            autocomplete="off"
+          />
+          <button class="userchat-send-btn" type="submit" aria-label="Send">
+            ➤
+          </button>
+        </form>
+      {% else %}
+        <footer class="userchat-input-bar" aria-label="Message input">
+          <input
+            class="userchat-input"
+            type="text"
+            placeholder="Type your message here"
+            disabled
+            aria-disabled="true"
+          />
+          <button class="userchat-send-btn" type="button" aria-label="Send" disabled>
+            ➤
+          </button>
+        </footer>
+      {% endif %}
     </section>
   </div>
 </div>

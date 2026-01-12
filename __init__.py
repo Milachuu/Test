@@ -1157,6 +1157,160 @@ def favorite_item(listing_id):
     return jsonify({"success": True})
 
 
+def ensure_chat_for_booking(listing_id, borrower_email, giver_email, listing_title, selected_date, selected_time):
+    mycursor.execute(
+        "SELECT chat_id FROM Chat WHERE listing_id = %s AND borrower_email = %s AND giver_email = %s",
+        (listing_id, borrower_email, giver_email),
+    )
+    row = mycursor.fetchone()
+    if row:
+        chat_id = row[0]
+    else:
+        mycursor.execute(
+            "INSERT INTO Chat (listing_id, borrower_email, giver_email) VALUES (%s,%s,%s)",
+            (listing_id, borrower_email, giver_email),
+        )
+        db.commit()
+        chat_id = mycursor.lastrowid
+
+    system_message = (
+        f"Booking created for {listing_title} on {selected_date} at {selected_time}."
+    )
+    mycursor.execute(
+        "INSERT INTO ChatMessage (chat_id, sender_email, message_text, message_type) VALUES (%s,%s,%s,%s)",
+        (chat_id, None, system_message, "system"),
+    )
+    db.commit()
+    return chat_id
+
+
+def fetch_user_chats(user_email):
+    mycursor.execute(
+        """
+        SELECT
+            c.chat_id,
+            c.listing_id,
+            c.borrower_email,
+            c.giver_email,
+            l.title,
+            l.photo_path,
+            l.category,
+            l.type,
+            borrower.username,
+            giver.username,
+            (
+                SELECT m.message_text
+                FROM ChatMessage m
+                WHERE m.chat_id = c.chat_id
+                ORDER BY m.created_at DESC, m.message_id DESC
+                LIMIT 1
+            ) AS last_message
+        FROM Chat c
+        JOIN Listing l ON l.listing_id = c.listing_id
+        JOIN User borrower ON borrower.login_email = c.borrower_email
+        JOIN User giver ON giver.login_email = c.giver_email
+        WHERE c.borrower_email = %s OR c.giver_email = %s
+        ORDER BY c.created_at DESC
+        """,
+        (user_email, user_email),
+    )
+    rows = mycursor.fetchall()
+    chats = []
+    for row in rows:
+        other_username = row[9] if user_email == row[2] else row[8]
+        chats.append(
+            {
+                "chat_id": row[0],
+                "listing_id": row[1],
+                "borrower_email": row[2],
+                "giver_email": row[3],
+                "listing_title": row[4],
+                "listing_photo": row[5] or "uploads/placeholder.png",
+                "listing_category": row[6],
+                "listing_type": row[7],
+                "other_username": other_username,
+                "last_message": row[10],
+            }
+        )
+    return chats
+
+
+def fetch_chat_details(chat_id, user_email):
+    mycursor.execute(
+        """
+        SELECT
+            c.chat_id,
+            c.listing_id,
+            c.borrower_email,
+            c.giver_email,
+            l.title,
+            l.description,
+            l.category,
+            l.type,
+            l.photo_path,
+            l.availability_date,
+            l.availability_time,
+            borrower.username,
+            giver.username
+        FROM Chat c
+        JOIN Listing l ON l.listing_id = c.listing_id
+        JOIN User borrower ON borrower.login_email = c.borrower_email
+        JOIN User giver ON giver.login_email = c.giver_email
+        WHERE c.chat_id = %s
+        """,
+        (chat_id,),
+    )
+    row = mycursor.fetchone()
+    if not row:
+        return None
+
+    borrower_email = row[2]
+    giver_email = row[3]
+    if user_email not in (borrower_email, giver_email):
+        return None
+
+    other_username = row[12] if user_email == borrower_email else row[11]
+    return {
+        "chat_id": row[0],
+        "listing_id": row[1],
+        "borrower_email": borrower_email,
+        "giver_email": giver_email,
+        "listing_title": row[4],
+        "listing_description": row[5],
+        "listing_category": row[6],
+        "listing_type": row[7],
+        "listing_photo": row[8] or "uploads/placeholder.png",
+        "availability_date": row[9],
+        "availability_time": row[10],
+        "other_username": other_username,
+    }
+
+
+def fetch_chat_messages(chat_id):
+    mycursor.execute(
+        """
+        SELECT message_id, sender_email, message_text, message_type, created_at
+        FROM ChatMessage
+        WHERE chat_id = %s
+        ORDER BY created_at ASC, message_id ASC
+        """,
+        (chat_id,),
+    )
+    rows = mycursor.fetchall()
+    messages = []
+    for row in rows:
+        messages.append(
+            {
+                "message_id": row[0],
+                "sender_email": row[1],
+                "message_text": row[2],
+                "message_type": row[3],
+                "created_at": row[4],
+            }
+        )
+    return messages
+
+
 @app.route('/booking/<int:listing_id>', methods=['GET', 'POST'])
 def booking(listing_id):
     if "user_email" not in session:
@@ -1185,7 +1339,7 @@ def booking(listing_id):
 
 
     # Fetch listing details
-    mycursor.execute("SELECT listing_id, listing_username, title, description, category, type, availability_date, availability_time, photo_path FROM Listing WHERE listing_id = %s", [listing_id])
+    mycursor.execute("SELECT listing_id, listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email FROM Listing WHERE listing_id = %s", [listing_id])
     listings = mycursor.fetchone()
 
    
@@ -1249,6 +1403,18 @@ def booking(listing_id):
 
             Database.Create_Booking(get_email, listings[0], selected_date, selected_time)
             db.commit()
+
+            giver_email = listings[9]
+            if giver_email:
+                chat_id = ensure_chat_for_booking(
+                    listing_id=listings[0],
+                    borrower_email=get_email,
+                    giver_email=giver_email,
+                    listing_title=listings[2],
+                    selected_date=selected_date,
+                    selected_time=selected_time,
+                )
+                db.commit()
 
             mycursor.execute("Select points From User Where username = %s",[listings[1]])
             get_point = mycursor.fetchone()
@@ -2796,11 +2962,72 @@ def userchat():
 
     get_email = session.get("user_email")
     get_username = session.get("username")
+    chat_id = request.args.get("chat_id", type=int)
 
-    lang_code = get_user_lang_code()     
-    t = make_t(lang_code)                 
-  
-    return render_template('userchat.html', t=t, username = get_username)
+    lang_code = get_user_lang_code()
+    t = make_t(lang_code)
+
+    chats = fetch_user_chats(get_email)
+    selected_chat = None
+    messages = []
+
+    if chat_id is None and chats:
+        chat_id = chats[0]["chat_id"]
+
+    if chat_id is not None:
+        selected_chat = fetch_chat_details(chat_id, get_email)
+        if selected_chat:
+            messages = fetch_chat_messages(chat_id)
+        else:
+            chat_id = None
+
+    return render_template(
+        'userchat.html',
+        t=t,
+        username=get_username,
+        chats=chats,
+        selected_chat=selected_chat,
+        messages=messages,
+        active_chat_id=chat_id,
+        user_email=get_email,
+    )
+
+
+@app.route('/userchat/<int:chat_id>')
+def userchat_thread(chat_id):
+    if "user_email" not in session:
+        return redirect(url_for('before_login'))
+
+    if "verify" not in session:
+        return redirect(url_for('before_login'))
+
+    return redirect(url_for('userchat', chat_id=chat_id))
+
+
+@app.route('/userchat/<int:chat_id>/message', methods=['POST'])
+def send_chat_message(chat_id):
+    if "user_email" not in session:
+        return redirect(url_for('before_login'))
+
+    if "verify" not in session:
+        return redirect(url_for('before_login'))
+
+    get_email = session.get("user_email")
+    message_text = (request.form.get("message") or "").strip()
+    if not message_text:
+        return redirect(url_for('userchat', chat_id=chat_id))
+
+    chat = fetch_chat_details(chat_id, get_email)
+    if not chat:
+        return redirect(url_for('userchat'))
+
+    mycursor.execute(
+        "INSERT INTO ChatMessage (chat_id, sender_email, message_text, message_type) VALUES (%s,%s,%s,%s)",
+        (chat_id, get_email, message_text, "user"),
+    )
+    db.commit()
+
+    return redirect(url_for('userchat', chat_id=chat_id))
 
 
 if __name__ == '__main__':
