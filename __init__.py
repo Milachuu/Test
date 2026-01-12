@@ -5,7 +5,7 @@ from Forms import CreateUserForm,CreateUserInfo,Login,Wishlist,Reporting
 import User,hashlib, pyotp, qrcode, base64, io, os, uuid, json
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time as dt_time
 from time import time
 import stripe
 import secrets
@@ -96,7 +96,7 @@ def _format_time_label(time_value):
 def _parse_time_value(time_value):
     if time_value is None:
         return None
-    if isinstance(time_value, time):
+    if isinstance(time_value, dt_time):
         return time_value
     if isinstance(time_value, str):
         return datetime.strptime(time_value[:5], "%H:%M").time()
