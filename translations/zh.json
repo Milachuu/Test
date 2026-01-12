@@ -731,6 +731,16 @@
     "availability": "可用时间",
     "availability_date": "日期",
     "availability_time": "时间",
+    "availability_start": "开始时间",
+    "availability_end": "结束时间",
+    "availability_add_slot": "添加时间段",
+    "availability_remove_slot": "移除时间段",
+    "availability_date_required": "请选择可用日期。",
+    "availability_slot_required": "请至少添加一个可用时间段。",
+    "availability_slot_incomplete": "每个时间段需要开始与结束时间。",
+    "availability_slot_invalid": "开始时间必须早于结束时间。",
+    "availability_slot_overlap": "可用时间段不能重叠。",
+    "availability_save_error": "无法保存可用时间段，请重试。",
     "date_error": "⚠ 日期需在 2025 年 2 月 5 日及之后。",
     "submit": "立即发布"
   },
@@ -816,4 +826,3 @@
   "terms_usage": "已兑换礼券可在指定参与商户使用（支持 $10 抵扣），详见 <a href=\"https://www.uniqgiftvoucher.com/egiftcard/\" target=\"_blank\">https://www.uniqgiftvoucher.com/egiftcard/</a>。"
   }
 }
-

@@ -17,6 +17,21 @@ def table_creation():
 
     mycursor.execute("CREATE TABLE IF NOT EXISTS Listing ( listing_id INT  AUTO_INCREMENT PRIMARY KEY NOT NULL, listing_username Varchar(30) , title Varchar(100), description Varchar(150), category ENUM('Food','Non-Food'), type ENUM('Borrow','Free'), availability_date Varchar(20) , availability_time Varchar(20), photo_path Varchar(255), listing_email Varchar(100), FOREIGN KEY (listing_email) REFERENCES User(login_email))")
 
+    mycursor.execute(
+        "CREATE TABLE IF NOT EXISTS ListingAvailability ("
+        " availability_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,"
+        " listing_id INT NOT NULL,"
+        " owner_email Varchar(100) NOT NULL,"
+        " availability_date DATE NOT NULL,"
+        " start_time TIME NOT NULL,"
+        " end_time TIME NOT NULL,"
+        " FOREIGN KEY (listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE,"
+        " FOREIGN KEY (owner_email) REFERENCES User(login_email) ON DELETE CASCADE,"
+        " INDEX (listing_id, availability_date),"
+        " INDEX (owner_email)"
+        ")"
+    )
+
 
     mycursor.execute(" CREATE TABLE IF NOT EXISTS Booking ( booking_id int AUTO_INCREMENT PRIMARY KEY NOT NULL, booking_email Varchar(100), book_listing_id int, selected_date Varchar(15) , selected_time Varchar(15), status ENUM('Pending','Confirmed','Approved','Reserved','Cancelled','Expired','Completed','Rejected') NOT NULL DEFAULT 'Pending', FOREIGN KEY (booking_email) REFERENCES User(login_email), FOREIGN KEY (book_listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE ) ")
 
@@ -104,9 +119,39 @@ def Create_Admin_Password(email,password,totp):
     
 
 
-def Create_Listing(listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email):
-    mycursor.execute("INSERT INTO Listing( listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email))
-    db.commit()
+def Create_Listing(
+    listing_username,
+    title,
+    description,
+    category,
+    type,
+    availability_date,
+    availability_time,
+    photo_path,
+    listing_email,
+    commit=True,
+):
+    mycursor.execute(
+        "INSERT INTO Listing( listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        (listing_username, title, description, category, type, availability_date, availability_time, photo_path, listing_email),
+    )
+    if commit:
+        db.commit()
+    return mycursor.lastrowid
+
+
+def Create_Listing_Availability(listing_id, owner_email, availability_rows, commit=True):
+    if not availability_rows:
+        return
+    mycursor.executemany(
+        "INSERT INTO ListingAvailability (listing_id, owner_email, availability_date, start_time, end_time) VALUES (%s,%s,%s,%s,%s)",
+        [
+            (listing_id, owner_email, row["date"], row["start"], row["end"])
+            for row in availability_rows
+        ],
+    )
+    if commit:
+        db.commit()
 
 
 def Create_Booking(booking_email,book_listing_id,selected_date,selected_time,status="Pending"):
@@ -330,6 +375,5 @@ def select_password_storage(email,password):
 
 """
     
-
 
 
