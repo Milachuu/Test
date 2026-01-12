@@ -10,9 +10,27 @@ RETRYABLE_ERRORS = {2006, 2013, 2055}
 _pool = None
 
 
+def _ensure_database_exists():
+    connection = mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST", "localhost"),
+        user=os.getenv("MYSQL_USER", "root"),
+        passwd=os.getenv("MYSQL_PASSWORD", "Helloworld1$"),
+        ssl_disabled=True,
+    )
+    cursor = connection.cursor()
+    cursor.execute(
+        "CREATE DATABASE IF NOT EXISTS `{}`".format(
+            os.getenv("MYSQL_DATABASE", "Neighbourly_Database")
+        )
+    )
+    cursor.close()
+    connection.close()
+
+
 def _get_pool():
     global _pool
     if _pool is None:
+        _ensure_database_exists()
         _pool = pooling.MySQLConnectionPool(
             pool_name=os.getenv("MYSQL_POOL_NAME", "neighbourly_pool"),
             pool_size=int(os.getenv("MYSQL_POOL_SIZE", 5)),
@@ -47,6 +65,13 @@ def init_app(app):
         conn = g.pop("db_conn", None)
         if conn is not None:
             conn.close()
+
+
+def ensure_schema():
+    _get_pool()
+    import Database
+
+    Database.table_creation()
 
 
 class CursorProxy:

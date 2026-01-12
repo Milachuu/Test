@@ -42,9 +42,10 @@ app.config.update(
 
 
 import Database
-from db_utils import db, mycursor, init_app as init_db
+from db_utils import db, mycursor, init_app as init_db, ensure_schema
 
 init_db(app)
+ensure_schema()
 
 ACTIVE_BOOKING_STATUSES = ("Pending", "Confirmed", "Approved", "Reserved")
 # Listings with inactive bookings are allowed to reappear in browse results.
