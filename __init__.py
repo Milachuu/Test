@@ -1492,7 +1492,22 @@ def fetch_chat_details(chat_id, user_email):
     if user_email not in (borrower_email, giver_email):
         return None
 
-    availability_date, availability_time = _get_next_availability(row[1])
+    mycursor.execute(
+        """
+        SELECT selected_date, selected_time
+        FROM Booking
+        WHERE book_listing_id = %s AND booking_email = %s
+        ORDER BY booking_id DESC
+        LIMIT 1
+        """,
+        (row[1], borrower_email),
+    )
+    booking_row = mycursor.fetchone()
+    if booking_row and booking_row[0] and booking_row[1]:
+        availability_date = str(booking_row[0])
+        availability_time = _format_time_label(booking_row[1])
+    else:
+        availability_date, availability_time = _get_next_availability(row[1])
     other_username = row[10] if user_email == borrower_email else row[9]
     return {
         "chat_id": row[0],
