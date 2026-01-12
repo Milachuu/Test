@@ -153,6 +153,67 @@ body {
   color: #111827;
 }
 
+.availability-helper {
+  margin: -8px 0 18px;
+  color: var(--muted-text);
+  font-size: 0.95rem;
+}
+
+.availability-block {
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.availability-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-add,
+.date-remove {
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #1f2937;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.date-add {
+  margin-top: 8px;
+  width: fit-content;
+}
+
+.date-remove {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.date-add:hover,
+.date-remove:hover {
+  background: #eef2ff;
+}
+
+.date-remove:hover {
+  background: #ffedd5;
+}
+
+.date-remove:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 label {
   font-weight: 600;
   font-size: 1rem;
@@ -283,6 +344,11 @@ textarea.form-control {
     margin: 32px 16px;
   }
 
+  .availability-block-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .time-slot-header {
     grid-template-columns: 1fr;
   }
@@ -360,6 +426,31 @@ html[data-theme-effective="dark"] .form-alert {
   background: rgba(248, 113, 113, 0.1);
   border-color: rgba(248, 113, 113, 0.3);
   color: #fecaca;
+}
+
+html[data-theme="dark"] .availability-block,
+html[data-theme-effective="dark"] .availability-block {
+  background: #111827;
+  border-color: var(--card-border);
+}
+
+html[data-theme="dark"] .availability-helper,
+html[data-theme-effective="dark"] .availability-helper {
+  color: var(--muted-text);
+}
+
+html[data-theme="dark"] .date-add,
+html[data-theme-effective="dark"] .date-add {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #bfdbfe;
+}
+
+html[data-theme="dark"] .date-remove,
+html[data-theme-effective="dark"] .date-remove {
+  background: rgba(249, 115, 22, 0.18);
+  border-color: rgba(249, 115, 22, 0.35);
+  color: #fdba74;
 }
 
 html[data-theme="dark"] .time-slot-header,

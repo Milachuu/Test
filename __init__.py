@@ -69,6 +69,7 @@ def allowed_file(filename):
 
 
 AVAILABILITY_MIN_DATE = date(2025, 2, 5)
+SLOT_MINUTES = 30
 
 
 def _format_time_value(time_value):
@@ -92,6 +93,34 @@ def _format_time_label(time_value):
     return time_str
 
 
+def _parse_time_value(time_value):
+    if time_value is None:
+        return None
+    if isinstance(time_value, time):
+        return time_value
+    if isinstance(time_value, str):
+        return datetime.strptime(time_value[:5], "%H:%M").time()
+    return time_value
+
+
+def _time_to_minutes(time_value):
+    parsed = _parse_time_value(time_value)
+    return parsed.hour * 60 + parsed.minute
+
+
+def _generate_time_slots(start_time, end_time, step_minutes=SLOT_MINUTES):
+    start_minutes = _time_to_minutes(start_time)
+    end_minutes = _time_to_minutes(end_time)
+    slots = []
+    current = start_minutes
+    while current + step_minutes <= end_minutes:
+        hours = current // 60
+        minutes = current % 60
+        slots.append(f"{hours:02d}:{minutes:02d}")
+        current += step_minutes
+    return slots
+
+
 def _get_next_availability(listing_id):
     mycursor.execute(
         """
@@ -113,7 +142,6 @@ def _get_next_availability(listing_id):
 
 
 def fetch_available_listings(listing_type, viewer_email):
-    status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     query = f"""
         SELECT
             l.listing_id,
@@ -132,19 +160,10 @@ def fetch_available_listings(listing_type, viewer_email):
             SELECT 1
             FROM ListingAvailability AS la
             WHERE la.listing_id = l.listing_id
-              AND NOT EXISTS (
-                SELECT 1
-                FROM Booking AS b
-                WHERE b.book_listing_id = l.listing_id
-                  AND b.status IN ({status_placeholders})
-                  AND b.selected_date = la.availability_date
-                  AND b.selected_time = CONCAT(TIME_FORMAT(la.start_time, '%H:%i'), '-', TIME_FORMAT(la.end_time, '%H:%i'))
-              )
           )
     """
     params = [
         listing_type.lower(),
-        *ACTIVE_BOOKING_STATUSES,
     ]
     mycursor.execute(query, params)
     return mycursor.fetchall()
@@ -998,9 +1017,7 @@ def create_listing():
         description = request.form.get('description')
         category = request.form.get('category')
         listing_type = request.form.get('type')
-        availability_date = request.form.get('availability_date')
-        availability_starts = request.form.getlist('availability_start[]')
-        availability_ends = request.form.getlist('availability_end[]')
+        availability_payload = request.form.get('availability_payload')
 
         errors = []
         for field, value in {'Title': title, 'Description': description, 'Category': category, 'Type': listing_type}.items():
@@ -1008,28 +1025,41 @@ def create_listing():
             if error:
                 errors.append(error)
 
-        availability_slots = []
-        for start_time, end_time in zip(availability_starts, availability_ends):
-            if not start_time and not end_time:
-                continue
-            availability_slots.append({"start": start_time, "end": end_time})
-
-        if not availability_date:
-            errors.append(t("create_newlisting.availability_date_required"))
-        else:
+        availability_blocks = []
+        if availability_payload:
             try:
-                parsed_date = datetime.strptime(availability_date, "%Y-%m-%d").date()
+                availability_blocks = json.loads(availability_payload)
+            except json.JSONDecodeError:
+                errors.append(t("create_newlisting.availability_block_required"))
+
+        if not isinstance(availability_blocks, list):
+            availability_blocks = []
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        if not availability_blocks:
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        availability_rows = []
+        for block in availability_blocks:
+            block_date = (block or {}).get("date")
+            slots = (block or {}).get("slots") or []
+            if not block_date:
+                errors.append(t("create_newlisting.availability_date_required"))
+                continue
+            try:
+                parsed_date = datetime.strptime(block_date, "%Y-%m-%d").date()
                 if parsed_date < AVAILABILITY_MIN_DATE:
                     errors.append(t("create_newlisting.date_error"))
             except ValueError:
                 errors.append(t("create_newlisting.availability_date_required"))
+                continue
 
-        if not availability_slots:
-            errors.append(t("create_newlisting.availability_slot_required"))
+            if not slots:
+                errors.append(t("create_newlisting.availability_slot_required"))
+                continue
 
-        parsed_slots = []
-        if availability_slots:
-            for slot in availability_slots:
+            parsed_slots = []
+            for slot in slots:
                 start_time = slot.get("start")
                 end_time = slot.get("end")
                 if not start_time or not end_time:
@@ -1044,9 +1074,11 @@ def create_listing():
                 if parsed_start >= parsed_end:
                     errors.append(t("create_newlisting.availability_slot_invalid"))
                     continue
+                if (_time_to_minutes(parsed_end) - _time_to_minutes(parsed_start)) < SLOT_MINUTES:
+                    errors.append(t("create_newlisting.availability_slot_duration"))
+                    continue
                 parsed_slots.append({"start": parsed_start, "end": parsed_end})
 
-        if parsed_slots:
             parsed_slots.sort(key=lambda slot: slot["start"])
             previous_end = None
             for slot in parsed_slots:
@@ -1055,14 +1087,22 @@ def create_listing():
                     break
                 previous_end = slot["end"]
 
+            for slot in parsed_slots:
+                availability_rows.append(
+                    {
+                        "date": block_date,
+                        "start": slot["start"],
+                        "end": slot["end"],
+                    }
+                )
+
         if errors:
-            display_slots = availability_slots or [{"start": "", "end": ""}]
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
             return render_template(
                 'new_listing.html',
                 errors=errors,
                 username=get_username,
-                availability_date=availability_date,
-                availability_slots=display_slots,
+                availability_blocks=display_blocks,
                 t=t,
             )
 
@@ -1080,15 +1120,6 @@ def create_listing():
         description = sanitisation(description)
 
         # Changes are made here, Insert details into db
-        availability_rows = [
-            {
-                "date": availability_date,
-                "start": slot["start"],
-                "end": slot["end"],
-            }
-            for slot in parsed_slots
-        ]
-
         try:
             listing_id = Database.Create_Listing(
                 get_username,
@@ -1112,13 +1143,12 @@ def create_listing():
         except Exception:
             db.rollback()
             errors.append(t("create_newlisting.availability_save_error"))
-            display_slots = availability_slots or [{"start": "", "end": ""}]
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
             return render_template(
                 'new_listing.html',
                 errors=errors,
                 username=get_username,
-                availability_date=availability_date,
-                availability_slots=display_slots,
+                availability_blocks=display_blocks,
                 t=t,
             )
 
@@ -1130,8 +1160,7 @@ def create_listing():
     return render_template(
         'new_listing.html',
         username=get_username,
-        availability_date="",
-        availability_slots=[{"start": "", "end": ""}],
+        availability_blocks=[{"date": "", "slots": [{"start": "", "end": ""}]}],
         t=t,
     )
 
@@ -1635,18 +1664,14 @@ def booking(listing_id):
         if not availability_date or not start_time or not end_time:
             continue
         date_str = str(availability_date)
-        start_value = _format_time_value(start_time)
-        end_value = _format_time_value(end_time)
-        time_str = f"{start_value}-{end_value}"
-        availability_by_date.setdefault(date_str, []).append(
-            {
-                "value": time_str,
-                "label": f"{_format_time_label(start_value)} – {_format_time_label(end_value)}",
-            }
-        )
+        for slot in _generate_time_slots(start_time, end_time):
+            availability_by_date.setdefault(date_str, set()).add(slot)
 
-    for date_key, time_slots in availability_by_date.items():
-        availability_by_date[date_key] = sorted(time_slots, key=lambda slot: slot["value"])
+    for date_key, time_slots in list(availability_by_date.items()):
+        sorted_slots = sorted(time_slots)
+        availability_by_date[date_key] = [
+            {"value": slot, "label": _format_time_label(slot)} for slot in sorted_slots
+        ]
 
     status_placeholders = ", ".join(["%s"] * len(ACTIVE_BOOKING_STATUSES))
     mycursor.execute(
