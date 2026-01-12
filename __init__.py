@@ -98,6 +98,11 @@ def _parse_time_value(time_value):
         return None
     if isinstance(time_value, dt_time):
         return time_value
+    if isinstance(time_value, timedelta):
+        total_minutes = int(time_value.total_seconds() // 60)
+        hours = (total_minutes // 60) % 24
+        minutes = total_minutes % 60
+        return dt_time(hour=hours, minute=minutes)
     if isinstance(time_value, str):
         return datetime.strptime(time_value[:5], "%H:%M").time()
     return time_value
