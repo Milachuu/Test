@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_socketio import SocketIO, join_room, emit, disconnect
 from otp_backup import generate_2fa_backup_codes, verify_and_consume_backup_code
 from Forms import CreateUserForm,CreateUserInfo,Login,Wishlist,Reporting
 import User,hashlib, pyotp, qrcode, base64, io, os, uuid, json
@@ -25,6 +26,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'asdsdasd dasdasd'
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 
 app.config.update(
@@ -1181,6 +1183,16 @@ def ensure_chat_for_booking(listing_id, borrower_email, giver_email, listing_tit
         (chat_id, None, system_message, "system"),
     )
     db.commit()
+    _emit_chat_message(
+        chat_id,
+        {
+            "chat_id": chat_id,
+            "message_id": mycursor.lastrowid,
+            "sender_email": None,
+            "message_text": system_message,
+            "message_type": "system",
+        },
+    )
     return chat_id
 
 
@@ -1309,6 +1321,90 @@ def fetch_chat_messages(chat_id):
             }
         )
     return messages
+
+
+def _get_authenticated_email():
+    if "user_email" not in session:
+        return None
+    if "verify" not in session:
+        return None
+    return session.get("user_email")
+
+
+def _chat_room(chat_id):
+    return f"chat_{chat_id}"
+
+
+def _emit_chat_message(chat_id, payload):
+    socketio.emit("chat_message", payload, room=_chat_room(chat_id))
+
+
+@socketio.on("connect")
+def handle_socket_connect():
+    if not _get_authenticated_email():
+        return False
+
+
+@socketio.on("join_thread")
+def handle_join_thread(data):
+    email = _get_authenticated_email()
+    if not email:
+        emit("socket_error", {"message": "Not authenticated."})
+        disconnect()
+        return
+
+    chat_id = data.get("chat_id") if isinstance(data, dict) else None
+    try:
+        chat_id = int(chat_id)
+    except (TypeError, ValueError):
+        emit("socket_error", {"message": "Invalid chat thread."})
+        return
+
+    if not fetch_chat_details(chat_id, email):
+        emit("socket_error", {"message": "Not authorized for this chat thread."})
+        return
+
+    join_room(_chat_room(chat_id))
+    emit("joined_thread", {"chat_id": chat_id})
+
+
+@socketio.on("send_message")
+def handle_send_message(data):
+    email = _get_authenticated_email()
+    if not email:
+        return {"ok": False, "message": "Not authenticated."}
+
+    if not isinstance(data, dict):
+        return {"ok": False, "message": "Invalid payload."}
+
+    chat_id = data.get("chat_id")
+    message_text = (data.get("message") or "").strip()
+    try:
+        chat_id = int(chat_id)
+    except (TypeError, ValueError):
+        return {"ok": False, "message": "Invalid chat thread."}
+
+    if not message_text:
+        return {"ok": False, "message": "Message cannot be empty."}
+
+    if not fetch_chat_details(chat_id, email):
+        return {"ok": False, "message": "Not authorized for this chat thread."}
+
+    mycursor.execute(
+        "INSERT INTO ChatMessage (chat_id, sender_email, message_text, message_type) VALUES (%s,%s,%s,%s)",
+        (chat_id, email, message_text, "user"),
+    )
+    db.commit()
+
+    payload = {
+        "chat_id": chat_id,
+        "message_id": mycursor.lastrowid,
+        "sender_email": email,
+        "message_text": message_text,
+        "message_type": "user",
+    }
+    _emit_chat_message(chat_id, payload)
+    return {"ok": True, "message_id": mycursor.lastrowid}
 
 
 @app.route('/booking/<int:listing_id>', methods=['GET', 'POST'])
@@ -3026,11 +3122,21 @@ def send_chat_message(chat_id):
         (chat_id, get_email, message_text, "user"),
     )
     db.commit()
+    _emit_chat_message(
+        chat_id,
+        {
+            "chat_id": chat_id,
+            "message_id": mycursor.lastrowid,
+            "sender_email": get_email,
+            "message_text": message_text,
+            "message_type": "user",
+        },
+    )
 
     return redirect(url_for('userchat', chat_id=chat_id))
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
 
     # app.run(ssl_context=("localhost+2.pem", "localhost+2-key.pem", debug=True))
