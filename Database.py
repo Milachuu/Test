@@ -30,6 +30,10 @@ def table_creation():
 
     mycursor.execute(" CREATE TABLE IF NOT EXISTS Booking ( booking_id int AUTO_INCREMENT PRIMARY KEY NOT NULL, booking_email Varchar(100), book_listing_id int, selected_date Varchar(15) , selected_time Varchar(15), FOREIGN KEY (booking_email) REFERENCES User(login_email), FOREIGN KEY (book_listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE ) ")
 
+    mycursor.execute(" CREATE TABLE IF NOT EXISTS Chat ( chat_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, listing_id INT NOT NULL, borrower_email VARCHAR(100) NOT NULL, giver_email VARCHAR(100) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uniq_chat (listing_id, borrower_email, giver_email), FOREIGN KEY (listing_id) REFERENCES Listing(listing_id) ON DELETE CASCADE, FOREIGN KEY (borrower_email) REFERENCES User(login_email) ON DELETE CASCADE, FOREIGN KEY (giver_email) REFERENCES User(login_email) ON DELETE CASCADE ) ")
+
+    mycursor.execute(" CREATE TABLE IF NOT EXISTS ChatMessage ( message_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, chat_id INT NOT NULL, sender_email VARCHAR(100) NULL, message_text TEXT NOT NULL, message_type ENUM('user','system') NOT NULL DEFAULT 'user', created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (chat_id) REFERENCES Chat(chat_id) ON DELETE CASCADE, FOREIGN KEY (sender_email) REFERENCES User(login_email) ON DELETE SET NULL ) ")
+
 
     mycursor.execute(" CREATE TABLE IF NOT EXISTS Wishlist ( wishlist_id int AUTO_INCREMENT PRIMARY KEY NOT NULL, wishlist_email Varchar(100), wishlist_listing_id int, FOREIGN KEY (wishlist_email) REFERENCES User(login_email), FOREIGN KEY (wishlist_listing_id) REFERENCES Listing(listing_id) ) ")
 
@@ -333,7 +337,6 @@ def select_password_storage(email,password):
 
 """
     
-
 
 
 
