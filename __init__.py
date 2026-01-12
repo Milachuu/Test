@@ -69,14 +69,6 @@ def allowed_file(filename):
 
 
 
-@app.route("/dev/test-token")
-def test_token():
-    token = sign_security_token("sjy0504j@gmail.com", "lock-confirm", expires_minutes=1)
-    ok = verify_security_token(token, "lock-confirm")
-    bad = verify_security_token(token, "deny")
-    return {"token": token, "verify_ok": ok, "verify_wrong_purpose": bad}
-
-
 """Web App Routing"""
 
 
@@ -2812,6 +2804,6 @@ def userchat():
 
 
 if __name__ == '__main__':
-    app.run(ssl_context=("localhost+2.pem", "localhost+2-key.pem"), debug=True)
+    app.run(debug=True)
 
     # app.run(ssl_context=("localhost+2.pem", "localhost+2-key.pem", debug=True))

@@ -19,6 +19,7 @@ def create_database():
     mycursor.execute("CREATE DATABASE Neighbourly_Database")
 
 
+
 def table_creation():
 
     mycursor.execute("CREATE TABLE IF NOT EXISTS User (user_id Varchar(50), first_name Varchar(50), last_name Varchar(50), username Varchar(30), gender Varchar(7) Check(gender In('Male','Female','Other')), postal_code Int(6), email Varchar(100), login_email Varchar(100) PRIMARY KEY NOT NULL, phone_num Int(15), bio Varchar(150), points int(4), role Varchar(15) Check(role In('Normal','Admin')) Default 'Normal'  ) ")
@@ -56,6 +57,7 @@ def table_creation():
 
     
     mycursor.execute("CREATE TABLE IF NOT EXISTS Log (log_id Int AUTO_INCREMENT Primary Key, log_email Varchar(100), failed_login Int(5),log_date Varchar(10),log_time Varchar(10),status Varchar(10) Check(status In('Success','Failed','New')),logout_date Varchar(10)  Default 'No Date',logout_time Varchar(10) Default 'No Time' ,FOREIGN KEY (log_email) REFERENCES User(login_email) ) ")
+
 
 # language, font size, Theme (system, light, dark mode) 
 # def add_points():
