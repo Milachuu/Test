@@ -1231,39 +1231,198 @@ def update_listing(listing_id):
 
  
 
-    if request.method == "POST":
+    listing = check_listing
 
+    def build_availability_blocks(rows):
+        blocks = {}
+        for row in rows:
+            date_str = str(row[0])
+            start_value = _format_time_value(row[1])
+            end_value = _format_time_value(row[2])
+            block = blocks.setdefault(date_str, {"date": date_str, "slots": []})
+            block["slots"].append({"start": start_value, "end": end_value})
+        return list(blocks.values())
+
+    mycursor.execute(
+        """
+        SELECT availability_date, start_time, end_time
+        FROM ListingAvailability
+        WHERE listing_id = %s
+        ORDER BY availability_date ASC, start_time ASC
+        """,
+        [listing_id],
+    )
+    availability_rows = mycursor.fetchall()
+    availability_blocks = build_availability_blocks(availability_rows)
+    if not availability_blocks:
+        availability_blocks = [{"date": "", "slots": [{"start": "", "end": ""}]}]
+
+    if request.method == "POST":
         title = request.form.get('title')
         description = request.form.get('description')
         category = request.form.get('category')
         listing_type = request.form.get('type')
-        availability_date = request.form.get('availability_date')
-        availability_time = request.form.get('availability_time')
+        availability_payload = request.form.get('availability_payload')
 
-        
-        # Handle new photo upload
+        errors = []
+        for field, value in {'Title': title, 'Description': description, 'Category': category, 'Type': listing_type}.items():
+            error = validate_input(value, field)
+            if error:
+                errors.append(error)
+
+        availability_blocks = []
+        if availability_payload:
+            try:
+                availability_blocks = json.loads(availability_payload)
+            except json.JSONDecodeError:
+                errors.append(t("create_newlisting.availability_block_required"))
+
+        if not isinstance(availability_blocks, list):
+            availability_blocks = []
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        if not availability_blocks:
+            errors.append(t("create_newlisting.availability_block_required"))
+
+        availability_rows = []
+        for block in availability_blocks:
+            block_date = (block or {}).get("date")
+            slots = (block or {}).get("slots") or []
+            if not block_date:
+                errors.append(t("create_newlisting.availability_date_required"))
+                continue
+            try:
+                parsed_date = datetime.strptime(block_date, "%Y-%m-%d").date()
+                if parsed_date < AVAILABILITY_MIN_DATE:
+                    errors.append(t("create_newlisting.date_error"))
+            except ValueError:
+                errors.append(t("create_newlisting.availability_date_required"))
+                continue
+
+            if not slots:
+                errors.append(t("create_newlisting.availability_slot_required"))
+                continue
+
+            parsed_slots = []
+            for slot in slots:
+                start_time = slot.get("start")
+                end_time = slot.get("end")
+                if not start_time or not end_time:
+                    errors.append(t("create_newlisting.availability_slot_incomplete"))
+                    continue
+                try:
+                    parsed_start = datetime.strptime(start_time, "%H:%M").time()
+                    parsed_end = datetime.strptime(end_time, "%H:%M").time()
+                except ValueError:
+                    errors.append(t("create_newlisting.availability_slot_incomplete"))
+                    continue
+                if parsed_start >= parsed_end:
+                    errors.append(t("create_newlisting.availability_slot_invalid"))
+                    continue
+                if (_time_to_minutes(parsed_end) - _time_to_minutes(parsed_start)) < SLOT_MINUTES:
+                    errors.append(t("create_newlisting.availability_slot_duration"))
+                    continue
+                parsed_slots.append({"start": parsed_start, "end": parsed_end})
+
+            parsed_slots.sort(key=lambda slot: slot["start"])
+            previous_end = None
+            for slot in parsed_slots:
+                if previous_end and slot["start"] < previous_end:
+                    errors.append(t("create_newlisting.availability_slot_overlap"))
+                    break
+                previous_end = slot["end"]
+
+            for slot in parsed_slots:
+                availability_rows.append(
+                    {
+                        "date": block_date,
+                        "start": slot["start"],
+                        "end": slot["end"],
+                    }
+                )
+
+        if errors:
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
+            return render_template(
+                'update_listing.html',
+                errors=errors,
+                listing_id=listing_id,
+                username=get_username,
+                listing_photo=listing[8],
+                availability_blocks=display_blocks,
+                form_title=title or "",
+                form_description=description or "",
+                form_category=category or "",
+                form_type=listing_type or "",
+                t=t,
+            )
+
+        photo_path = listing[8]
         photo = request.files.get('photo')
         if photo and allowed_file(photo.filename):
             filename = secure_filename(photo.filename)
-            photo_path = f"uploads/{filename}"  # Store only relative path
+            photo_path = f"uploads/{filename}"
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
-        # validate input
+
         title = sanitisation(title)
         description = sanitisation(description)
 
-        Database.Update_Listing(title,description,category,listing_type,availability_date,availability_time,photo_path,get_email,listing_id)
-        db.commit()
+        try:
+            Database.Update_Listing(
+                title,
+                description,
+                category,
+                listing_type,
+                None,
+                None,
+                photo_path,
+                get_email,
+                listing_id,
+                commit=False,
+            )
+            mycursor.execute(
+                "DELETE FROM ListingAvailability WHERE listing_id = %s AND owner_email = %s",
+                [listing_id, get_email],
+            )
+            Database.Create_Listing_Availability(
+                listing_id,
+                get_email,
+                availability_rows,
+                commit=False,
+            )
+            db.commit()
+        except Exception:
+            db.rollback()
+            errors.append(t("create_newlisting.availability_save_error"))
+            display_blocks = availability_blocks or [{"date": "", "slots": [{"start": "", "end": ""}]}]
+            return render_template(
+                'update_listing.html',
+                errors=errors,
+                listing_id=listing_id,
+                username=get_username,
+                listing_photo=listing[8],
+                availability_blocks=display_blocks,
+                form_title=title or "",
+                form_description=description or "",
+                form_category=category or "",
+                form_type=listing_type or "",
+                t=t,
+            )
 
         return redirect(url_for('login_home'))
 
-
-    mycursor.execute("Select * from Listing where listing_id = %s  ",[listing_id])
-
-    listing = mycursor.fetchone()
-
-
-    return render_template('update_listing.html', listing=listing, listing_id=listing_id,username=get_username, t=t)
+    return render_template(
+        'update_listing.html',
+        listing_id=listing_id,
+        username=get_username,
+        listing_photo=listing[8],
+        availability_blocks=availability_blocks,
+        form_title=listing[2],
+        form_description=listing[3],
+        form_category=listing[4],
+        form_type=listing[5],
+        t=t,
+    )
 
 
 # Delete Listing

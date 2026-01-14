@@ -221,9 +221,13 @@ def Update_Postal(postal_code,login_email):
     mycursor.execute("UPDATE User SET postal_code =%s Where login_email = %s ",(postal_code,login_email))
     db.commit()
 
-def Update_Listing(title, description, category, type, availability_date, availability_time, photo_path,login_email,listing_id):
-    mycursor.execute("UPDATE Listing Set title = %s, description = %s, category = %s, type = %s, availability_date = %s, availability_time = %s, photo_path = %s WHERE listing_email = %s And listing_id = %s", (title, description, category, type, availability_date, availability_time, photo_path,login_email,listing_id))
-    db.commit()
+def Update_Listing(title, description, category, type, availability_date, availability_time, photo_path, login_email, listing_id, commit=True):
+    mycursor.execute(
+        "UPDATE Listing Set title = %s, description = %s, category = %s, type = %s, availability_date = %s, availability_time = %s, photo_path = %s WHERE listing_email = %s And listing_id = %s",
+        (title, description, category, type, availability_date, availability_time, photo_path, login_email, listing_id),
+    )
+    if commit:
+        db.commit()
 
 
 def Update_Desire(desire_item,desire_description,login_email,desire_id):
@@ -375,5 +379,4 @@ def select_password_storage(email,password):
 
 """
     
-
 
