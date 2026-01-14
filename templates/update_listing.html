@@ -1,73 +1,430 @@
 {% extends "base.html" %}
-{% block title %}NeighbourlyNest Singapore | Update Listing{% endblock %}
+{% block title %}Update Listing{% endblock %}
+
 {% block css %}
-<!-- Ensure CSS is loaded properly -->
-<link rel="stylesheet" href="{{ url_for('static', filename='update_listing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='newlisting.css') }}">
 {% endblock %}
+
 {% block content %}
-<div class="listing-form-container">
+<div class="bg">
+  <div class="listing-form-container">
     <h1 class="page-title">Update Listing</h1>
-    <form class="update-listing-form" method="POST" action="{{ url_for('update_listing', listing_id=listing_id) }}" enctype="multipart/form-data">
-        <!-- Listing Title -->
-        <div class="form-group">
-            <label for="title">Listing Title</label>
-            <input type="text" id="title" name="title" class="form-control" value="{{ listing[2] }}" required pattern=".{5,}" title="Title must be at least 5 characters">
+    {% if errors %}
+      <div class="form-alert" role="alert">
+        <ul>
+          {% for error in errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+    <div
+      class="form-alert form-alert-client"
+      id="availabilityErrors"
+      data-error-incomplete="{{ t('create_newlisting.availability_slot_incomplete') }}"
+      data-error-invalid="{{ t('create_newlisting.availability_slot_invalid') }}"
+      data-error-overlap="{{ t('create_newlisting.availability_slot_overlap') }}"
+      data-error-required="{{ t('create_newlisting.availability_block_required') }}"
+      data-error-date-required="{{ t('create_newlisting.availability_date_required') }}"
+      data-error-duration="{{ t('create_newlisting.availability_slot_duration') }}"
+      hidden
+    ></div>
+    <form method="POST" action="{{ url_for('update_listing', listing_id=listing_id) }}" enctype="multipart/form-data">
+      <!-- Photo Upload Section -->
+      <div class="photo-upload">
+        <label for="photo" class="photo-label">
+          <div id="photoPlaceholder" class="photo-placeholder" {% if listing_photo %}style="display: none;"{% endif %}>
+            <p>{{ t("create_newlisting.photo_label") }}</p>
+            <small>{{ t("create_newlisting.photo_subtext") }}</small>
+          </div>
+          <img
+            id="imagePreview"
+            class="image-preview"
+            src="{% if listing_photo %}{{ url_for('static', filename=listing_photo) }}{% endif %}"
+            alt="Preview"
+            {% if listing_photo %}style="display: block;"{% else %}style="display: none;"{% endif %}
+            data-has-image="{{ 'true' if listing_photo else 'false' }}"
+          >
+          <input type="file" name="photo" id="photo" class="photo-input form-control" accept="image/*" />
+        </label>
+      </div>
+
+      <!-- Item Details -->
+      <div class="item-details">
+        <div class="form-field">
+          <label for="title">{{ t("create_newlisting.listing_title") }}</label>
+          <input type="text" id="title" name="title"
+                 placeholder="{{ t('create_newlisting.title_placeholder') }}"
+                 class="form-control" required pattern=".{5,}"
+                 title="{{ t('create_listing.title_rule') }}"
+                 value="{{ form_title }}">
         </div>
-        <!-- Description -->
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" class="form-control" rows="3" required minlength="10">{{ listing[3] }}</textarea>
+
+        <div class="form-field">
+          <label for="description">{{ t("create_newlisting.description") }}</label>
+          <textarea id="description" name="description"
+                    placeholder="{{ t('create_newlisting.description_placeholder') }}"
+                    class="form-control" rows="3" required minlength="10">{{ form_description }}</textarea>
         </div>
-        <!-- Category -->
-        <div class="form-group">
-            <label for="category">Category</label>
-            <select id="category" name="category" class="form-control" required>
-                <option value="food" {% if listing[4] == 'food' %}selected{% endif %}>Food</option>
-                <option value="non-food" {% if listing[4] == 'non-food' %}selected{% endif %}>Non-Food</option>
-            </select>
+      </div>
+
+      <!-- Category Selection -->
+      <div class="category-selection">
+        <div class="form-field">
+          <label for="category">{{ t("create_newlisting.category") }}</label>
+          <select id="category" name="category" class="form-control" required>
+            <option value="">{{ t("create_newlisting.category_select") }}</option>
+            <option value="food" {% if form_category == 'food' %}selected{% endif %}>{{ t("create_newlisting.category_food") }}</option>
+            <option value="non-food" {% if form_category == 'non-food' %}selected{% endif %}>{{ t("create_newlisting.category_non_food") }}</option>
+          </select>
         </div>
-        <!-- Type -->
-        <div class="form-group">
-            <label for="type">Type</label>
-            <select id="type" name="type" class="form-control" required>
-                <option value="borrow" {% if listing[5] == 'borrow' %}selected{% endif %}>Borrow</option>
-                <option value="free" {% if listing[5] == 'free' %}selected{% endif %}>Free</option>
-            </select>
+
+        <div class="form-field">
+          <label for="type">{{ t("create_newlisting.type") }}</label>
+          <select id="type" name="type" class="form-control" required>
+            <option value="">{{ t("create_newlisting.type_select") }}</option>
+            <option value="borrow" {% if form_type == 'borrow' %}selected{% endif %}>{{ t("create_newlisting.type_borrow") }}</option>
+            <option value="free" {% if form_type == 'free' %}selected{% endif %}>{{ t("create_newlisting.type_free") }}</option>
+          </select>
         </div>
-        <!-- Availability Date -->
-        <div class="form-group">
-            <label for="availability_date">Availability Date</label>
-            <input type="date" id="availability_date" name="availability_date" class="form-control" value="{{ listing[6] }}" required min="{{ today }}">
-            <p id="date-error" style="color: red; font-size: 14px; display: none;">⚠ Date must be from 5th February 2025 onwards.</p>
+      </div>
+
+      <!-- Availability -->
+      <div class="availability">
+        <h2>{{ t("create_newlisting.availability") }}</h2>
+        <p class="availability-helper">{{ t("create_newlisting.availability_helper") }}</p>
+        <div id="availabilityBlocks">
+          {% for block in availability_blocks %}
+            <div class="availability-block">
+              <div class="availability-block-header">
+                <div class="form-field">
+                  <label class="form-label">{{ t("create_newlisting.availability_date") }}</label>
+                  <input
+                    type="date"
+                    class="form-control availability-date"
+                    value="{{ block.date }}"
+                    required
+                  >
+                </div>
+                <button type="button" class="date-remove">
+                  {{ t("create_newlisting.availability_remove_date") }}
+                </button>
+              </div>
+
+              <div class="time-slot-header">
+                <span>{{ t("create_newlisting.availability_start") }}</span>
+                <span class="slot-separator-header" aria-hidden="true"></span>
+                <span>{{ t("create_newlisting.availability_end") }}</span>
+                <span class="slot-separator-header" aria-hidden="true"></span>
+              </div>
+              <div class="time-slot-list">
+                {% for slot in block.slots %}
+                  <div class="time-slot-row">
+                    <select class="form-control time-input availability-start" data-current="{{ slot.start }}" required></select>
+                    <span class="slot-separator">→</span>
+                    <select class="form-control time-input availability-end" data-current="{{ slot.end }}" required></select>
+                    <button type="button" class="slot-remove" aria-label="{{ t('create_newlisting.availability_remove_slot') }}">
+                      {{ t("create_newlisting.availability_remove_slot") }}
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+              <button type="button" class="slot-add">
+                {{ t("create_newlisting.availability_add_slot") }}
+              </button>
+            </div>
+          {% endfor %}
         </div>
-        <!-- Availability Time -->
-        <div class="form-group">
-            <label for="availability_time">Availability Time</label>
-            <input type="time" id="availability_time" name="availability_time" class="form-control" value="{{  listing[7] }}" required>
-        </div>
-        <!-- Upload New Photo -->
-        <div class="form-group">
-            <label for="photo">Upload New Photo</label>
-            <input type="file" id="photo" name="photo" class="form-control" required accept="image/*">
-        </div>
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Update Listing</button>
+        <button type="button" class="date-add" id="addDate">
+          {{ t("create_newlisting.availability_add_date") }}
+        </button>
+        <p id="date-error" class="error-msg" style="display:none;">
+          {{ t("create_newlisting.date_error") }}
+        </p>
+        <input type="hidden" id="availabilityPayload" name="availability_payload">
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Update Listing</button>
     </form>
+  </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const errorMsg = document.getElementById("date-error");
+    const minDate = new Date(2025, 1, 5); // Feb 5, 2025
+    const minDateString = minDate.toISOString().split("T")[0];
+    const availabilityBlocks = document.getElementById("availabilityBlocks");
+    const addDateButton = document.getElementById("addDate");
+    const availabilityErrors = document.getElementById("availabilityErrors");
+    const form = document.querySelector("form");
+    const payloadInput = document.getElementById("availabilityPayload");
+    const minDurationMinutes = 30;
+
+    const timeOptions = [];
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+            timeOptions.push(value);
+        }
+    }
+
+    const applyDateMin = (input) => {
+        input.setAttribute("min", minDateString);
+    };
+
+    const populateTimeSelect = (select) => {
+        const currentValue = select.dataset.current || "";
+        select.innerHTML = "";
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "--:--";
+        select.appendChild(placeholder);
+        timeOptions.forEach((value) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+        if (currentValue) {
+            select.value = currentValue;
+        }
+    };
+
+    const createSlotRow = (startValue = "", endValue = "") => {
+        const row = document.createElement("div");
+        row.className = "time-slot-row";
+        row.innerHTML = `
+            <select class="form-control time-input availability-start" data-current="${startValue}" required></select>
+            <span class="slot-separator">→</span>
+            <select class="form-control time-input availability-end" data-current="${endValue}" required></select>
+            <button type="button" class="slot-remove" aria-label="{{ t('create_newlisting.availability_remove_slot') }}">
+              {{ t("create_newlisting.availability_remove_slot") }}
+            </button>
+        `;
+        populateTimeSelect(row.querySelector(".availability-start"));
+        populateTimeSelect(row.querySelector(".availability-end"));
+        row.querySelector(".slot-remove").addEventListener("click", () => {
+            row.remove();
+            updateSlotRemoveButtons();
+        });
+        return row;
+    };
+
+    const createDateBlock = (dateValue = "", slots = []) => {
+        const block = document.createElement("div");
+        block.className = "availability-block";
+        block.innerHTML = `
+            <div class="availability-block-header">
+              <div class="form-field">
+                <label class="form-label">{{ t("create_newlisting.availability_date") }}</label>
+                <input type="date" class="form-control availability-date" value="${dateValue}" required>
+              </div>
+              <button type="button" class="date-remove">{{ t("create_newlisting.availability_remove_date") }}</button>
+            </div>
+            <div class="time-slot-header">
+              <span>{{ t("create_newlisting.availability_start") }}</span>
+              <span class="slot-separator-header" aria-hidden="true"></span>
+              <span>{{ t("create_newlisting.availability_end") }}</span>
+              <span class="slot-separator-header" aria-hidden="true"></span>
+            </div>
+            <div class="time-slot-list"></div>
+            <button type="button" class="slot-add">{{ t("create_newlisting.availability_add_slot") }}</button>
+        `;
+        const dateInput = block.querySelector(".availability-date");
+        applyDateMin(dateInput);
+        dateInput.addEventListener("change", () => {
+            if (dateInput.value && dateInput.value < minDateString) {
+                errorMsg.style.display = "block";
+                dateInput.value = "";
+            } else {
+                errorMsg.style.display = "none";
+            }
+        });
+
+        const slotList = block.querySelector(".time-slot-list");
+        const slotData = slots.length ? slots : [{ start: "", end: "" }];
+        slotData.forEach((slot) => {
+            slotList.appendChild(createSlotRow(slot.start, slot.end));
+        });
+
+        block.querySelector(".slot-add").addEventListener("click", () => {
+            slotList.appendChild(createSlotRow());
+            updateSlotRemoveButtons();
+        });
+
+        block.querySelector(".date-remove").addEventListener("click", () => {
+            block.remove();
+            updateDateRemoveButtons();
+        });
+        return block;
+    };
+
+    const updateSlotRemoveButtons = () => {
+        availabilityBlocks.querySelectorAll(".availability-block").forEach((block) => {
+            const rows = block.querySelectorAll(".time-slot-row");
+            rows.forEach((row) => {
+                const removeButton = row.querySelector(".slot-remove");
+                removeButton.disabled = rows.length === 1;
+            });
+        });
+    };
+
+    const updateDateRemoveButtons = () => {
+        const blocks = availabilityBlocks.querySelectorAll(".availability-block");
+        blocks.forEach((block) => {
+            const removeButton = block.querySelector(".date-remove");
+            removeButton.disabled = blocks.length === 1;
+        });
+    };
+
+    const parseTimeValue = (value) => {
+        const [hours, minutes] = value.split(":").map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const showAvailabilityErrors = (messages) => {
+        if (!messages.length) {
+            availabilityErrors.hidden = true;
+            availabilityErrors.innerHTML = "";
+            return;
+        }
+        availabilityErrors.hidden = false;
+        availabilityErrors.innerHTML = `<ul>${messages.map((msg) => `<li>${msg}</li>`).join("")}</ul>`;
+    };
+
+    form.addEventListener("submit", (event) => {
+        const messages = [];
+        const blocks = Array.from(availabilityBlocks.querySelectorAll(".availability-block"));
+        const payload = [];
+
+        if (!blocks.length) {
+            messages.push(availabilityErrors.dataset.errorRequired);
+        }
+
+        blocks.forEach((block) => {
+            const dateInput = block.querySelector(".availability-date");
+            const slots = Array.from(block.querySelectorAll(".time-slot-row")).map((row) => {
+                const start = row.querySelector(".availability-start").value;
+                const end = row.querySelector(".availability-end").value;
+                return { start, end };
+            });
+
+            if (!dateInput.value) {
+                messages.push(availabilityErrors.dataset.errorDateRequired);
+            } else if (dateInput.value < minDateString) {
+                messages.push(errorMsg.textContent.trim());
+            }
+
+            const incompleteSlot = slots.some((slot) => !slot.start || !slot.end);
+            if (incompleteSlot) {
+                messages.push(availabilityErrors.dataset.errorIncomplete);
+            }
+
+            const parsedSlots = slots
+                .filter((slot) => slot.start && slot.end)
+                .map((slot) => ({
+                    start: parseTimeValue(slot.start),
+                    end: parseTimeValue(slot.end),
+                }));
+
+            const invalidSlot = parsedSlots.some((slot) => slot.start >= slot.end);
+            if (invalidSlot) {
+                messages.push(availabilityErrors.dataset.errorInvalid);
+            }
+
+            const durationTooShort = parsedSlots.some((slot) => slot.end - slot.start < minDurationMinutes);
+            if (durationTooShort) {
+                messages.push(availabilityErrors.dataset.errorDuration);
+            }
+
+            const sortedSlots = parsedSlots.slice().sort((a, b) => a.start - b.start);
+            for (let i = 1; i < sortedSlots.length; i++) {
+                if (sortedSlots[i].start < sortedSlots[i - 1].end) {
+                    messages.push(availabilityErrors.dataset.errorOverlap);
+                    break;
+                }
+            }
+
+            payload.push({
+                date: dateInput.value,
+                slots,
+            });
+        });
+
+        if (messages.length) {
+            event.preventDefault();
+            showAvailabilityErrors(messages);
+            return;
+        }
+
+        payloadInput.value = JSON.stringify(payload);
+        showAvailabilityErrors([]);
+    });
+
+    availabilityBlocks.querySelectorAll(".availability-date").forEach(applyDateMin);
+    availabilityBlocks.querySelectorAll(".availability-start, .availability-end").forEach(populateTimeSelect);
+
+    availabilityBlocks.querySelectorAll(".slot-add").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const block = event.currentTarget.closest(".availability-block");
+            const list = block.querySelector(".time-slot-list");
+            list.appendChild(createSlotRow());
+            updateSlotRemoveButtons();
+        });
+    });
+
+    availabilityBlocks.querySelectorAll(".slot-remove").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.currentTarget.closest(".time-slot-row").remove();
+            updateSlotRemoveButtons();
+        });
+    });
+
+    availabilityBlocks.querySelectorAll(".date-remove").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.currentTarget.closest(".availability-block").remove();
+            updateDateRemoveButtons();
+        });
+    });
+
+    addDateButton.addEventListener("click", () => {
+        availabilityBlocks.appendChild(createDateBlock());
+        updateDateRemoveButtons();
+        updateSlotRemoveButtons();
+    });
+
+    updateDateRemoveButtons();
+    updateSlotRemoveButtons();
+
+    const photoInput = document.getElementById('photo');
+    const imagePreview = document.getElementById('imagePreview');
+    const placeholder = document.getElementById('photoPlaceholder');
+
+    if (imagePreview.dataset.hasImage === "true") {
+        imagePreview.style.display = 'block';
+        placeholder.style.display = 'none';
+    }
+
+    photoInput.addEventListener('change', function () {
+        const file = photoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        } else if (imagePreview.dataset.hasImage === "true") {
+            imagePreview.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            imagePreview.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
+    });
+});
+</script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
